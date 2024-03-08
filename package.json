@@ -1,7 +1,14 @@
 {
   "name": "prodrun",
   "version": "0.0.1",
+  "description": "Awesome fitness project",
   "private": true,
+  "authors": [
+    {
+      "name": "M9M9Ra | Igor Ivanov",
+      "email": "vasa4g@gmail.com"
+    }
+  ],
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
