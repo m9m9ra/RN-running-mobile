@@ -1,4 +1,4 @@
-package com.prodrun;
+package com.m9m9ra.prodrun;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

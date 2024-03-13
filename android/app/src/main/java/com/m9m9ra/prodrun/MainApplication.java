@@ -1,4 +1,4 @@
-package com.prodrun;
+package com.m9m9ra.prodrun;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
