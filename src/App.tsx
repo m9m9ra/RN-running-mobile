@@ -1,4 +1,4 @@
-import {Linking, Platform, SafeAreaView, ScrollView, StatusBar, useColorScheme} from "react-native";
+import {Platform, SafeAreaView, ScrollView, StatusBar, useColorScheme} from "react-native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {Button, MD3LightTheme, PaperProvider, Text} from "react-native-paper";
 import {useRootStore} from "./store/RootStore";
@@ -10,29 +10,6 @@ import BackgroundJob from 'react-native-background-actions';
 
 const sleep = (time: any) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
 
-BackgroundJob.on('expiration', () => {
-    console.log('iOS: I am being closed!');
-});
-
-const taskRandom = async (taskData: any) => {
-    if (Platform.OS === 'ios') {
-        console.warn(
-            'This task will not keep your app alive in the background by itself, use other library like react-native-track-player that use audio,',
-            'geolocalization, etc. to keep your app alive in the background while you excute the JS from this library.'
-        );
-    }
-    await new Promise(async (resolve) => {
-        // For loop with a delay
-        const { delay } = taskData;
-        console.log(BackgroundJob.isRunning(), delay)
-        for (let i = 0; BackgroundJob.isRunning(); i++) {
-            console.log('Runned -> ', i);
-            await BackgroundJob.updateNotification({ taskDesc: 'Runned -> ' + i });
-            await sleep(delay);
-        }
-    });
-};
-
 const options = {
     taskName: 'Example',
     taskTitle: 'ExampleTask title',
@@ -42,23 +19,10 @@ const options = {
         type: 'mipmap',
     },
     color: '#ff00ff',
-    linkingURI: 'exampleScheme://chat/jane',
     parameters: {
         delay: 1000,
     },
 };
-
-function handleOpenURL(evt: any) {
-    console.log(evt.url);
-    // do something with the url
-}
-
-Linking.addEventListener('url', handleOpenURL);
-
-
-// await BackgroundService.updateNotification({taskDesc: 'New ExampleTask description'}); // Only Android, iOS will ignore this call
-// iOS will also run everything here in the background until .stop() is called
-// await BackgroundService.stop();
 
 export const App = observer((): JSX.Element => {
     const [steps, setSteps] = useState<number>(0);
@@ -66,6 +30,23 @@ export const App = observer((): JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
     const {userStore} = useRootStore();
     let playing = BackgroundJob.isRunning();
+
+    const taskRandom = async (taskData: any) => {
+        if (Platform.OS === 'ios') {
+            console.warn(
+                'This task will not keep your app alive in the background by itself, use other library like react-native-track-player that use audio,',
+                'geolocalization, etc. to keep your app alive in the background while you excute the JS from this library.'
+            );
+        }
+        await new Promise(async (resolve) => {
+            const { delay } = taskData;
+            // for (let i = 0; BackgroundJob.isRunning(); i++) {
+            //     await BackgroundJob.updateNotification({ taskDesc: 'Runned -> ' + i });
+            //     await sleep(delay);
+            // }
+            startCounter();
+        });
+    };
 
     const toggleBackground = async () => {
         playing = !playing;
@@ -119,7 +100,7 @@ export const App = observer((): JSX.Element => {
                             mode={`outlined`}/>
                     <Button children={`Закончить тренировку`}
                             onPress={() => {
-                                startCounter();
+                                stopCounter();
                             }}
                             style={{
                                 width: `60%`,

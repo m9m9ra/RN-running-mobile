@@ -5,8 +5,6 @@ import {action, makeObservable, observable, runInAction} from "mobx";
 
 class StepCounter {
     public stepCount: number = 0;
-    private oldYposition: number;
-    private newYposition: number;
     private subscription: Subscription
 
     constructor() {
@@ -18,21 +16,26 @@ class StepCounter {
     }
 
     public startCounter = () => {
-        setUpdateIntervalForType(SensorTypes.accelerometer, 600);
-        this.subscription = accelerometer.subscribe(({x, y, z, timestamp}) => {
+        let oldXposition: number = 0;
+        let oldYposition: number = 0;
+        let oldZposition: number = 0;
+        setUpdateIntervalForType(SensorTypes.accelerometer, 1600);
+        this.subscription = accelerometer.subscribe(({x, y, z}) => {
+            console.log(x, y, z);
+            const newXposition: number = x;
+            const newYposition: number = y;
+            const newZposition: number = z;
 
-            runInAction(() => {
-                this.newYposition = y;
-            })
-            if ((this.newYposition - this.oldYposition) > 1.2) {
-                runInAction(() => {
+
+            if (((newXposition - oldXposition) > 1.8) || (newYposition - oldYposition) > 1.2 || (newZposition - oldZposition) > 1.4) {
+                runInAction((): void => {
                     this.stepCount = this.stepCount + 1;
                 })
                 console.log(`step`);
             };
-            runInAction(() => {
-                this.oldYposition = y;
-            })
+            oldXposition = x;
+            oldYposition = y;
+            oldZposition = z;
         });
     };
 
