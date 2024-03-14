@@ -21,7 +21,7 @@ class StepCounter {
         let oldZposition: number = 0;
         setUpdateIntervalForType(SensorTypes.accelerometer, 1600);
         this.subscription = accelerometer.subscribe(({x, y, z}) => {
-            console.log(x, y, z);
+            // console.log(x, y, z);
             const newXposition: number = x;
             const newYposition: number = y;
             const newZposition: number = z;
@@ -31,7 +31,7 @@ class StepCounter {
                 runInAction((): void => {
                     this.stepCount = this.stepCount + 1;
                 })
-                console.log(`step`);
+                // console.log(`step`);
             };
             oldXposition = x;
             oldYposition = y;

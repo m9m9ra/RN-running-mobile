@@ -1,4 +1,4 @@
-import {Platform, SafeAreaView, ScrollView, StatusBar, useColorScheme} from "react-native";
+import {PermissionsAndroid, Platform, SafeAreaView, ScrollView, StatusBar, useColorScheme, View} from "react-native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {Button, MD3LightTheme, PaperProvider, Text} from "react-native-paper";
 import {useRootStore} from "./store/RootStore";
@@ -7,8 +7,7 @@ import {useEffect, useState} from "react";
 import {useStepCounter} from "./modules/StepCounter";
 
 import BackgroundJob from 'react-native-background-actions';
-
-const sleep = (time: any) => new Promise<void>((resolve) => setTimeout(() => resolve(), time));
+import Geolocation from "@react-native-community/geolocation";
 
 const options = {
     taskName: 'Example',
@@ -24,31 +23,36 @@ const options = {
     },
 };
 
+// Configure Geolocation
+Geolocation.setRNConfiguration({
+    authorizationLevel: 'always', // Request "always" location permission
+    skipPermissionRequests: false, // Prompt for permission if not granted
+});
+
+// To stop tracking (for example, when the component unmounts):
+// Geolocation.clearWatch(watchId);
+
 export const App = observer((): JSX.Element => {
     const [steps, setSteps] = useState<number>(0);
     const {stepCount, startCounter, stopCounter} = useStepCounter();
     const isDarkMode = useColorScheme() === 'dark';
     const {userStore} = useRootStore();
+    const [location, setLocation] = useState<Array<any>>([]);
     let playing = BackgroundJob.isRunning();
 
-    const taskRandom = async (taskData: any) => {
+    const taskRandom = async (taskData: any): Promise<void> => {
         if (Platform.OS === 'ios') {
             console.warn(
                 'This task will not keep your app alive in the background by itself, use other library like react-native-track-player that use audio,',
                 'geolocalization, etc. to keep your app alive in the background while you excute the JS from this library.'
             );
         }
-        await new Promise(async (resolve) => {
-            const { delay } = taskData;
-            // for (let i = 0; BackgroundJob.isRunning(); i++) {
-            //     await BackgroundJob.updateNotification({ taskDesc: 'Runned -> ' + i });
-            //     await sleep(delay);
-            // }
+        await new Promise(async (resolve): Promise<void> => {
             startCounter();
         });
     };
 
-    const toggleBackground = async () => {
+    const toggleBackground = async (): Promise<void> => {
         playing = !playing;
         if (playing) {
             try {
@@ -64,7 +68,54 @@ export const App = observer((): JSX.Element => {
         }
     };
 
+    // Watch for position updates
+    const watchId = Geolocation.watchPosition(
+        position => {
+            console.log(position);
+            setLocation([...location, position]);
+            // Send the position data to the server
+        },
+        error => {
+            console.log(`error`, error);
+        },
+        {
+            distanceFilter: 0, // Minimum distance (in meters) to update the location
+            interval: 600, // Update interval (in milliseconds), which is 15 minutes
+            fastestInterval: 600, // Fastest update interval (in milliseconds)
+            accuracy: {
+                android: 'highAccuracy',
+                ios: 'best',
+            },
+            showsBackgroundLocationIndicator: true,
+            pausesLocationUpdatesAutomatically: false,
+            activityType: 'fitness', // Specify the activity type (e.g., 'fitness' or 'other')
+            useSignificantChanges: false,
+            deferredUpdatesInterval: 0,
+            deferredUpdatesDistance: 0,
+            foregroundService: {
+                notificationTitle: 'Tracking your location',
+                notificationBody: 'Enable location tracking to continue', // Add a notification body
+            },
+        }
+    );
+
+
     useEffect(() => {
+        async function requestLocationPermission() {
+            try {
+                const granted = await PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+                )
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log("You can use locations ")
+                } else {
+                    console.log("Location permission denied")
+                }
+            } catch (err) {
+                console.warn(err)
+            }
+        };
+        requestLocationPermission().then();
 
         userStore.main()
             .then(() => {
@@ -89,24 +140,36 @@ export const App = observer((): JSX.Element => {
                               fontSize: 34,
                               textAlign: `center`
                           }}/>
-                    <Button children={`Начать тренировку`}
-                            onPress={async () => {
-                                await toggleBackground();
-                            }}
-                            style={{
-                                width: `66%`,
-                                marginVertical: 2
-                            }}
-                            mode={`outlined`}/>
-                    <Button children={`Закончить тренировку`}
-                            onPress={() => {
-                                stopCounter();
-                            }}
-                            style={{
-                                width: `60%`,
-                                marginVertical: 2
-                            }}
-                            mode={`contained`}/>
+                    <View style={{alignItems: `center`, gap: 12, marginVertical: 24}}>
+                        <Button children={`Начать тренировку`}
+                                onPress={async () => {
+                                    await toggleBackground();
+                                }}
+                                style={{
+                                    width: `66%`,
+                                    marginVertical: 2
+                                }}
+                                mode={`outlined`}/>
+                        <Button children={`Закончить тренировку`}
+                                onPress={() => {
+                                    // Geolocation.clearWatch(watchId);
+                                    // Geolocation.stopObserving();
+                                }}
+                                style={{
+                                    width: `60%`,
+                                    marginVertical: 2
+                                }}
+                                mode={`contained`}/>
+                    </View>
+                    <View style={{gap: 12}}>
+                        {location.map((item, index) =>
+                            <Text key={index}
+                                  style={{
+                                      textAlign: `center`,
+                                      fontSize: 14
+                                  }}
+                                  children={JSON.stringify(item)}/>)}
+                    </View>
                 </ScrollView>
             </SafeAreaView>
         </PaperProvider>
