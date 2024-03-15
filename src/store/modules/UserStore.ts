@@ -1,48 +1,82 @@
-import {makeAutoObservable} from "mobx";
+import {makeAutoObservable, runInAction} from "mobx";
 import {dataSourse} from "../../configs/DataSourse";
 import {User} from "../../entity/User";
-import BackgroundService from "react-native-background-actions";
+import ErrorStore from "./ErrorStore";
 
 export default class UserStore {
     public auth: boolean = false;
+    public guest: boolean = false;
+    public user: User;
     public stepCounter: number = 0;
 
+    private errorStore: ErrorStore;
     private userRepositoty = dataSourse.getRepository(User);
 
-    constructor() {
-        makeAutoObservable(this)
-    }
+    constructor(errorStore: ErrorStore) {
+        this.errorStore = errorStore;
+        makeAutoObservable(this);
+    };
 
-    main = async () => {
-        // await dataSourse.initialize();
-        console.log(`success`);
-
-        const sleep = (time) => new Promise((resolve) => setTimeout(() => {}, time));
-        const veryIntensiveTask = async (taskDataArguments) => {
-            // Example of an infinite loop task
-            const { delay } = taskDataArguments;
-            await new Promise( async (resolve) => {
-                for (let i = 0; BackgroundService.isRunning(); i++) {
-                    console.log(i);
-                    await sleep(delay);
-                }
+    public main = async () => {
+        await dataSourse.initialize();
+        const user = await this.userRepositoty.findOne({
+            where: {
+                auth: true || false
+            }
+        });
+        if (user !== null) {
+            runInAction(() => {
+                this.auth = user.auth;
+                this.guest = user.guest;
+                this.user = user;
             });
-        };
+            console.log(`Storage loaded!`);
+            console.log(user);
+        }
 
-        const options = {
-            taskName: 'Example',
-            taskTitle: 'ExampleTask title',
-            taskDesc: 'ExampleTask description',
-            taskIcon: {
-                name: 'ic_launcher',
-                type: 'mipmap',
-            },
-            color: '#ff00ff',
-            parameters: {
-                delay: 1000,
-            },
-        };
+    };
 
-        // await BackgroundService.start(veryIntensiveTask, options);
+    public userRegister = async (user: User): Promise<boolean> => {
+        if (this.user && this.auth) {
+            return true
+        }
+        // todo - Guest auth
+        const newUser = Object.assign(new User(), {
+            ...user,
+            auth: true,
+            guest: false
+        })
+        const response = await this.userRepositoty.save(newUser);
+
+        if (response !== null) {
+            runInAction(() => {
+                this.auth = true;
+            })
+            return true
+        } else {
+            return false
+        }
+    };
+
+    public userLogout = async (): Promise<boolean> => {
+        if (this.user) {
+            const cacheUser = Object.assign(new User(), {
+                ...this.user,
+                auth: false,
+                guest: false
+            });
+
+            await this.userRepositoty.remove(this.user);
+
+            await this.userRepositoty.save(cacheUser)
+                .finally(() => {
+                    runInAction(() => {
+                        this.auth = false;
+                        this.guest = false;
+                    })
+                });
+        } else {
+            return false
+        }
     }
 };

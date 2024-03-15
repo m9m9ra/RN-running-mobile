@@ -1,13 +1,21 @@
-import {PermissionsAndroid, Platform, SafeAreaView, ScrollView, StatusBar, useColorScheme, View} from "react-native";
+import {PermissionsAndroid, Platform, SafeAreaView, StatusBar, useColorScheme, View} from "react-native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
-import {Button, MD3LightTheme, PaperProvider, Text} from "react-native-paper";
+import {MD3LightTheme, PaperProvider} from "react-native-paper";
 import {useRootStore} from "./store/RootStore";
 import {observer} from "mobx-react-lite";
 import {useEffect, useState} from "react";
 import {useStepCounter} from "./modules/StepCounter";
+import {enGB, registerTranslation} from 'react-native-paper-dates'
+
+registerTranslation('en-GB', enGB)
 
 import BackgroundJob from 'react-native-background-actions';
 import Geolocation from "@react-native-community/geolocation";
+import {getLocales} from "react-native-localize";
+import {useTranslation} from "react-i18next";
+import {NavigationContainer} from "@react-navigation/native";
+import {AuthStack} from "./navigation/AuthStack";
+import {MainStack} from "./navigation/MainStack";
 
 const options = {
     taskName: 'Example',
@@ -33,12 +41,12 @@ Geolocation.setRNConfiguration({
 // Geolocation.clearWatch(watchId);
 
 export const App = observer((): JSX.Element => {
-    const [steps, setSteps] = useState<number>(0);
-    const {stepCount, startCounter, stopCounter} = useStepCounter();
     const isDarkMode = useColorScheme() === 'dark';
+    const {startCounter} = useStepCounter();
     const {userStore} = useRootStore();
     const [location, setLocation] = useState<Array<any>>([]);
     let playing = BackgroundJob.isRunning();
+    const {t} = useTranslation();
 
     const taskRandom = async (taskData: any): Promise<void> => {
         if (Platform.OS === 'ios') {
@@ -101,6 +109,8 @@ export const App = observer((): JSX.Element => {
 
 
     useEffect(() => {
+        console.log(getLocales());
+
         async function requestLocationPermission() {
             try {
                 const granted = await PermissionsAndroid.request(
@@ -132,45 +142,12 @@ export const App = observer((): JSX.Element => {
             <SafeAreaView style={{...backgroundStyle, flex: 1}}>
                 <StatusBar barStyle={'dark-content'}
                            backgroundColor={backgroundStyle.backgroundColor}/>
-                <ScrollView contentInsetAdjustmentBehavior="automatic"
-                            style={backgroundStyle}>
-                    <Text children={`Шагов пройдено: ${stepCount}`}
-                          style={{
-                              marginTop: 20,
-                              fontSize: 34,
-                              textAlign: `center`
-                          }}/>
-                    <View style={{alignItems: `center`, gap: 12, marginVertical: 24}}>
-                        <Button children={`Начать тренировку`}
-                                onPress={async () => {
-                                    await toggleBackground();
-                                }}
-                                style={{
-                                    width: `66%`,
-                                    marginVertical: 2
-                                }}
-                                mode={`outlined`}/>
-                        <Button children={`Закончить тренировку`}
-                                onPress={() => {
-                                    // Geolocation.clearWatch(watchId);
-                                    // Geolocation.stopObserving();
-                                }}
-                                style={{
-                                    width: `60%`,
-                                    marginVertical: 2
-                                }}
-                                mode={`contained`}/>
-                    </View>
-                    <View style={{gap: 12}}>
-                        {location.map((item, index) =>
-                            <Text key={index}
-                                  style={{
-                                      textAlign: `center`,
-                                      fontSize: 14
-                                  }}
-                                  children={JSON.stringify(item)}/>)}
-                    </View>
-                </ScrollView>
+                <NavigationContainer independent={true}>
+                    {userStore.auth ?
+                        <MainStack/>
+                        :
+                        <AuthStack/>}
+                </NavigationContainer>
             </SafeAreaView>
         </PaperProvider>
     );

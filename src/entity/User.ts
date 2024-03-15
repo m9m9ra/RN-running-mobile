@@ -3,13 +3,10 @@ import {Column, Entity, PrimaryColumn} from "typeorm";
 @Entity()
 export class User {
     @PrimaryColumn({unique: true})
-    auth: boolean
+    auth?: boolean
 
     @Column({nullable: true})
-    height: number
-
-    @Column({nullable: true})
-    weight: number
+    guest?: boolean
 
     @Column({nullable: true})
     firstName: string
@@ -17,12 +14,33 @@ export class User {
     @Column({nullable: true})
     lastName: string
 
-    @Column({nullable: true})
-    phone: string
+    @Column({nullable: false, enum: [`MALE`, `FEMALE`, `NOT_SAY`]})
+    gender: string
+
+    @Column({nullable: false})
+    email: string
 
     @Column({nullable: true})
-    token: string
+    password: string
 
     @Column({nullable: true})
-    avatar: string
+    birthdate: string
+
+    @Column({nullable: true})
+    policy: boolean
+
+    @Column({nullable: true})
+    height?: number
+
+    @Column({nullable: true})
+    weight?: number
+
+    @Column({nullable: true})
+    phone?: string
+
+    @Column({nullable: true})
+    token?: string
+
+    @Column({nullable: true})
+    avatar?: string
 }

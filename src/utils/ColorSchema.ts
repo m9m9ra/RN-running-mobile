@@ -1,4 +1,4 @@
 export const colorSchema = {
-    primary: ``,
-    secondary: ``
+    primary: `#000000`,
+    secondary: `#A7A7A7`
 }
