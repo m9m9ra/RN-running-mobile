@@ -4,14 +4,28 @@ import { Subscription } from "rxjs";
 import {action, makeObservable, observable, runInAction} from "mobx";
 
 class StepCounter {
+    public isRunning: boolean = false;
+    public timer: string = `00:00:00`;
     public stepCount: number = 0;
+
+    private ms: number = 0;
+    private seconds: number = 0;
+    private minute: number = 0;
     private subscription: Subscription
 
     constructor() {
+
         makeObservable(this, {
+            isRunning: observable,
             stepCount: observable,
+            timer: observable,
+            // @ts-ignore
+            ms: observable,
+            seconds: observable,
+            minute: observable,
+            toggleRunning: action,
             startCounter: action,
-            stopCounter: action
+            stopCounter: action,
         })
     }
 
@@ -38,6 +52,36 @@ class StepCounter {
             oldZposition = z;
         });
     };
+
+    public toggleRunning = async () => {
+        let interval: NodeJS.Timeout;
+        if (!this.isRunning) {
+            runInAction(() => {
+                this.isRunning = true;
+            });
+
+            interval = setInterval(() => {
+                runInAction(() => {
+                    this.ms += 1;
+                    if (this.ms >= 60) {
+                        this.ms = 0;
+                        this.seconds += 1
+                    };
+                    if (this.seconds >= 60) {
+                        this.seconds = 0;
+                        this.minute += 1;
+                    }
+                    this.timer = `${this.minute < 10 ? '0'+this.minute : this.minute}:${this.seconds < 10 ? '0'+this.seconds : this.seconds}:${this.ms < 10 ? '0'+this.ms : this.ms}`;
+                })
+                console.log(this.ms);
+            }, 1000);
+        } else {
+            clearInterval(interval);
+            runInAction(() => {
+                this.isRunning = false;
+            });
+        };
+    }
 
     public stopCounter = () => {
         this.subscription.unsubscribe();

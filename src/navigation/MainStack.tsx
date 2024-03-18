@@ -2,12 +2,12 @@ import {createStackNavigator} from "@react-navigation/stack";
 import {HomeStack, HomeStackParamList} from "./modules/HomeStack";
 import {createDrawerNavigator} from "@react-navigation/drawer";
 
-type MainStackParamList = {
+export type MainStackParamList = {
     HomeStack: HomeStackParamList
 }
 
 // const Stack = createStackNavigator<MainStackParamList>();
-const Drawer = createDrawerNavigator();
+const Drawer = createDrawerNavigator<MainStackParamList>();
 export const MainStack = () => {
     return (
         <Drawer.Navigator initialRouteName={`HomeStack`}
@@ -17,7 +17,7 @@ export const MainStack = () => {
                                   width: 240
                               },
                               headerShown: false,
-                              swipeEdgeWidth: 77
+                              swipeEdgeWidth: 77,
                           }}>
             <Drawer.Screen name={`HomeStack`}
                            component={HomeStack}/>

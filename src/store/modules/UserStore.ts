@@ -18,7 +18,8 @@ export default class UserStore {
     };
 
     public main = async () => {
-        await dataSourse.initialize();
+        !dataSourse.isConnected ? await dataSourse.initialize() : false;
+
         const user = await this.userRepositoty.findOne({
             where: {
                 auth: true || false

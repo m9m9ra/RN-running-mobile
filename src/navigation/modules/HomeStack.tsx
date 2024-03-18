@@ -4,17 +4,26 @@ import {Icon} from "react-native-paper";
 import {colorSchema} from "../../utils/ColorSchema";
 import {ProfileScreen} from "../../screens/ProfileScreen";
 import {ActivityScreen} from "../../screens/ActivityScreen";
-import {Colors} from "react-native/Libraries/NewAppScreen";
 import {AppBar} from "../../components/AppBar";
+import {DrawerNavigationOptions, DrawerScreenProps} from "@react-navigation/drawer";
+import {MainStackParamList} from "../MainStack";
+import { LogBox } from 'react-native';
+
+
+LogBox.ignoreLogs([
+    'Non-serializable values were found in the navigation state',
+]);
 
 export type HomeStackParamList = {
     HomeScreen: any,
-    ActivityScreen: any
-    ProfileScreen: any,
+    ActivityScreen: {
+        setOptions: (options: DrawerNavigationOptions) => void
+    },
+    ProfileScreen: any
 }
-
+type props = DrawerScreenProps<MainStackParamList, `HomeStack`>;
 const Tab = createBottomTabNavigator<HomeStackParamList>()
-export const HomeStack = () => {
+export const HomeStack = ({navigation, route}: props) => {
     return (
         <Tab.Navigator initialRouteName={`ActivityScreen`}
                        sceneContainerStyle={{
@@ -46,6 +55,11 @@ export const HomeStack = () => {
                         component={HomeScreen}/>
 
             <Tab.Screen name={`ActivityScreen`}
+                        initialParams={{
+                            setOptions: (options: DrawerNavigationOptions) => {
+                                navigation.setOptions(options)
+                            }
+                        }}
                         options={{
                             tabBarLabel: `Activity`,
                             tabBarIcon: (props) => <Icon size={26}

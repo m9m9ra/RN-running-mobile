@@ -34,6 +34,10 @@
       "CONFIRM_PASSWORD": "",
       "BIRTHDATE": "",
       "PRIVATE_POLICY": ""
+    },
+
+    "ACTION": {
+      "START_TIMER": "Start live"
     }
   }
 }
