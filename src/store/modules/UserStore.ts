@@ -60,6 +60,8 @@ export default class UserStore {
     };
 
     public userLogout = async (): Promise<boolean> => {
+        console.log(this.user);
+
         if (this.user) {
             const cacheUser = Object.assign(new User(), {
                 ...this.user,

@@ -1,23 +1,20 @@
 import {ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {HomeStackParamList} from "../navigation/modules/HomeStack";
-import {useEffect, useLayoutEffect, useState} from "react";
+import {useLayoutEffect} from "react";
 import {Appbar, Icon, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {useTranslation} from "react-i18next";
-import {useStepCounter} from "../modules/StepCounter";
 import {observer} from "mobx-react-lite";
+import {useServiceProvider} from "../modules/ServicesProvider";
+import {MapMini} from "../components/MapMini";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
-    // const [timer, setTimer] = useState<number>(0);
-    const {toggleRunning, timer} = useStepCounter();
+    const {timer, toggleRunning, startGpsService, stopGpsService} = useServiceProvider();
 
     useLayoutEffect(() => {
-        route.params.setOptions({
-            swipeEnabled: false
-        })
         navigation.setOptions({
             headerShown: false
         });
@@ -87,16 +84,23 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                 </View>
             </Appbar.Header>
 
+            <MapMini/>
+
             <View style={{
                 paddingHorizontal: 24,
                 position: `absolute`,
-                bottom: 12,
+                bottom: 24,
                 left: 0,
                 right: 0
             }}>
                 <TouchableWithoutFeedback disabled={false}
                                           onPress={async () => {
-                                              await toggleRunning();
+                                              const isRunning = await toggleRunning();
+                                              if (isRunning) {
+                                                  await startGpsService();
+                                              } else {
+                                                  await stopGpsService();
+                                              }
                                           }}>
                     <View style={{
                         backgroundColor: `black`,
@@ -115,12 +119,22 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                               fontWeight: `700`
                                                           }}/>}
                                           onPress={async () => {
-                                              await toggleRunning();
+                                              const isRunning = await toggleRunning();
+                                              if (isRunning) {
+                                                  await startGpsService();
+                                              } else {
+                                                  await stopGpsService();
+                                              }
                                           }}/>
                         <TouchableOpacity disabled={false}
                                           children={<Icon size={18} source={`arrow-right`} color={`#FFFFFF`}/>}
                                           onPress={async () => {
-                                              await toggleRunning();
+                                              const isRunning = await toggleRunning();
+                                              if (isRunning) {
+                                                  await startGpsService();
+                                              } else {
+                                                  await stopGpsService();
+                                              }
                                           }}/>
                     </View>
                 </TouchableWithoutFeedback>

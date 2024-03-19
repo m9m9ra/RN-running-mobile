@@ -7,18 +7,10 @@ import {ActivityScreen} from "../../screens/ActivityScreen";
 import {AppBar} from "../../components/AppBar";
 import {DrawerNavigationOptions, DrawerScreenProps} from "@react-navigation/drawer";
 import {MainStackParamList} from "../MainStack";
-import { LogBox } from 'react-native';
-
-
-LogBox.ignoreLogs([
-    'Non-serializable values were found in the navigation state',
-]);
 
 export type HomeStackParamList = {
     HomeScreen: any,
-    ActivityScreen: {
-        setOptions: (options: DrawerNavigationOptions) => void
-    },
+    ActivityScreen: any,
     ProfileScreen: any
 }
 type props = DrawerScreenProps<MainStackParamList, `HomeStack`>;
@@ -55,11 +47,6 @@ export const HomeStack = ({navigation, route}: props) => {
                         component={HomeScreen}/>
 
             <Tab.Screen name={`ActivityScreen`}
-                        initialParams={{
-                            setOptions: (options: DrawerNavigationOptions) => {
-                                navigation.setOptions(options)
-                            }
-                        }}
                         options={{
                             tabBarLabel: `Activity`,
                             tabBarIcon: (props) => <Icon size={26}

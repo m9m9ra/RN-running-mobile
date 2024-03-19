@@ -18,10 +18,17 @@ export const ProfileCard = ({title, icon, label}: props) => {
                                   }}>
             <View style={style.profileCard}>
                 <View style={{flexDirection: `row`, alignItems: `center`, gap: 4}}>
-                    <TouchableOpacity children={<Icon size={34}
+                    <TouchableOpacity disabled={false}
+                                      onPress={async () => {
+                                          icon == `logout` ? await userStore.userLogout() : false;
+                                      }}
+                                      children={<Icon size={34}
                                                       color={icon == `logout` ? "#e51200" : `black`}
                                                       source={icon}/>}/>
-                    <TouchableOpacity>
+                    <TouchableOpacity disabled={false}
+                                      onPress={async () => {
+                                          icon == `logout` ? await userStore.userLogout() : false;
+                                      }}>
                         <View>
                             <Text children={title}
                                   style={{
@@ -37,7 +44,12 @@ export const ProfileCard = ({title, icon, label}: props) => {
                         </View>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity children={<Icon size={24} source={`chevron-right`}/>}/>
+                <TouchableOpacity disabled={false}
+                                  onPress={async () => {
+                                      icon == `logout` ? await userStore.userLogout() : false;
+                                  }}
+                                  children={<Icon size={24}
+                                                  source={`chevron-right`}/>}/>
             </View>
         </TouchableWithoutFeedback>
     )

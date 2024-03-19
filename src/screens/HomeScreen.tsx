@@ -1,10 +1,20 @@
 import {ScrollView, StyleSheet, View} from "react-native";
-import {Divider, TextInput} from "react-native-paper";
+import {Divider, Text, TextInput} from "react-native-paper";
+import {observer} from "mobx-react-lite";
+import {useServiceProvider} from "../modules/ServicesProvider";
 
-export const HomeScreen = () => {
+export const HomeScreen = observer(() => {
+    const {stepCounter} = useServiceProvider();
+
     return (
         <ScrollView horizontal={false}
                     contentContainerStyle={style.container}>
+            <Text children={`Step: ${stepCounter.stepCount}`}
+                  style={{
+                      fontSize: 24,
+                      fontWeight: `700`,
+                      letterSpacing: 2
+                  }}/>
             <TextInput label={`text`}
                        mode={`outlined`}/>
             <View style={{height: 600}}/>
@@ -12,7 +22,7 @@ export const HomeScreen = () => {
             <View style={{height: 300}}/>
         </ScrollView>
     )
-};
+});
 
 const style = StyleSheet.create({
     container: {
