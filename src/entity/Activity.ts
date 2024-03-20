@@ -1,0 +1,20 @@
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "./User";
+
+@Entity()
+export class Activity {
+    @PrimaryGeneratedColumn()
+    id: number
+
+    @ManyToOne(() => User, (user) => user.activity)
+    user_id: boolean
+
+    @Column()
+    step: number
+
+    @Column()
+    data: string
+
+    @Column({nullable: true})
+    kcal: number
+}

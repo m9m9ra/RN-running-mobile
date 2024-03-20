@@ -1,9 +1,14 @@
-import {Column, Entity, PrimaryColumn} from "typeorm";
+import {Column, Entity, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import { Activity } from "./Activity";
+import { Training } from "./Training";
 
 @Entity()
 export class User {
-    @PrimaryColumn({unique: true})
+    @PrimaryColumn({default: false})
     auth?: boolean
+
+    @Column({nullable: true})
+    user_id?: number
 
     @Column({nullable: true})
     guest?: boolean
@@ -16,6 +21,12 @@ export class User {
 
     @Column({nullable: false, enum: [`MALE`, `FEMALE`, `NOT_SAY`]})
     gender: string
+
+    @OneToMany(() => Activity, (activity) => activity.user_id)
+    activity: Activity[]
+
+    @OneToMany(() => Training, (training) => training.user_id)
+    training: Training[]
 
     @Column({nullable: false})
     email: string

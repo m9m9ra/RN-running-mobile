@@ -26,9 +26,9 @@ export class StepCounter {
             const newXposition: number = x;
             const newYposition: number = y;
             const newZposition: number = z;
-
-
-            if (((newXposition - oldXposition) > 1.8) || (newYposition - oldYposition) > 1.2 || (newZposition - oldZposition) > 1.4) {
+            
+            // todo - y: 1.2, z: 1.4?
+            if (((newXposition - oldXposition) > 1.8) || (newYposition - oldYposition) > 1.4 || (newZposition - oldZposition) > 1.6) {
                 runInAction((): void => {
                     this.stepCount = this.stepCount + 1;
                 })
@@ -38,6 +38,15 @@ export class StepCounter {
             oldYposition = y;
             oldZposition = z;
         });
+
+        this.observeStepService();
+    };
+
+    private observeStepService = async () => {
+        // todo - Перестать говнакодить!!!
+        // const saveTimer: NodeJS.Timeout = setInterval(() => {
+        //     // console.log(this.stepCount);
+        // }, 1200);
     };
 
     public stopPedometer = () => {

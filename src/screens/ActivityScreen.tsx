@@ -156,7 +156,5 @@ const style = StyleSheet.create({
         fontSize: 28,
         fontWeight: `700`
     },
-    headerLabel: {
-
-    }
+    headerLabel: {}
 });

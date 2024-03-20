@@ -7,10 +7,10 @@ export default class UserStore {
     public auth: boolean = false;
     public guest: boolean = false;
     public user: User;
-    public stepCounter: number = 0;
 
     private errorStore: ErrorStore;
     private userRepositoty = dataSourse.getRepository(User);
+    private activityRepositoty = dataSourse.getRepository(User);
 
     constructor(errorStore: ErrorStore) {
         this.errorStore = errorStore;
@@ -25,6 +25,7 @@ export default class UserStore {
                 auth: true || false
             }
         });
+
         if (user !== null) {
             runInAction(() => {
                 this.auth = user.auth;

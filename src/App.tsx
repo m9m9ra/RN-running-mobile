@@ -50,6 +50,7 @@ export const App = observer((): JSX.Element => {
             .finally(() => {
                 settingStore.main()
                 .then(() => {
+                    console.log(settingStore.settings);
                     i18n.changeLanguage(settingStore.settings.language);
                 });
             })

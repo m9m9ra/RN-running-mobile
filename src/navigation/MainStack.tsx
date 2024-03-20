@@ -13,7 +13,7 @@ export const MainStack = () => {
     return (
         <Drawer.Navigator initialRouteName={`HomeStack`}
                           screenOptions={{
-                              swipeEnabled: true,
+                              swipeEnabled: false,
                               drawerStyle: {
                                   width: 240
                               },

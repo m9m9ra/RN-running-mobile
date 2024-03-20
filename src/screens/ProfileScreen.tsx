@@ -1,7 +1,7 @@
 import {ScrollView, StyleSheet, View} from "react-native";
 import {ProfileCard} from "../components/ProfileCard";
 import {useTranslation} from "react-i18next";
-import { observer } from "mobx-react-lite";
+import {observer} from "mobx-react-lite";
 
 export const ProfileScreen = observer(() => {
     const {t} = useTranslation();

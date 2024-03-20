@@ -22,6 +22,7 @@ export default class SettingStore {
             });
             console.log(`Setting loaded`);
         } else {
+            console.log(`Setting creted`);
             const newSettings = Object.assign(new Settings, {
                 settings: true,
                 language: 'en',
