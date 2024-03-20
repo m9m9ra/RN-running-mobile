@@ -34,6 +34,8 @@
     "react-i18next": "^14.1.0",
     "react-native": "0.72.6",
     "react-native-background-actions": "^3.0.1",
+    "react-native-chart-kit": "^6.12.0",
+    "react-native-circular-progress-indicator": "^4.4.2",
     "react-native-dotenv": "^3.4.11",
     "react-native-gesture-handler": "^2.15.0",
     "react-native-localize": "^3.0.6",
@@ -45,6 +47,7 @@
     "react-native-screens": "^3.29.0",
     "react-native-sensors": "^7.3.6",
     "react-native-sqlite-storage": "^6.0.1",
+    "react-native-svg": "^15.1.0",
     "react-native-vector-icons": "^10.0.3",
     "react-native-yamap": "^4.1.18",
     "typeorm": "^0.3.20"

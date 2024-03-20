@@ -10,13 +10,15 @@ import {NavigationContainer} from "@react-navigation/native";
 import {AuthStack} from "./navigation/AuthStack";
 import {MainStack} from "./navigation/MainStack";
 import {useServiceProvider} from "./modules/ServicesProvider";
+import { useTranslation } from "react-i18next";
 registerTranslation('en-GB', enGB)
 
 
 export const App = observer((): JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
     const {startStepCounterService} = useServiceProvider();
-    const {userStore} = useRootStore();
+    const {userStore, settingStore} = useRootStore();
+    const {i18n} = useTranslation();
 
 
     useEffect(() => {
@@ -43,8 +45,14 @@ export const App = observer((): JSX.Element => {
                 console.log(1);
                 startStepCounterService().then(() => {
                     console.log(`Pedometer`);
-                })
-            });
+                });
+            })
+            .finally(() => {
+                settingStore.main()
+                .then(() => {
+                    i18n.changeLanguage(settingStore.settings.language);
+                });
+            })
     }, []);
 
     const backgroundStyle = {

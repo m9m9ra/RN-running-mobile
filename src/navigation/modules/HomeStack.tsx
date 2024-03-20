@@ -61,6 +61,7 @@ export const HomeStack = ({navigation, route}: props) => {
 
             <Tab.Screen name={`ProfileScreen`}
                         options={{
+                            headerTitle: `Profile`,
                             tabBarLabel: `Profile`,
                             tabBarIcon: (props) => <Icon size={26}
                                                          color={props.focused ? `black` : colorSchema.secondary}
