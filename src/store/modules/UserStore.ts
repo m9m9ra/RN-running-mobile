@@ -2,6 +2,9 @@ import {makeAutoObservable, runInAction} from "mobx";
 import {dataSourse} from "../../configs/DataSourse";
 import {User} from "../../entity/User";
 import ErrorStore from "./ErrorStore";
+import {StepCounter} from "../../services/StepCounter";
+import {Activity} from "../../entity/Activity";
+import moment from "moment";
 
 export default class UserStore {
     public auth: boolean = false;
@@ -9,24 +12,43 @@ export default class UserStore {
     public user: User;
 
     private errorStore: ErrorStore;
-    private userRepositoty = dataSourse.getRepository(User);
-    private activityRepositoty = dataSourse.getRepository(User);
+    private stepCounter: StepCounter;
+    private userRepository = dataSourse.getRepository(User);
+    private activityRepository = dataSourse.getRepository(Activity);
 
-    constructor(errorStore: ErrorStore) {
+    constructor(errorStore: ErrorStore, stepCounter: StepCounter) {
         this.errorStore = errorStore;
+        this.stepCounter = stepCounter;
+
         makeAutoObservable(this);
     };
 
     public main = async () => {
         !dataSourse.isConnected ? await dataSourse.initialize() : false;
 
-        const user = await this.userRepositoty.findOne({
+        const user = await this.userRepository.findOne({
             where: {
                 auth: true || false
+            },
+            relations: {
+                activity: true,
+                training: true
             }
         });
 
+        await this.observeStepCount();
+
         if (user !== null) {
+            const loadPedometer = await this.activityRepository.findOne({
+                where: {
+                    data: moment(new Date()).format("L")
+                }
+            });
+
+            if (loadPedometer !== null) {
+                this.stepCounter.setStepCount(loadPedometer.step);
+            }
+
             runInAction(() => {
                 this.auth = user.auth;
                 this.guest = user.guest;
@@ -36,6 +58,44 @@ export default class UserStore {
             console.log(user);
         }
 
+    };
+
+    private observeStepCount = async (): Promise<void> => {
+        const saveStep: NodeJS.Timeout = setInterval(async () => {
+            const data = new Date();
+            const currentDay = moment(data);
+            console.log(moment(currentDay).format("L"));
+            console.log(moment(currentDay).isSame(currentDay));
+
+            const dayActivity = await this.activityRepository.findOne({
+                where: {
+                    data: moment(currentDay).format("L")
+                }
+            });
+
+            const updateUserInfo = await this.activityRepository.find({
+
+            });
+
+            runInAction(() => {
+                this.user.activity = updateUserInfo;
+            });
+
+            console.log(dayActivity);
+
+            if (dayActivity !== null) {
+                dayActivity.step = this.stepCounter.stepCount;
+                await this.activityRepository.save(dayActivity);
+            } else {
+                const newDayActivity = Object.assign(new Activity(), {
+                    user_id: this.user.auth,
+                    step: this.stepCounter.stepCount,
+                    data: moment(currentDay).format("L")
+                });
+
+                await this.activityRepository.save(newDayActivity);
+            }
+        }, (60000 * 25));
     };
 
     public userRegister = async (user: User): Promise<boolean> => {
@@ -48,7 +108,7 @@ export default class UserStore {
             auth: true,
             guest: false
         })
-        const response = await this.userRepositoty.save(newUser);
+        const response = await this.userRepository.save(newUser);
 
         if (response !== null) {
             runInAction(() => {
@@ -70,9 +130,9 @@ export default class UserStore {
                 guest: false
             });
 
-            await this.userRepositoty.remove(this.user);
+            await this.userRepository.remove(this.user);
 
-            await this.userRepositoty.save(cacheUser)
+            await this.userRepository.save(cacheUser)
                 .finally(() => {
                     runInAction(() => {
                         this.auth = false;

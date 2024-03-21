@@ -12,6 +12,7 @@ export class Activity {
     @Column()
     step: number
 
+    // dd/mm/year: 01/07/2024
     @Column()
     data: string
 

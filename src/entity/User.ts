@@ -23,10 +23,10 @@ export class User {
     gender: string
 
     @OneToMany(() => Activity, (activity) => activity.user_id)
-    activity: Activity[]
+    activity?: Activity[]
 
     @OneToMany(() => Training, (training) => training.user_id)
-    training: Training[]
+    training?: Training[]
 
     @Column({nullable: false})
     email: string

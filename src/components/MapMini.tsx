@@ -2,10 +2,10 @@ import {ScrollView, StyleSheet} from "react-native";
 import {observer} from "mobx-react-lite";
 import YaMap, {Marker} from "react-native-yamap";
 import {useEffect, useState} from "react";
-import {useServiceProvider} from "../modules/ServicesProvider";
+import {useRootStore} from "../store/RootStore";
 
 export const MapMini = observer(() => {
-    const {geolocationService} = useServiceProvider();
+    const {geolocationService} = useRootStore();
     const [defaultPosition, setDefaultPosition] = useState({
         lat: 54.7065,
         lon: 20.511,

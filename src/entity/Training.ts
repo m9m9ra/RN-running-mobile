@@ -12,6 +12,25 @@ export class Training {
     @Column({enum: ["RUNNING"]})
     type: string
 
+    // todo - ??? Массив точек на карте
+    @Column({nullable: true})
+    polyline: string
+
+    @Column()
+    distance: number
+
+    @Column()
+    average: string
+
+    // todo - Или ms => number || "00:00:00" => sting.data
+    @Column()
+    duration: string
+
+    // dd/mm/year: 01/07/2024
     @Column()
     data: string
+
+    @Column({nullable: true})
+    kcal: number
+
 }

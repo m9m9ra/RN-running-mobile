@@ -1,7 +1,6 @@
 import {Dimensions, ScrollView, StyleSheet, TouchableOpacity, View, Image} from "react-native";
 import {Appbar, Avatar, Icon, MD3LightTheme, Text} from "react-native-paper";
 import {observer} from "mobx-react-lite";
-import {useServiceProvider} from "../modules/ServicesProvider";
 import {BottomTabHeaderProps, BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {HomeStackParamList} from "../navigation/modules/HomeStack";
 import {DrawerActions, useNavigation} from "@react-navigation/native";
@@ -12,6 +11,8 @@ import CircularProgress from "react-native-circular-progress-indicator";
 import {daysInMonth} from "../utils/DayInMonth";
 import {FlatList} from "react-native-gesture-handler";
 import {FilterActivityScreen} from "../components/FilterActivityList";
+import {useRootStore} from "../store/RootStore";
+import {TotalStep} from "../components/TotalStep";
 
 
 type props = BottomTabScreenProps<HomeStackParamList, `HomeScreen`>;
@@ -20,7 +21,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
     const [data, setData] = useState<Array<number>>([]);
     const [selectedDay, setSelectedDay] = useState<number>(26);
     const navigationState = useNavigation();
-    const {stepCounter} = useServiceProvider();
+    const {stepCounter} = useRootStore();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -128,50 +129,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                       }}/>
             </View>
 
-            <View style={{
-                flexDirection: `row`,
-                alignItems: `center`,
-                justifyContent: `space-between`,
-                gap: 12
-            }}>
-                <View style={{
-                    flexDirection: `row`,
-                    alignItems: `center`,
-                    gap: 22
-                }}>
-                    <Image source={require(`./../assets/image/footprints.png`)}
-                           style={{
-                               width: 50,
-                               height: 50
-                           }}/>
-                    <View>
-                        <Text children={`Total step`}
-                              style={{
-                                  color: `gray`,
-                                  fontSize: 18,
-                                  fontWeight: `700`,
-                                  letterSpacing: 2.8
-                              }}/>
-                        <Text children={`${stepCounter.stepCount}`}
-                              style={{
-                                  fontSize: 22,
-                                  fontWeight: `700`,
-                                  letterSpacing: 2.4
-                              }}/>
-                    </View>
-                </View>
-
-                <CircularProgress value={stepCounter.stepCount}
-                                  title={`10000`}
-                                  radius={38}
-                                  maxValue={10000}
-                                  titleColor="black"
-                                  duration={10000}
-                                  titleStyle={{fontWeight: `700`}}
-                                  activeStrokeWidth={10}
-                                  activeStrokeColor={stepCounter.stepCount > 5000 ? `#2ecc71` : `#ffa726`}
-                                  progressValueColor={'black'}/>
-            </View>
+            <TotalStep useStore={true}/>
 
             <View>
                 <FlatList data={data}

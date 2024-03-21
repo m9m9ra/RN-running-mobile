@@ -49,6 +49,10 @@ export class StepCounter {
         // }, 1200);
     };
 
+    public setStepCount = (newStepCount: number) => {
+        this.stepCount = newStepCount;
+    };
+
     public stopPedometer = () => {
         this.subscription.unsubscribe();
     }

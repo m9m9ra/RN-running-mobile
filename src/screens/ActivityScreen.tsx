@@ -6,13 +6,13 @@ import {Appbar, Icon, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {useTranslation} from "react-i18next";
 import {observer} from "mobx-react-lite";
-import {useServiceProvider} from "../modules/ServicesProvider";
 import {MapMini} from "../components/MapMini";
+import {useRootStore} from "../store/RootStore";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
-    const {timer, toggleRunning, startGpsService, stopGpsService} = useServiceProvider();
+    const {timer, toggleRunning, startGpsService, stopGpsService} = useRootStore();
 
     useLayoutEffect(() => {
         navigation.setOptions({
