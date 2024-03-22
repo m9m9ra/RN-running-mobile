@@ -1,5 +1,8 @@
 {
   "translation": {
+    "LANGUAGE": "Язык",
+    "TRANSLATE": "Русский",
+
     "CANCEL": "Отмена",
     "HAVE_ACCOUNT": "Уже есть аккаунт?",
     "SIGN_IN": "Вход",
@@ -38,6 +41,12 @@
 
     "ACTION": {
       "START_TIMER": "Начать пробежку"
+    },
+
+    "DRAWER_MENU": {
+      "PROGRESS": "Прогресс",
+      "SETTINGS": "Настройки",
+      "PEDOMETER": "Шагомер"
     }
   }
 }

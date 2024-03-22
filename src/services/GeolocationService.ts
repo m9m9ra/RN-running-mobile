@@ -1,12 +1,22 @@
-import {makeObservable, runInAction} from "mobx";
+import {action, makeObservable, observable, runInAction} from "mobx";
 import Geolocation from "@react-native-community/geolocation";
+import {Point} from "react-native-yamap";
 
 export class GeolocationService {
     private watchId;
-    public geolocation: Array<any> = [];
+    public geolocation: Point[] = [];
+    public currentPosition: Point = {
+        lat: 54.7065,
+        lon: 20.511,
+    };
 
     constructor() {
-        makeObservable(this, {});
+        makeObservable(this, {
+            geolocation: observable,
+            currentPosition: observable,
+            startGeolocation: action,
+            stopGeolocation: action
+        });
         Geolocation.setRNConfiguration({
             authorizationLevel: 'always', // Request "always" location permission
             skipPermissionRequests: false, // Prompt for permission if not granted
@@ -16,9 +26,16 @@ export class GeolocationService {
     public startGeolocation = async () => {
         this.watchId = Geolocation.watchPosition(
             position => {
-                console.log(position);
+                // console.log(position);
                 runInAction(() => {
-                    this.geolocation = [...this.geolocation, position];
+                    this.currentPosition = {
+                        lon: position.coords.longitude,
+                        lat: position.coords.latitude
+                    };
+                    this.geolocation.push({
+                        lon: position.coords.longitude,
+                        lat: position.coords.latitude
+                    });
                 })
                 // Send the position data to the server
             },

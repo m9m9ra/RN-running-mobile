@@ -1,5 +1,8 @@
 {
   "translation": {
+    "LANGUAGE": "Language",
+    "TRANSLATE": "English",
+
     "CANCEL": "Cancel",
     "HAVE_ACCOUNT": "Already have an account?",
     "SIGN_IN": "Sign in",
@@ -38,6 +41,12 @@
 
     "ACTION": {
       "START_TIMER": "Start live"
+    },
+
+    "DRAWER_MENU": {
+      "PROGRESS": "Progress",
+      "SETTINGS": "Settings",
+      "PEDOMETER": "Pedometer"
     }
   }
 }

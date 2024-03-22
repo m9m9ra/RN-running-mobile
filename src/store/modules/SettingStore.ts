@@ -7,7 +7,7 @@ export default class SettingStore {
     public settings: Settings;
 
     private errorStore: ErrorStore;
-    private settingRepositoty = dataSourse.getRepository(Settings);
+    private settingRepository = dataSourse.getRepository(Settings);
 
     constructor(errorStore: ErrorStore) {
         this.errorStore = errorStore;
@@ -15,7 +15,7 @@ export default class SettingStore {
     };
 
     public main = async () => {
-        const current = await this.settingRepositoty.find({});
+        const current = await this.settingRepository.find({});
         if (current.length > 0) {
             runInAction(() => {
                 this.settings = current[0];
@@ -28,18 +28,37 @@ export default class SettingStore {
                 language: 'en',
                 them: `LIGHT`
             });
-            const setting = await this.settingRepositoty.save(newSettings);
+            const setting = await this.settingRepository.save(newSettings);
             runInAction(() => {
                 this.settings = setting;
             })
         }
     };
 
+    public changeSetting = async (setting: Settings): Promise<boolean> => {
+        const currentSetting: Settings = await this.settingRepository.findOne({});
+
+        if (currentSetting != null) {
+            await this.settingRepository.save({
+                ...currentSetting,
+                ...setting
+            });
+            return true;
+        } else {
+            const newSettings = Object.assign(new Settings, {
+                settings: true,
+                language: "en",
+                them: `LIGHT`
+            });
+            await this.settingRepository.save(newSettings);
+        }
+    }
+
     public setLaunguage = async (language: "ru" | "en"): Promise<boolean> => {
-        const current = await this.settingRepositoty.findOne({});
+        const current = await this.settingRepository.findOne({});
         if (current != null) {
             current.language = language;
-            await this.settingRepositoty.save(current);
+            await this.settingRepository.save(current);
             return true;
         } else {
             const newSettings = Object.assign(new Settings, {
@@ -47,7 +66,7 @@ export default class SettingStore {
                 language: language,
                 them: `LIGHT`
             });
-            await this.settingRepositoty.save(newSettings);
+            await this.settingRepository.save(newSettings);
         }
     };
 };

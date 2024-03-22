@@ -6,6 +6,10 @@ import {action, makeObservable, observable, runInAction} from "mobx";
 import {GeolocationService} from "../services/GeolocationService";
 import {BackgroundService} from "../services/BackgroundService";
 import {StepCounter} from "../services/StepCounter";
+import {dataSourse} from "../configs/DataSourse";
+import {Training} from "../entity/Training";
+import moment from "moment";
+import {Polyline} from "../entity/Polyline";
 
 class RootStore {
     // StoreModules
@@ -15,6 +19,7 @@ class RootStore {
 
     // ServicesModules
     public isRunning: boolean = false;
+    public isTraining: boolean = false;
     public timer: string = `00:00:00`;
     public stepCounter: StepCounter;
     public backgroundService: BackgroundService;
@@ -24,7 +29,10 @@ class RootStore {
     private ms: number = 0;
     private seconds: number = 0;
     private minute: number = 0;
+    private training: Training | null = null;
     private intervalId: NodeJS.Timeout;
+    private intervalToSaveTraining: NodeJS.Timeout;
+    private trainingRepository = dataSourse.getRepository(Training);
 
     constructor() {
         this.stepCounter = new StepCounter();
@@ -33,11 +41,12 @@ class RootStore {
 
         // StoreModules
         this.errorStore = new ErrorStore();
-        this.userStore = new UserStore(this.errorStore, this.stepCounter);
+        this.userStore = new UserStore(this.errorStore, this.stepCounter, this.geolocationService);
         this.settingStore = new SettingStore(this.errorStore);
 
         makeObservable(this, {
             isRunning: observable,
+            isTraining: observable,
             timer: observable,
             stopStepCounterService: action,
             startStepCounterService: action,
@@ -46,25 +55,20 @@ class RootStore {
         });
     };
 
-    public startGpsService = async () => {
-        await this.backgroundService.startBackgroundTask(this.geolocationService.startGeolocation);
-    }
-
-    public stopGpsService = async () => {
-        await this.geolocationService.stopGeolocation();
-    }
-
-    public startStepCounterService = async () => {
-        await this.backgroundService.startBackgroundTask(this.stepCounter.startPedometer);
-    }
-
-    public stopStepCounterService = async () => {
-        await this.backgroundService.stopBackgroundTask();
-    }
-
     public toggleRunning = async (): Promise<boolean> => {
-
+        console.log(moment(new Date()).format(`MM/DD/YYYY/h:mm a`));
         if (!this.isRunning) {
+            this.training = Object.assign(new Training(), {
+                user_id: this.userStore.user.auth,
+                type: "RUNNING",
+                start_data: moment(new Date()).format(`h:mm a`),
+                data: moment(new Date()).format(`MM/DD/YYYY`)
+            });
+
+            // this.intervalToSaveTraining = setInterval(() => {
+            //
+            // }, 15000);
+
             runInAction(() => {
                 this.isRunning = true;
                 this.intervalId = setInterval(() => {
@@ -92,8 +96,25 @@ class RootStore {
         }
     };
 
+
     public clearTimer = () => {
         this.timer = `00:00:00`;
+    }
+
+    public startGpsService = async () => {
+        await this.backgroundService.startBackgroundTask(this.geolocationService.startGeolocation);
+    }
+
+    public stopGpsService = async () => {
+        await this.geolocationService.stopGeolocation();
+    }
+
+    public startStepCounterService = async () => {
+        await this.backgroundService.startBackgroundTask(this.stepCounter.startPedometer);
+    }
+
+    public stopStepCounterService = async () => {
+        await this.backgroundService.stopBackgroundTask();
     }
 };
 

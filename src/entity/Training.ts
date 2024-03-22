@@ -1,5 +1,6 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { User } from "./User";
+import {Polyline} from "./Polyline";
 
 @Entity()
 export class Training {
@@ -13,22 +14,30 @@ export class Training {
     type: string
 
     // todo - ??? Массив точек на карте
+    @OneToMany(() => Polyline, (polyline) => polyline.training_id)
+    polyline?: Polyline[]
+
     @Column({nullable: true})
-    polyline: string
+    distance?: number
 
-    @Column()
-    distance: number
-
-    @Column()
-    average: string
+    @Column({nullable: true})
+    average?: string
 
     // todo - Или ms => number || "00:00:00" => sting.data
-    @Column()
-    duration: string
+    @Column({nullable: true})
+    duration?: string
+
+    // dd/mm/year: 8:54 pm
+    @Column({nullable: true})
+    start_data?: string
+
+    // dd/mm/year: 8:54 pm
+    @Column({nullable: true})
+    end_data?: string
 
     // dd/mm/year: 01/07/2024
     @Column()
-    data: string
+    data?: string
 
     @Column({nullable: true})
     kcal: number

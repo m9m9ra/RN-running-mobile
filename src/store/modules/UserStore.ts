@@ -5,6 +5,7 @@ import ErrorStore from "./ErrorStore";
 import {StepCounter} from "../../services/StepCounter";
 import {Activity} from "../../entity/Activity";
 import moment from "moment";
+import {GeolocationService} from "../../services/GeolocationService";
 
 export default class UserStore {
     public auth: boolean = false;
@@ -13,12 +14,14 @@ export default class UserStore {
 
     private errorStore: ErrorStore;
     private stepCounter: StepCounter;
+    private geolocationService: GeolocationService;
     private userRepository = dataSourse.getRepository(User);
     private activityRepository = dataSourse.getRepository(Activity);
 
-    constructor(errorStore: ErrorStore, stepCounter: StepCounter) {
+    constructor(errorStore: ErrorStore, stepCounter: StepCounter, geolocationService: GeolocationService) {
         this.errorStore = errorStore;
         this.stepCounter = stepCounter;
+        this.geolocationService = geolocationService;
 
         makeAutoObservable(this);
     };
@@ -87,6 +90,8 @@ export default class UserStore {
                 dayActivity.step = this.stepCounter.stepCount;
                 await this.activityRepository.save(dayActivity);
             } else {
+                this.stepCounter.setStepCount(1);
+
                 const newDayActivity = Object.assign(new Activity(), {
                     user_id: this.user.auth,
                     step: this.stepCounter.stepCount,

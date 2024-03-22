@@ -13,6 +13,7 @@ import {FlatList} from "react-native-gesture-handler";
 import {FilterActivityScreen} from "../components/FilterActivityList";
 import {useRootStore} from "../store/RootStore";
 import {TotalStep} from "../components/TotalStep";
+import moment from "moment/moment";
 
 
 type props = BottomTabScreenProps<HomeStackParamList, `HomeScreen`>;
@@ -21,7 +22,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
     const [data, setData] = useState<Array<number>>([]);
     const [selectedDay, setSelectedDay] = useState<number>(26);
     const navigationState = useNavigation();
-    const {stepCounter} = useRootStore();
+    const {stepCounter, userStore} = useRootStore();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -64,7 +65,6 @@ export const HomeScreen = observer(({navigation, route}: props) => {
         if (data.length < 27) {
             let dataToArr = Number(daysInMonth());
             while (dataToArr > 0) {
-                console.log(dataToArr);
                 data.push(dataToArr);
 
                 dataToArr -= 1;
@@ -116,13 +116,13 @@ export const HomeScreen = observer(({navigation, route}: props) => {
             <View style={{
                 marginBottom: 24
             }}>
-                <Text children={`April 20, 2024`}
+                <Text children={`${moment().format("MMMM DD")}, ${moment().format("YYYY")}`}
                       style={{
                           fontSize: 14,
                           fontWeight: `700`,
                           color: `gray`
                       }}/>
-                <Text children={`Good day, M9M9Ra`}
+                <Text children={`Good day, ${userStore.user.firstName}`}
                       style={{
                           fontSize: 24,
                           fontWeight: `700`
