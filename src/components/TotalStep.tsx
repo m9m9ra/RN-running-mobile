@@ -3,6 +3,7 @@ import {Text} from "react-native-paper";
 import CircularProgress from "react-native-circular-progress-indicator";
 import {observer} from "mobx-react-lite";
 import {useRootStore} from "../store/RootStore";
+import {useTranslation} from "react-i18next";
 
 interface props {
     useStore: boolean,
@@ -11,6 +12,7 @@ interface props {
 
 export const TotalStep = observer(({useStore = false, step}: props) => {
     const {stepCounter} = useRootStore();
+    const {t} = useTranslation();
 
     return (
             <View style={{
@@ -30,7 +32,7 @@ export const TotalStep = observer(({useStore = false, step}: props) => {
                                height: 50
                            }}/>
                     <View>
-                        <Text children={`Total step`}
+                        <Text children={t(`TOTAL_STEP`)}
                               style={{
                                   color: `gray`,
                                   fontSize: 18,

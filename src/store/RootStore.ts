@@ -8,8 +8,8 @@ import {BackgroundService} from "../services/BackgroundService";
 import {StepCounter} from "../services/StepCounter";
 import {dataSourse} from "../configs/DataSourse";
 import {Training} from "../entity/Training";
-import moment from "moment";
 import {Polyline} from "../entity/Polyline";
+import moment from "moment";
 
 class RootStore {
     // StoreModules
@@ -24,15 +24,16 @@ class RootStore {
     public stepCounter: StepCounter;
     public backgroundService: BackgroundService;
     public geolocationService: GeolocationService;
+    public training: Training | null = null;
 
     // DomesticModules
     private ms: number = 0;
     private seconds: number = 0;
     private minute: number = 0;
-    private training: Training | null = null;
     private intervalId: NodeJS.Timeout;
     private intervalToSaveTraining: NodeJS.Timeout;
     private trainingRepository = dataSourse.getRepository(Training);
+    private polylineRepository = dataSourse.getRepository(Polyline);
 
     constructor() {
         this.stepCounter = new StepCounter();
@@ -47,6 +48,7 @@ class RootStore {
         makeObservable(this, {
             isRunning: observable,
             isTraining: observable,
+            training: observable,
             timer: observable,
             stopStepCounterService: action,
             startStepCounterService: action,
@@ -57,17 +59,48 @@ class RootStore {
 
     public toggleRunning = async (): Promise<boolean> => {
         console.log(moment(new Date()).format(`MM/DD/YYYY/h:mm a`));
-        if (!this.isRunning) {
-            this.training = Object.assign(new Training(), {
-                user_id: this.userStore.user.auth,
-                type: "RUNNING",
-                start_data: moment(new Date()).format(`h:mm a`),
-                data: moment(new Date()).format(`MM/DD/YYYY`)
-            });
+        const start_data: string = moment(new Date()).format(`h:mm a`);
 
-            // this.intervalToSaveTraining = setInterval(() => {
-            //
-            // }, 15000);
+        if (!this.isRunning) {
+            await runInAction(async () => {
+                this.training = Object.assign(new Training(), {
+                    user_id: this.userStore.user.auth,
+                    type: "RUNNING",
+                    start_data: moment(new Date()).format(`h:mm a`),
+                    start_step: this.stepCounter.stepCount,
+                    data: moment(new Date()).format(`MM/DD/YYYY`)
+                });
+
+                this.intervalToSaveTraining = setInterval(async () => {
+                    const newPolyline = Object.assign(new Polyline(), {
+                        training_id: this.training.id,
+                        lat: this.geolocationService.currentPosition.lat,
+                        lon: this.geolocationService.currentPosition.lon
+                    });
+                    console.log(Polyline, newPolyline);
+                    const oldChange = await this.trainingRepository.save(this.training);
+                    runInAction(() => {
+                        this.training = oldChange;
+                    });
+
+                    await this.polylineRepository.save(newPolyline);
+
+
+                    const change = await this.trainingRepository.findOne({
+                        where: {
+                            start_data: start_data,
+                        },
+                        relations: {
+                            polyline: true
+                        }
+                    });
+
+                    runInAction(() => {
+                        this.training = change
+                    });
+
+                }, 10000);
+            });
 
             runInAction(() => {
                 this.isRunning = true;
@@ -77,12 +110,13 @@ class RootStore {
                         if (this.ms >= 60) {
                             this.ms = 0;
                             this.seconds += 1
-                        };
+                        }
+                        ;
                         if (this.seconds >= 60) {
                             this.seconds = 0;
                             this.minute += 1;
                         }
-                        this.timer = `${this.minute < 10 ? '0'+this.minute : this.minute}:${this.seconds < 10 ? '0'+this.seconds : this.seconds}:${this.ms < 10 ? '0'+this.ms : this.ms}`;
+                        this.timer = `${this.minute < 10 ? '0' + this.minute : this.minute}:${this.seconds < 10 ? '0' + this.seconds : this.seconds}:${this.ms < 10 ? '0' + this.ms : this.ms}`;
                     });
                 }, 1000);
             });
@@ -91,7 +125,21 @@ class RootStore {
             runInAction(() => {
                 this.isRunning = false;
                 clearInterval(this.intervalId);
+                clearInterval(this.intervalToSaveTraining);
+                this.training.end_data = moment(new Date()).format(`h:mm a`);
+                this.training.end_step = this.stepCounter.stepCount;
+                this.training.step_count = this.training.end_step - this.training.start_step;
+                this.clearTimer();
+                this.ms = 0;
+                this.seconds = 0;
+                this.minute = 0;
             });
+            const change = await this.trainingRepository.save(this.training);
+            await this.userStore.updateUserInfo();
+            runInAction(() => {
+                this.training = change;
+            })
+            this.geolocationService.setLocation([]);
             return false;
         }
     };
@@ -102,7 +150,7 @@ class RootStore {
     }
 
     public startGpsService = async () => {
-        await this.backgroundService.startBackgroundTask(this.geolocationService.startGeolocation);
+        await this.geolocationService.startGeolocation()
     }
 
     public stopGpsService = async () => {

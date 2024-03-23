@@ -35,7 +35,9 @@ export default class UserStore {
             },
             relations: {
                 activity: true,
-                training: true
+                training: {
+                    polyline: true
+                }
             }
         });
 
@@ -61,6 +63,23 @@ export default class UserStore {
             console.log(user);
         }
 
+    };
+
+    public updateUserInfo = async (): Promise<void> => {
+        const user = await this.userRepository.findOne({
+            where: {
+                auth: true || false
+            },
+            relations: {
+                activity: true,
+                training: {
+                    polyline: true
+                }
+            }
+        });
+        runInAction(() => {
+           this.user = user;
+        });
     };
 
     private observeStepCount = async (): Promise<void> => {

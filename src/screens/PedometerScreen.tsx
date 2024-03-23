@@ -8,18 +8,20 @@ import {MainStackParamList} from "../navigation/MainStack";
 import {TotalStep} from "../components/TotalStep";
 import {useLayoutEffect, useState} from "react";
 import {AppBar} from "../components/AppBar";
+import {useTranslation} from "react-i18next";
 
 type props = DrawerScreenProps<MainStackParamList, `PedometerScreen`>;
 export const PedometerScreen = observer(({navigation, route}: props) => {
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const {userStore} = useRootStore();
+    const {t} = useTranslation();
 
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: true,
             header: () => {
                 return (
-                        <AppBar title={`Pedometer`} action={() => navigation.goBack()}/>
+                        <AppBar title={t(`DRAWER_MENU.PEDOMETER`)} action={() => navigation.goBack()}/>
                 )
             }
         })
@@ -58,7 +60,7 @@ export const PedometerScreen = observer(({navigation, route}: props) => {
                                                 alignItems: `center`,
                                                 gap: 10
                                             }}>
-                                                <Text children={`Total step:`}
+                                                <Text children={`${t(`TOTAL_STEP`)}:`}
                                                       style={{
                                                           color: `gray`,
                                                           fontSize: 18,

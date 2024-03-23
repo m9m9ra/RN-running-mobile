@@ -6,7 +6,7 @@ import {useRootStore} from "../store/RootStore";
 import {Text} from "react-native-paper";
 
 export const MapMini = observer(() => {
-    const {geolocationService} = useRootStore();
+    const {training, geolocationService} = useRootStore();
     const yaMapRef = createRef<YaMap>();
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [defaultPosition, setDefaultPosition] = useState({
@@ -15,12 +15,6 @@ export const MapMini = observer(() => {
     });
 
     useEffect(() => {
-        console.log(geolocationService.geolocation, geolocationService.currentPosition);
-        // geolocationService.geolocation.length > 2 ? setDefaultPosition({
-        //     lon: geolocationService.geolocation['coords']['longitude'],
-        //     lat: geolocationService.geolocation['coords']['latitude']
-        // }) : false;
-
         setRefreshing(true);
         setTimeout(() => {
             setRefreshing(false);
@@ -39,7 +33,7 @@ export const MapMini = observer(() => {
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
-                <Text children={JSON.stringify(geolocationService.geolocation)}
+                <Text children={JSON.stringify(training != null ? training.polyline : training)}
                       style={{
                           position: `absolute`,
                           top: 0,
@@ -60,9 +54,9 @@ export const MapMini = observer(() => {
                                style={{flex: 1}}>
                             <Marker point={{...geolocationService.currentPosition}}/>
                             {/* todo - Ебучий полилайн */}
-                            {/*<Polyline points={geolocationService.geolocation.length > 1*/}
-                            {/*        ? geolocationService.geolocation*/}
-                            {/*        : [{...geolocationService.currentPosition}]}/>*/}
+                            <Polyline points={training != null
+                                    ? training.polyline
+                                    : [{...geolocationService.currentPosition}]}/>
                         </YaMap>
                         : false}
             </ScrollView>

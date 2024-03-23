@@ -7,6 +7,7 @@ import {ActivityScreen} from "../../screens/ActivityScreen";
 import {AppBar} from "../../components/AppBar";
 import {DrawerNavigationOptions, DrawerScreenProps} from "@react-navigation/drawer";
 import {MainStackParamList} from "../MainStack";
+import {useTranslation} from "react-i18next";
 
 export type HomeStackParamList = {
     HomeScreen: any,
@@ -16,6 +17,8 @@ export type HomeStackParamList = {
 type props = DrawerScreenProps<MainStackParamList, `HomeStack`>;
 const Tab = createBottomTabNavigator<HomeStackParamList>()
 export const HomeStack = ({navigation, route}: props) => {
+    const {t} = useTranslation();
+
     return (
         <Tab.Navigator initialRouteName={`ActivityScreen`}
                        sceneContainerStyle={{
@@ -34,7 +37,7 @@ export const HomeStack = ({navigation, route}: props) => {
 
             <Tab.Screen name={`HomeScreen`}
                         options={{
-                            tabBarLabel: `Progress`,
+                            tabBarLabel: t(`DRAWER_MENU.PROGRESS`),
                             headerTitle: `un`,
                             tabBarIcon: (props) => <Icon size={26}
                                                          color={props.focused ? `black` : colorSchema.secondary}
@@ -48,7 +51,7 @@ export const HomeStack = ({navigation, route}: props) => {
 
             <Tab.Screen name={`ActivityScreen`}
                         options={{
-                            tabBarLabel: `Activity`,
+                            tabBarLabel: t(`DRAWER_MENU.ACTIVITY`),
                             tabBarIcon: (props) => <Icon size={26}
                                                          color={props.focused ? `black` : colorSchema.secondary}
                                                          source={`lightning-bolt-outline`}/>,
@@ -62,7 +65,7 @@ export const HomeStack = ({navigation, route}: props) => {
             <Tab.Screen name={`ProfileScreen`}
                         options={{
                             headerTitle: `Profile`,
-                            tabBarLabel: `Profile`,
+                            tabBarLabel: t(`DRAWER_MENU.PROFILE`),
                             tabBarIcon: (props) => <Icon size={26}
                                                          color={props.focused ? `black` : colorSchema.secondary}
                                                          source={`account-circle-outline`}/>,

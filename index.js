@@ -6,6 +6,6 @@ import YaMap from 'react-native-yamap';
 import './src/i18n';
 
 // todo - KeyGen
-YaMap.init(process.env.YA_MAP_KEY);
-Geocoder.init(process.env.YA_MAP_GEO);
+YaMap.init(String(process.env.YA_MAP_KEY));
+Geocoder.init(String(process.env.YA_MAP_GEO));
 AppRegistry.registerComponent(appName, () => App);

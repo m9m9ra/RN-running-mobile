@@ -22,7 +22,7 @@ export default class SettingStore {
             });
             console.log(`Setting loaded`);
         } else {
-            console.log(`Setting creted`);
+            console.log(`Setting created`);
             const newSettings = Object.assign(new Settings, {
                 settings: true,
                 language: 'en',
@@ -54,11 +54,15 @@ export default class SettingStore {
         }
     }
 
-    public setLaunguage = async (language: "ru" | "en"): Promise<boolean> => {
-        const current = await this.settingRepository.findOne({});
-        if (current != null) {
-            current.language = language;
-            await this.settingRepository.save(current);
+    public setLanguage = async (language: "ru" | "en"): Promise<any> => {
+        const current = await this.settingRepository.find({
+            where: {
+                settings: true || false
+            }
+        });
+        if (current[0] != null) {
+            current[0].language = language;
+            await this.settingRepository.save(current[0]);
             return true;
         } else {
             const newSettings = Object.assign(new Settings, {

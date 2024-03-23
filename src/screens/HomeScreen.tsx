@@ -14,6 +14,7 @@ import {FilterActivityScreen} from "../components/FilterActivityList";
 import {useRootStore} from "../store/RootStore";
 import {TotalStep} from "../components/TotalStep";
 import moment from "moment/moment";
+import {useTranslation} from "react-i18next";
 
 
 type props = BottomTabScreenProps<HomeStackParamList, `HomeScreen`>;
@@ -22,7 +23,8 @@ export const HomeScreen = observer(({navigation, route}: props) => {
     const [data, setData] = useState<Array<number>>([]);
     const [selectedDay, setSelectedDay] = useState<number>(26);
     const navigationState = useNavigation();
-    const {stepCounter, userStore} = useRootStore();
+    const {stepCounter, userStore, training} = useRootStore();
+    const {t} = useTranslation();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -42,7 +44,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                                           source={"menu"}/>}/>
                         {/* <Badge children={3}/> */}
                         <Appbar.Header mode={`small`}
-                                       children={<Text children={`Progress`}
+                                       children={<Text children={t(`DRAWER_MENU.PROGRESS`)}
                                                        style={{
                                                            width: `82%`,
                                                            fontWeight: `700`,
@@ -122,7 +124,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                           fontWeight: `700`,
                           color: `gray`
                       }}/>
-                <Text children={`Good day, ${userStore.user.firstName}`}
+                <Text children={`${t(`GREETINGS`)} ${userStore.user.firstName}`}
                       style={{
                           fontSize: 24,
                           fontWeight: `700`
@@ -144,7 +146,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
             </View>
 
             <View>
-                <Text children={`My activity`}
+                <Text children={t(`MY_ACTIVITY`)}
                       style={{
                           fontSize: 24,
                           fontWeight: `700`,
@@ -198,6 +200,21 @@ export const HomeScreen = observer(({navigation, route}: props) => {
             }}>
                 <FilterActivityScreen/>
             </View>
+
+            <Text children={JSON.stringify(training)}
+                  style={{
+                      marginTop: 24,
+                      paddingHorizontal: 4,
+                      fontWeight: `700`
+                  }}/>
+
+            <Text children={JSON.stringify(userStore.user)}
+                  style={{
+                      marginTop: 12,
+                      marginBottom: 24,
+                      paddingHorizontal: 4,
+                      fontWeight: `700`
+                  }}/>
 
         </ScrollView>
     )

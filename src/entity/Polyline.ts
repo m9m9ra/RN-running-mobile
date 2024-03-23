@@ -9,9 +9,9 @@ export class Polyline {
     @ManyToOne(() => Training, (training) => training.polyline)
     training_id: boolean
 
-    @Column()
+    @Column({type: "float"})
     lat: number
 
-    @Column()
+    @Column({type: "float"})
     lon: number
 }

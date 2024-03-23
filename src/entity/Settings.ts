@@ -1,11 +1,8 @@
-import {Column, Entity, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, PrimaryColumn} from "typeorm";
 
 @Entity()
 export class Settings {
-    @PrimaryGeneratedColumn()
-    id: number
-    
-    @Column({unique: true})
+    @PrimaryColumn({unique: true})
     settings: boolean
 
     @Column({nullable: false, default: "en", enum: ["en", "ru"]})

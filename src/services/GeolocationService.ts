@@ -15,18 +15,34 @@ export class GeolocationService {
             geolocation: observable,
             currentPosition: observable,
             startGeolocation: action,
-            stopGeolocation: action
+            stopGeolocation: action,
+            setLocation: action
         });
         Geolocation.setRNConfiguration({
             authorizationLevel: 'always', // Request "always" location permission
             skipPermissionRequests: false, // Prompt for permission if not granted
+            enableBackgroundLocationUpdates: true,
+            locationProvider: 'auto'
+        });
+        // @ts-ignore
+        Geolocation.getCurrentPosition(position => {
+            console.log(position);
+            this.currentPosition = {
+                lon: position.coords.longitude,
+                lat: position.coords.latitude
+            };
         });
     }
+
+    public setLocation = (polyline: Point[]): void => {
+        this.geolocation = polyline;
+    };
 
     public startGeolocation = async () => {
         this.watchId = Geolocation.watchPosition(
             position => {
-                // console.log(position);
+                console.log(position);
+                console.log(this.watchId);
                 runInAction(() => {
                     this.currentPosition = {
                         lon: position.coords.longitude,
@@ -44,13 +60,13 @@ export class GeolocationService {
             },
             {
                 distanceFilter: 0, // Minimum distance (in meters) to update the location
-                interval: 600, // Update interval (in milliseconds), which is 15 minutes
-                fastestInterval: 600, // Fastest update interval (in milliseconds)
+                interval: 6000, // Update interval (in milliseconds), which is 15 minutes
+                fastestInterval: 3000, // Fastest update interval (in milliseconds)
                 accuracy: {
                     android: 'highAccuracy',
                     ios: 'best',
                 },
-                showsBackgroundLocationIndicator: true,
+                showsBackgroundLocationIndicator: false,
                 pausesLocationUpdatesAutomatically: false,
                 activityType: 'fitness', // Specify the activity type (e.g., 'fitness' or 'other')
                 useSignificantChanges: false,
@@ -64,6 +80,7 @@ export class GeolocationService {
     };
 
     public stopGeolocation = async () => {
+        console.log(this.watchId);
         Geolocation.clearWatch(this.watchId);
-    }
+    };
 };

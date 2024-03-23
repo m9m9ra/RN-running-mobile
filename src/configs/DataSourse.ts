@@ -9,7 +9,7 @@ export const dataSourse = new DataSource({
     type: "react-native",
     database: `default`,
     location: `default`,
-    logging: [`query`, `error`, `schema`],
+    logging: [`error`, `schema`], //`query`,
     synchronize: true,
-    entities: [User, Training, Activity, Settings, Polyline]
+    entities: [Polyline, Training, Activity, Settings, User]
 });

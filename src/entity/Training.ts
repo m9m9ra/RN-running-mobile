@@ -27,6 +27,15 @@ export class Training {
     @Column({nullable: true})
     duration?: string
 
+    @Column({nullable: true})
+    start_step?: number
+
+    @Column({nullable: true})
+    end_step?: number
+
+    @Column({nullable: true})
+    step_count?: number
+
     // dd/mm/year: 8:54 pm
     @Column({nullable: true})
     start_data?: string

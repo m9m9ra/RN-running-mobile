@@ -50,7 +50,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     <Text disabled={false}
                           children={`${timer}`}
                           style={style.headerText}/>
-                    <Text children={`Duration`}
+                    <Text children={t(`ACTION.DURATION`)}
                           style={style.headerLabel}/>
                 </View>
 
@@ -63,21 +63,21 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     <View>
                         <Text children={`0.00`}
                               style={style.headerScore}/>
-                        <Text children={`Distance`}
+                        <Text children={t(`ACTION.DISTANCE`)}
                               style={style.headerLabel}/>
                     </View>
 
                     <View>
                         <Text children={`00:00`}
                               style={style.headerScore}/>
-                        <Text children={`Calories [call]`}
+                        <Text children={t(`ACTION.CALORIES`)}
                               style={style.headerLabel}/>
                     </View>
 
                     <View>
                         <Text children={`00:00`}
                               style={style.headerScore}/>
-                        <Text children={`Avg. [min/km]`}
+                        <Text children={t(`ACTION.AVERAGE`)}
                               style={style.headerLabel}/>
                     </View>
 

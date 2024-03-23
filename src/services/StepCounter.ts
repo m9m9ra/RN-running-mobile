@@ -27,8 +27,8 @@ export class StepCounter {
             const newYposition: number = y;
             const newZposition: number = z;
             
-            // todo - y: 1.2, z: 1.4?
-            if (((newXposition - oldXposition) > 1.8) || (newYposition - oldYposition) > 1.4 || (newZposition - oldZposition) > 1.6) {
+            // todo - x: 1.8, y: 1.2, z: 1.4?
+            if (((newXposition - oldXposition) > 2.0) || (newYposition - oldYposition) > 1.2 || (newZposition - oldZposition) > 1.4) {
                 runInAction((): void => {
                     this.stepCount = this.stepCount + 1;
                 })

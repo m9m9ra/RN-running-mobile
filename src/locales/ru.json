@@ -2,6 +2,13 @@
   "translation": {
     "LANGUAGE": "Язык",
     "TRANSLATE": "Русский",
+    "TRANSLATE_EN": "Russian",
+
+    "GREETINGS": "Хороший день,",
+
+    "TOTAL_STEP": "Всего шагов",
+
+    "MY_ACTIVITY": "Моя активность",
 
     "CANCEL": "Отмена",
     "HAVE_ACCOUNT": "Уже есть аккаунт?",
@@ -40,13 +47,22 @@
     },
 
     "ACTION": {
-      "START_TIMER": "Начать пробежку"
+      "DURATION": "Продолжительность",
+      "DISTANCE": "Дистанция",
+      "CALORIES": "Калории [ккал]",
+      "AVERAGE": "Ср.скp [м/мин]",
+
+      "START_TIMER": "Начать пробежку",
+      "END_TIMER": "Закончить пробежку",
+      "ROUND_TIMER": "Круг"
     },
 
     "DRAWER_MENU": {
       "PROGRESS": "Прогресс",
       "SETTINGS": "Настройки",
-      "PEDOMETER": "Шагомер"
+      "PEDOMETER": "Шагомер",
+      "ACTIVITY": "Активность",
+      "PROFILE": "Профиль"
     }
   }
 }

@@ -5,7 +5,7 @@ import ru from './locales/ru.json';
 
 const resources = {
     en: en,
-    ru: ru,
+    ru: ru
 };
 
 i18n.use(initReactI18next)

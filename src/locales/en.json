@@ -2,6 +2,13 @@
   "translation": {
     "LANGUAGE": "Language",
     "TRANSLATE": "English",
+    "TRANSLATE_EN": "English",
+
+    "GREETINGS": "Good day,",
+
+    "TOTAL_STEP": "Total step",
+
+    "MY_ACTIVITY": "My activity",
 
     "CANCEL": "Cancel",
     "HAVE_ACCOUNT": "Already have an account?",
@@ -29,24 +36,33 @@
     "FORGOT_PASSWORD": "Forgot password?",
 
     "ERROR": {
-      "FIRSTNAME": "qwerwer",
-      "LASTNAME": "",
-      "GENDER": "",
-      "EMAIL": "",
-      "PASSWORD": "",
-      "CONFIRM_PASSWORD": "",
-      "BIRTHDATE": "",
-      "PRIVATE_POLICY": ""
+      "FIRSTNAME": "Enter a valid name",
+      "LASTNAME": "Enter a valid last name",
+      "GENDER": "Choose one of the options",
+      "EMAIL": "Enter a correct email",
+      "PASSWORD": "The password was entered incorrectly",
+      "CONFIRM_PASSWORD": "Passwords don't match",
+      "BIRTHDATE": "Please enter a valid date",
+      "PRIVATE_POLICY": "This field is required"
     },
 
     "ACTION": {
-      "START_TIMER": "Start live"
+      "DURATION": "Duration",
+      "DISTANCE": "Distance",
+      "CALORIES": "Calories [call]",
+      "AVERAGE": "Avg. [min/km]",
+
+      "START_TIMER": "Start live",
+      "END_TIMER": "End live",
+      "ROUND_TIMER": "Circle"
     },
 
     "DRAWER_MENU": {
       "PROGRESS": "Progress",
       "SETTINGS": "Settings",
-      "PEDOMETER": "Pedometer"
+      "PEDOMETER": "Pedometer",
+      "ACTIVITY": "Activity",
+      "PROFILE": "Profile"
     }
   }
 }

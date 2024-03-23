@@ -1,22 +1,10 @@
-import {
-    Image,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
-} from "react-native";
+import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
 import {observer} from "mobx-react-lite";
 import {useRootStore} from "../store/RootStore";
-import {Activity} from "../entity/Activity";
-import {Appbar, Avatar, Caption, Icon, List, MD3Colors, Text, TextInput, Title} from "react-native-paper";
+import {Appbar, Avatar, Caption, Icon, List, Text, Title} from "react-native-paper";
 import {DrawerHeaderProps, DrawerScreenProps} from "@react-navigation/drawer";
 import {MainStackParamList} from "../navigation/MainStack";
-import {TotalStep} from "../components/TotalStep";
 import {useLayoutEffect, useState} from "react";
-import {AppBar} from "../components/AppBar";
-import {BottomTabHeaderProps} from "@react-navigation/bottom-tabs";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {DrawerActions} from "@react-navigation/native";
 import {useTranslation} from "react-i18next";
@@ -34,15 +22,15 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                 return (
                         <Appbar.Header elevated
                                        style={{
-                                           paddingHorizontal: 24,
+                                           paddingHorizontal: 18,
                                            backgroundColor: Colors.lighter
                                        }}>
                             <TouchableOpacity disabled={false}
                                               onPress={() => {
-                                                  navigation.dispatch(DrawerActions.openDrawer())
+                                                  navigation.goBack();
                                               }}
-                                              children={<Icon size={28}
-                                                              source={"menu"}/>}/>
+                                              children={<Icon size={24}
+                                                              source={"arrow-left"}/>}/>
                             {/* <Badge children={3}/> */}
                             <Appbar.Header mode={`small`}
                                            children={<Text children={`${t("DRAWER_MENU.SETTINGS")}`}
@@ -57,6 +45,10 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                                            }}/>
                             <TouchableOpacity disabled={false}
                                               onPress={() => {
+                                                  setRefreshing(true);
+                                                  setTimeout(() => {
+                                                      setRefreshing(false);
+                                                  }, 1450)
                                               }}
                                               children={<Icon size={28}
                                                               source={"content-save-cog-outline"}/>}/>
@@ -131,18 +123,17 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
 
                 {/*               }}/>*/}
                 {/*</List.Section>*/}
+                <View>
+                    <Text children={t(`DRAWER_MENU.SETTINGS`)}
+                          style={{
+                              fontWeight: `700`,
+                              fontSize: 16,
+                              marginTop: 24,
+                              marginBottom: 18,
+                              letterSpacing: 0.8
+                          }}/>
 
-                <List.Section style={{
-                    // backgroundColor: "#e7e0ec",
-                    // gap: 12
-                }}>
-                    <List.Subheader children={`Settings`}
-                                    style={{
-                                        fontWeight: `700`,
-                                        fontSize: 14
-                                    }}/>
-
-                    <TouchableOpacity disabled={false}
+                    <TouchableOpacity disabled={refreshing}
                                       onPress={() => {
                                           navigation.navigate("LanguageScreen", settingStore.settings);
                                       }}
@@ -153,8 +144,7 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                                                                               }}/>}
                                                            left={() => <List.Icon color={'gray'}
                                                                                   icon="google-translate"/>}/>}/>
-
-                </List.Section>
+                </View>
 
             </ScrollView>
     )
