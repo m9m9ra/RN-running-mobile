@@ -18,7 +18,7 @@ export class Training {
     polyline?: Polyline[]
 
     @Column({nullable: true})
-    distance?: number
+    distance?: string
 
     @Column({nullable: true})
     average?: string
@@ -26,6 +26,10 @@ export class Training {
     // todo - Или ms => number || "00:00:00" => sting.data
     @Column({nullable: true})
     duration?: string
+
+    // todo - Или ms => number || "00:00:00" => sting.data
+    @Column({nullable: true})
+    circle?: string
 
     @Column({nullable: true})
     start_step?: number

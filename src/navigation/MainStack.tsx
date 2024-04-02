@@ -1,4 +1,3 @@
-import {createStackNavigator} from "@react-navigation/stack";
 import {HomeStack, HomeStackParamList} from "./modules/HomeStack";
 import {createDrawerNavigator, DrawerContentComponentProps} from "@react-navigation/drawer";
 import {getFocusedRouteNameFromRoute} from "@react-navigation/native";
@@ -7,12 +6,17 @@ import {SettingsScreen} from "../screens/SettingsScreen";
 import {DrawerMenu} from "../components/DrawerMenu";
 import {Settings} from "../entity/Settings";
 import {LanguageScreen} from "../screens/LanguageScreen";
+import {AboutTrainingScreen} from "../screens/AboutTrainingScreen";
+import {Training} from "../entity/Training";
 
 export type MainStackParamList = {
     HomeStack: HomeStackParamList,
     PedometerScreen: any,
     SettingsScreen: Settings | any,
     LanguageScreen: Settings | any,
+    AboutTrainingScreen: {
+        training: Training
+    }
 }
 
 // const Stack = createStackNavigator<MainStackParamList>();
@@ -57,6 +61,12 @@ export const MainStack = () => {
                                swipeEnabled: false
                            }}
                            component={LanguageScreen}/>
+
+            <Drawer.Screen name={`AboutTrainingScreen`}
+                           options={{
+                               swipeEnabled: false
+                           }}
+                           component={AboutTrainingScreen}/>
         </Drawer.Navigator>
     )
 }

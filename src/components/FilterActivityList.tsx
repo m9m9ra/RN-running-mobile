@@ -23,7 +23,7 @@ export const FilterActivityScreen = () => {
                                 backgroundColor: selected == index ? MD3LightTheme.colors.primaryContainer : `#FFFFFF`,
                                 paddingVertical: 2,
                                 paddingHorizontal: 24,
-                                borderRadius: 4,
+                                borderRadius: 2,
                                 borderWidth: 1,
                                 borderColor: `gray`
                               }}

@@ -13,6 +13,7 @@ type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
     const {timer, toggleRunning, startGpsService, stopGpsService} = useRootStore();
+    const {training, isRunning} = useRootStore();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -61,7 +62,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     marginTop: 24
                 }}>
                     <View>
-                        <Text children={`0.00`}
+                        <Text children={`${training && training.distance? training.distance : `0.00`}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.DISTANCE`)}
                               style={style.headerLabel}/>
@@ -75,7 +76,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     </View>
 
                     <View>
-                        <Text children={`00:00`}
+                        <Text children={`${training && training.average? '0' + training.average : `00:00`}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.AVERAGE`)}
                               style={style.headerLabel}/>
@@ -100,18 +101,21 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                   await startGpsService();
                                               } else {
                                                   await stopGpsService();
+                                                  // @ts-ignore
+                                                  navigation.navigate(`AboutTrainingScreen`, {training: training});
                                               }
                                           }}>
                     <View style={{
                         backgroundColor: `black`,
-                        paddingHorizontal: 9,
+                        paddingHorizontal: 11,
                         paddingVertical: 16,
                         flexDirection: `row`,
                         justifyContent: `space-between`,
                         elevation: 4
                     }}>
                         <TouchableOpacity disabled={false}
-                                          children={<Text children={t(`ACTION.START_TIMER`).toUpperCase()}
+                                          //END_TIMER
+                                          children={<Text children={`${isRunning? t(`ACTION.END_TIMER`): t(`ACTION.START_TIMER`)}`.toUpperCase()}
                                                           style={{
                                                               color: `#FFFFFF`,
                                                               fontSize: 13,
@@ -124,6 +128,8 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                   await startGpsService();
                                               } else {
                                                   await stopGpsService();
+                                                  // @ts-ignore
+                                                  navigation.navigate(`AboutTrainingScreen`, {training: training});
                                               }
                                           }}/>
                         <TouchableOpacity disabled={false}
@@ -134,6 +140,8 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                   await startGpsService();
                                               } else {
                                                   await stopGpsService();
+                                                  // @ts-ignore
+                                                  navigation.navigate(`AboutTrainingScreen`, {training: training});
                                               }
                                           }}/>
                     </View>

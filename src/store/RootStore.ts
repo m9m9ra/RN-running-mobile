@@ -10,6 +10,7 @@ import {dataSourse} from "../configs/DataSourse";
 import {Training} from "../entity/Training";
 import {Polyline} from "../entity/Polyline";
 import moment from "moment";
+import {pointToDistance} from "../utils/PointToDistance";
 
 class RootStore {
     // StoreModules
@@ -78,13 +79,14 @@ class RootStore {
                         lon: this.geolocationService.currentPosition.lon
                     });
                     console.log(Polyline, newPolyline);
+
                     const oldChange = await this.trainingRepository.save(this.training);
+
                     runInAction(() => {
                         this.training = oldChange;
                     });
 
                     await this.polylineRepository.save(newPolyline);
-
 
                     const change = await this.trainingRepository.findOne({
                         where: {
@@ -96,7 +98,24 @@ class RootStore {
                     });
 
                     runInAction(() => {
-                        this.training = change
+                        this.training = change;
+                        let currentDistance: number = 0;
+
+                        if (this.training.polyline.length > 1 && this.training.polyline) {
+                            for (let i = 0; i < this.training.polyline.length - 1; i++) {
+                                const distance = pointToDistance(this.training.polyline[i].lat, this.training.polyline[i].lon, this.training.polyline[i + 1].lat, this.training.polyline[i + 1].lon);
+                                currentDistance += distance;
+                            }
+                            console.log(currentDistance, "Distance");
+                            console.log(this.seconds, "Minute");
+
+                            this.seconds > 0 ? this.training.average = Number(currentDistance / this.seconds).toFixed(2) : this.training.average = `00.00`;
+
+                            this.training.distance = currentDistance.toFixed(2);
+                            console.log(this.training.distance, "Training Distance");
+                            console.log(this.training.average, "Training Average");
+                        }
+
                     });
 
                 }, 10000);
@@ -129,17 +148,22 @@ class RootStore {
                 this.training.end_data = moment(new Date()).format(`h:mm a`);
                 this.training.end_step = this.stepCounter.stepCount;
                 this.training.step_count = this.training.end_step - this.training.start_step;
+                this.training.duration = this.timer;
                 this.clearTimer();
                 this.ms = 0;
                 this.seconds = 0;
                 this.minute = 0;
             });
+
             const change = await this.trainingRepository.save(this.training);
+
             await this.userStore.updateUserInfo();
+
             runInAction(() => {
                 this.training = change;
             })
             this.geolocationService.setLocation([]);
+
             return false;
         }
     };
