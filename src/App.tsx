@@ -1,6 +1,6 @@
 import {PermissionsAndroid, SafeAreaView, StatusBar, useColorScheme, View} from "react-native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
-import {MD3LightTheme, PaperProvider} from "react-native-paper";
+import {MD3DarkTheme, MD3LightTheme, PaperProvider} from "react-native-paper";
 import {useRootStore} from "./store/RootStore";
 import {observer} from "mobx-react-lite";
 import {useEffect, useState} from "react";
@@ -54,15 +54,11 @@ export const App = observer((): JSX.Element => {
             })
     }, []);
 
-    const backgroundStyle = {
-        backgroundColor: Colors.lighter // isDarkMode ? Colors.darker :
-    };
-
     return (
-        <PaperProvider theme={MD3LightTheme}>
-            <SafeAreaView style={{...backgroundStyle, flex: 1}}>
-                <StatusBar barStyle={'dark-content'}
-                           backgroundColor={backgroundStyle.backgroundColor}/>
+        <PaperProvider theme={settingStore.them == "DARK" ? MD3DarkTheme : MD3LightTheme}>
+            <SafeAreaView style={{backgroundColor: settingStore.them == "DARK" ? Colors.lighter : Colors.darker, flex: 1}}>
+                <StatusBar barStyle={settingStore.them == "DARK" ? `light-content` : 'dark-content'}
+                           backgroundColor={settingStore.them !== "DARK" ? Colors.lighter : Colors.darker}/>
                 <NavigationContainer independent={true}>
                     {userStore.auth ?
                         <MainStack/>

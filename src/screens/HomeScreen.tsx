@@ -7,12 +7,12 @@ import {
     Image,
     TouchableWithoutFeedback, RefreshControl
 } from "react-native";
-import {Appbar, Avatar, Divider, Icon, MD3LightTheme, Text} from "react-native-paper";
+import {Appbar, Avatar, Divider, Icon, MD3Colors, MD3LightTheme, Text} from "react-native-paper";
 import {observer} from "mobx-react-lite";
 import {BottomTabHeaderProps, BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {HomeStackParamList} from "../navigation/modules/HomeStack";
 import {DrawerActions, useNavigation} from "@react-navigation/native";
-import {useLayoutEffect, useState} from "react";
+import {useEffect, useLayoutEffect, useState} from "react";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {LineChart} from "react-native-chart-kit";
 import CircularProgress from "react-native-circular-progress-indicator";
@@ -35,7 +35,10 @@ export const HomeScreen = observer(({navigation, route}: props) => {
     const [selectedDay, setSelectedDay] = useState<number>(26);
     const [refreshing, setRefreshing] = useState<boolean>(true);
     const navigationState = useNavigation();
-    const {stepCounter, userStore, training, geolocationService} = useRootStore();
+    const {stepCounter, userStore, training, geolocationService, settingStore} = useRootStore();
+    const [filter, setFilter] = useState<string>(``);
+    const [sortedTraining, setSortedTraining] = useState<Training[]>(userStore.user.training);
+    const [sortedTrainingCount, setSortedTrainingCount] = useState<number>(4);
     const {t} = useTranslation();
 
     useLayoutEffect(() => {
@@ -46,7 +49,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                         <Appbar.Header elevated
                                        style={{
                                            paddingHorizontal: 24,
-                                           backgroundColor: Colors.lighter
+                                           backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter
                                        }}>
                             <TouchableOpacity disabled={false}
                                               onPress={() => {
@@ -64,7 +67,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                                                textAlign: `center`
                                                            }}/>}
                                            style={{
-                                               backgroundColor: Colors.lighter
+                                               backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter
                                            }}/>
                             <Avatar.Text label="M9"
                                          style={{
@@ -83,13 +86,17 @@ export const HomeScreen = observer(({navigation, route}: props) => {
 
                 dataToArr -= 1;
             }
-        };
+        }
 
         setTimeout(() => {
             setRefreshing(false);
         }, 1240);
-    }, []);
 
+        sortedTraining.sort((a, b) => {
+            // @ts-ignore
+            return moment(a.data, 'DD.MM.YY') - moment(b.data, 'DD.MM.YY');
+        });
+    }, []);
     const renderItem = (item: any, index: number) => {
         return (
                 <TouchableOpacity disabled={false}
@@ -97,7 +104,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                       // height: 24,
                                       minWidth: 42,
                                       maxWidth: 44,
-                                      backgroundColor: index == selectedDay ? MD3LightTheme.colors.primaryContainer : `#FFFFFF`,
+                                      backgroundColor: index == selectedDay || index == Number(moment(new Date(), "DD")) ? MD3LightTheme.colors.primaryContainer : `#FFFFFF`,
                                       paddingHorizontal: 4,
                                       paddingVertical: 8,
                                       gap: 2,
@@ -139,7 +146,10 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                         nestedScrollEnabled={false}
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
-                        contentContainerStyle={style.container}>
+                        contentContainerStyle={{
+                            ...style.container,
+                            backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter
+                        }}>
 
                 <View style={{
                     marginBottom: 24
@@ -172,31 +182,51 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                 </View>
 
                 <View>
-                    <Text children={t(`MY_ACTIVITY`)}
-                          style={{
-                              fontSize: 24,
-                              fontWeight: `700`,
-                              letterSpacing: 2.4
-                          }}/>
+                    <View style={{
+                        flexDirection: `row`,
+                        alignItems: `center`,
+                        justifyContent: `space-between`
+                    }}>
+                        <Text children={t(`MY_ACTIVITY`)}
+                              style={{
+                                  fontSize: 24,
+                                  fontWeight: `700`,
+                                  letterSpacing: 2.4
+                              }}/>
+
+                        <TouchableOpacity disabled={false}
+                                          onPress={() => {
+                                              // @ts-ignore
+                                              navigation.navigate(`HistoryScreen`);
+                                          }}
+                                          children={<Text children={`History`}
+                                                          style={{
+                                                              fontSize: 16,
+                                                              fontWeight: `600`,
+                                                              color: MD3LightTheme.colors.primary,
+                                                              letterSpacing: 1
+                                                          }}/>}/>
+                    </View>
                     <LineChart data={{
-                        labels: ["January", "February", "March", "April", "May", "June"],
+                        labels: ["Day", "March", "April", "May", "June"],
                         datasets: [
                             {
-                                data: [
-                                    Math.random() * 100,
-                                    Math.random() * 100,
-                                    Math.random() * 100,
-                                    Math.random() * 100,
-                                    Math.random() * 100,
-                                    Math.random() * 100
-                                ]
+                                // data: [
+                                //     Math.random() * 100,
+                                //     Math.random() * 100,
+                                //     Math.random() * 100,
+                                //     Math.random() * 100,
+                                //     Math.random() * 100,
+                                //     Math.random() * 100
+                                // ]
+                                data: userStore.user.activity.map(item => item.step)
                             }
                         ]
                     }}
                                width={Dimensions.get("window").width - 48} // from react-native
                                height={220}
-                               yAxisLabel="$"
-                               yAxisSuffix="k"
+                               // yAxisLabel="$"
+                               // yAxisSuffix="k"
                                yAxisInterval={1} // optional, defaults to 1
                                chartConfig={{
                                    backgroundColor: "#A7A7A7",
@@ -221,17 +251,18 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                }}/>
                 </View>
 
-                <View style={{
-                    marginTop: 12
-                }}>
-                    <FilterActivityScreen/>
-                </View>
+                {/*<View style={{*/}
+                {/*    marginTop: 12*/}
+                {/*}}>*/}
+                {/*    <FilterActivityScreen setFilter={setFilter}/>*/}
+                {/*</View>*/}
 
                 <View style={{
                     gap: 12,
                     marginTop: 12
                 }}>
-                    {userStore.user.training.reverse().map((item: Training, index: number) => {
+                    <Text children={`Recently activity`}/>
+                    {sortedTraining.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         return (
                                 <TouchableWithoutFeedback key={item.id}
                                                           onPress={() => {
@@ -247,8 +278,8 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                     }}>
                                         <YaMap nightMode={false}
                                                showUserPosition={false}
-                                               mapType={"vector"}
-                                               maxFps={30}
+                                               mapType={"raster"}
+                                               maxFps={15}
                                                 // @ts-ignore
                                                interactive={false}
                                                logoPadding={{horizontal: 200, vertical: 200}}
@@ -316,6 +347,30 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                 </TouchableWithoutFeedback>
                         )
                     })}
+
+                    {sortedTrainingCount < userStore.user.training.length
+                            ?
+                            <TouchableOpacity disabled={false}
+                                              onPress={() => {
+                                                  setRefreshing(true);
+                                                  setSortedTrainingCount(sortedTrainingCount + 7);
+                                                  setTimeout(() => {
+                                                      setRefreshing(false);
+                                                  }, 250);
+                                              }}
+                                              style={{
+                                                  alignItems: `center`,
+                                                  justifyContent: `center`,
+                                                  marginTop: 4
+                                              }}
+                                              children={<Text children={`Load more`}
+                                                              style={{
+                                                                  fontSize: 16,
+                                                                  color: MD3LightTheme.colors.primary
+                                                              }}/>}/>
+                            :
+                            false
+                    }
                 </View>
 
             </ScrollView>

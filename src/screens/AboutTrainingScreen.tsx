@@ -176,7 +176,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.duration}`}
+                        <Text children={`${route.params.training.duration != null ? route.params.training.duration : `00:00`} min`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -200,7 +200,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.kcal} kcal`}
+                        <Text children={`${route.params.training.kcal != null ? route.params.training.kcal : 1} kcal`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -224,7 +224,8 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.average} km/min`}
+
+                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} km/min`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -248,7 +249,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.distance} km`}
+                        <Text children={`${route.params.training.distance != null ? route.params.training.distance : `0.00`} km`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -276,7 +277,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.step_count}`}
+                        <Text children={`${route.params.training.step_count != null ? route.params.training.step_count : 1} step`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -304,7 +305,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.start_data}`}
+                        <Text children={`${route.params.training.start_data ? route.params.training.start_data : `unknown`}`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -328,7 +329,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.end_data}`}
+                        <Text children={`${route.params.training.end_data ? route.params.training.end_data : `unknown`}`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`

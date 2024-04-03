@@ -5,6 +5,7 @@ import {Settings} from "../../entity/Settings";
 
 export default class SettingStore {
     public settings: Settings;
+    public them: Settings['them'] = "LIGHT";
 
     private errorStore: ErrorStore;
     private settingRepository = dataSourse.getRepository(Settings);
@@ -19,6 +20,7 @@ export default class SettingStore {
         if (current.length > 0) {
             runInAction(() => {
                 this.settings = current[0];
+                this.them = current[0].them;
             });
             console.log(`Setting loaded`);
         } else {
@@ -31,6 +33,7 @@ export default class SettingStore {
             const setting = await this.settingRepository.save(newSettings);
             runInAction(() => {
                 this.settings = setting;
+                this.them = setting.them;
             })
         }
     };

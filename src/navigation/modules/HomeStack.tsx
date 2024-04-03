@@ -8,16 +8,21 @@ import {AppBar} from "../../components/AppBar";
 import {DrawerNavigationOptions, DrawerScreenProps} from "@react-navigation/drawer";
 import {MainStackParamList} from "../MainStack";
 import {useTranslation} from "react-i18next";
+import {DrawerStackParamList} from "./DrawerStack";
+import {Colors} from "react-native/Libraries/NewAppScreen";
+import {observer} from "mobx-react-lite";
+import {useRootStore} from "../../store/RootStore";
 
 export type HomeStackParamList = {
     HomeScreen: any,
     ActivityScreen: any,
     ProfileScreen: any
 }
-type props = DrawerScreenProps<MainStackParamList, `HomeStack`>;
+type props = DrawerScreenProps<DrawerStackParamList, `HomeStack`>;
 const Tab = createBottomTabNavigator<HomeStackParamList>()
-export const HomeStack = ({navigation, route}: props) => {
+export const HomeStack = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
+    const {settingStore} = useRootStore();
 
     return (
         <Tab.Navigator initialRouteName={`ActivityScreen`}
@@ -30,7 +35,8 @@ export const HomeStack = ({navigation, route}: props) => {
                                                                             action={() => props.navigation.goBack()}/>,
                            tabBarStyle: {
                                height: 54,
-                               paddingBottom: 4
+                               paddingBottom: 4,
+                               backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter,
                            },
                            tabBarHideOnKeyboard: true
                        }}>
@@ -77,4 +83,4 @@ export const HomeStack = ({navigation, route}: props) => {
                         component={ProfileScreen}/>
         </Tab.Navigator>
     )
-}
+});

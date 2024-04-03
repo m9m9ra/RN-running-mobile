@@ -10,6 +10,8 @@
 
     "TRAINING_RESULT": "Training result",
 
+    "TRAINING_HISTORY": "Training history",
+
     "MY_ACTIVITY": "My activity",
 
     "CANCEL": "Cancel",
@@ -63,6 +65,7 @@
       "PROGRESS": "Progress",
       "SETTINGS": "Settings",
       "PEDOMETER": "Pedometer",
+      "HISTORY": "History",
       "ACTIVITY": "Activity",
       "PROFILE": "Profile"
     }

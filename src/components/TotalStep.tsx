@@ -1,5 +1,5 @@
 import {Image, StyleSheet, View} from "react-native";
-import {Text} from "react-native-paper";
+import {MD3LightTheme, Text} from "react-native-paper";
 import CircularProgress from "react-native-circular-progress-indicator";
 import {observer} from "mobx-react-lite";
 import {useRootStore} from "../store/RootStore";
@@ -56,7 +56,7 @@ export const TotalStep = observer(({useStore = false, step}: props) => {
                                   duration={3450}
                                   delay={1}
 
-                                  activeStrokeColor={'#5324fd'}
+                                  activeStrokeColor={MD3LightTheme.colors.primary}
                                   activeStrokeSecondaryColor={'#C25AFF'}
                                   // activeStrokeColor={(useStore ? stepCounter.stepCount : step) > 5000 ? `#2ecc71` : `#ffa726`}
 

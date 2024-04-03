@@ -58,6 +58,11 @@ export default class UserStore {
                 this.auth = user.auth;
                 this.guest = user.guest;
                 this.user = user;
+
+                this.user.training = this.user.training.sort((a, b) => {
+                    // @ts-ignore
+                    return moment(b.data, 'DD.MM.YY') - moment(a.data, 'DD.MM.YY');
+                });
             });
             console.log(`Storage loaded!`);
             console.log(user);
@@ -79,6 +84,10 @@ export default class UserStore {
         });
         runInAction(() => {
            this.user = user;
+           this.user.training = this.user.training.sort((a, b) => {
+               // @ts-ignore
+               return moment(b.data, 'DD.MM.YY') - moment(a.data, 'DD.MM.YY');
+           });
         });
     };
 

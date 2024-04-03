@@ -7,18 +7,22 @@ import {useRootStore} from "../store/RootStore";
 import {useTranslation} from "react-i18next";
 
 export const DrawerMenu = observer((props: DrawerContentComponentProps) => {
-    const {userStore} = useRootStore();
+    const {userStore, settingStore} = useRootStore();
     const {t} = useTranslation();
 
     return (
             <DrawerContentScrollView {...props}
-                                     style={style.drawer}>
+                                     style={{
+                                         ...style.drawer,
+                                         backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter,
+                                     }}>
 
                 <View style={{
                     flexDirection: 'row',
                     alignItems: `center`,
                     paddingLeft: 22,
-                    backgroundColor: `#ffffff`,
+                    // backgroundColor: `#ffffff`,
+                    backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter,
                     gap: 6
                 }}>
 
@@ -84,6 +88,17 @@ export const DrawerMenu = observer((props: DrawerContentComponentProps) => {
                               color={`gray`}
                               source={`foot-print`}/>
                         <Text children={t("DRAWER_MENU.PEDOMETER")}
+                              style={style.drawerText}/>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={style.drawerItem}
+                                      onPress={() => {
+                                          props.navigation.navigate(`HistoryScreen`);
+                                      }}>
+                        <Icon size={28}
+                              color={`gray`}
+                              source={`history`}/>
+                        <Text children={t("DRAWER_MENU.HISTORY")}
                               style={style.drawerText}/>
                     </TouchableOpacity>
 
@@ -154,7 +169,6 @@ export const DrawerMenu = observer((props: DrawerContentComponentProps) => {
 const style = StyleSheet.create({
     drawer: {
         flex: 1,
-        // backgroundColor: Colors.lighter,
         paddingTop: 13
     },
     drawerSection: {

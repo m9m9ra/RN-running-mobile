@@ -10,6 +10,8 @@
 
     "TRAINING_RESULT": "Результаты тренировки",
 
+    "TRAINING_HISTORY": "История тренировок",
+
     "MY_ACTIVITY": "Моя активность",
 
     "CANCEL": "Отмена",
@@ -63,6 +65,7 @@
       "PROGRESS": "Прогресс",
       "SETTINGS": "Настройки",
       "PEDOMETER": "Шагомер",
+      "HISTORY": "История",
       "ACTIVITY": "Активность",
       "PROFILE": "Профиль"
     }
