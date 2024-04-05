@@ -6,12 +6,15 @@ import {useTranslation} from "react-i18next";
 import {colorSchema} from "../utils/ColorSchema";
 import {useLayoutEffect, useState} from "react";
 import {Colors} from "react-native/Libraries/NewAppScreen";
+import {observer} from "mobx-react-lite";
+import {useRootStore} from "../store/RootStore";
 
 type props = StackScreenProps<AuthStackParamList, `AuthScreen`>;
-export const AuthScreen = ({navigation, route}: props) => {
+export const AuthScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
     const [email, setEmail] = useState<string>(``);
     const [password, setPassword] = useState<string>(``);
+    const {userStore} = useRootStore();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -55,7 +58,9 @@ export const AuthScreen = ({navigation, route}: props) => {
                        style={{}}/>
 
             <TouchableWithoutFeedback disabled={false}
-                                      onPress={() => {}}>
+                                      onPress={async () => {
+                                          await userStore.userAuth(password, email);
+                                      }}>
                 <View style={{
                     backgroundColor: colorSchema.primary,
                     paddingHorizontal: 9,
@@ -72,13 +77,13 @@ export const AuthScreen = ({navigation, route}: props) => {
                                                           letterSpacing: 2.6,
                                                           fontWeight: `700`
                                                       }}/>}
-                                      onPress={() => {
-
+                                      onPress={async () => {
+                                          await userStore.userAuth(password, email);
                                       }}/>
                     <TouchableOpacity disabled={false}
                                       children={<Icon size={18} source={`arrow-right`} color={`#FFFFFF`}/>}
-                                      onPress={() => {
-
+                                      onPress={async () => {
+                                          await userStore.userAuth(password, email);
                                       }}/>
                 </View>
             </TouchableWithoutFeedback>
@@ -98,7 +103,7 @@ export const AuthScreen = ({navigation, route}: props) => {
                               style={{}}/>
         </ScrollView>
     )
-};
+});
 
 const style = StyleSheet.create({
     container: {

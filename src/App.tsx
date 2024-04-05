@@ -15,7 +15,7 @@ registerTranslation('en-GB', enGB)
 
 export const App = observer((): JSX.Element => {
     const isDarkMode = useColorScheme() === 'dark';
-    const {userStore, settingStore, startStepCounterService} = useRootStore();
+    const {userStore, settingStore, startStepCounterService, dataStore} = useRootStore();
     const {i18n} = useTranslation();
 
 
@@ -38,20 +38,25 @@ export const App = observer((): JSX.Element => {
         };
         requestLocationPermission().then();
 
-        userStore.main()
-            .then(() => {
-                console.log(1);
-                startStepCounterService().then(() => {
-                    console.log(`Pedometer`);
-                });
-            })
-            .finally(() => {
-                settingStore.main()
-                .then(() => {
-                    console.log(settingStore.settings);
-                    i18n.changeLanguage(settingStore.settings.language);
-                });
-            })
+        dataStore.main().then(() => {
+            userStore.main()
+                    .then(() => {
+                        console.log(1);
+
+                        startStepCounterService().then(() => {
+                            console.log(`Pedometer`);
+                        });
+                    })
+                    .finally(() => {
+                        settingStore.main()
+                                .then(() => {
+                                    console.log(settingStore.settings);
+                                    console.log(userStore.auth, "App.tsx");
+                                    i18n.changeLanguage(settingStore.settings.language);
+
+                                });
+                    })
+        });
     }, []);
 
     return (

@@ -5,8 +5,10 @@ import {AuthScreen} from "../screens/AuthScreen";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {OtpScreen} from "../screens/OtpScreen";
 import {ForgotScreen} from "../screens/ForgotScreen";
+import {LockScreen} from "../screens/LockScreen";
 
 export type AuthStackParamList = {
+    LockScreen: any,
     WelcomeScreen: any,
     LoginScreen: any,
     AuthScreen: any,
@@ -18,10 +20,13 @@ const Stack = createStackNavigator<AuthStackParamList>()
 export const AuthStack = () => {
 
     return (
-        <Stack.Navigator initialRouteName={`WelcomeScreen`}
+        <Stack.Navigator initialRouteName={`${process.env.BUILD == `DEVELOPMENT` ? `LockScreen` : `WelcomeScreen`}`}
                          screenOptions={{
                              headerShown: false
                          }}>
+
+            <Stack.Screen name={`LockScreen`}
+                          component={LockScreen}/>
 
             <Stack.Screen name={`WelcomeScreen`}
                           component={WelcomeScreen}/>

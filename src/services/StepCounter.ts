@@ -50,7 +50,9 @@ export class StepCounter {
     };
 
     public setStepCount = (newStepCount: number) => {
-        this.stepCount = newStepCount;
+        runInAction(() => {
+            this.stepCount = newStepCount;
+        });
     };
 
     public stopPedometer = () => {

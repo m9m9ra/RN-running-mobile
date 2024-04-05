@@ -4,11 +4,11 @@ import { Training } from "./Training";
 
 @Entity()
 export class User {
-    @PrimaryColumn({default: false})
-    auth?: boolean
-
-    @Column({nullable: true})
+    @PrimaryColumn()
     user_id?: number
+
+    @Column({default: false})
+    auth?: boolean
 
     @Column({nullable: true})
     guest?: boolean
@@ -19,7 +19,7 @@ export class User {
     @Column({nullable: true})
     lastName: string
 
-    @Column({nullable: false, enum: [`MALE`, `FEMALE`, `NOT_SAY`]})
+    @Column({nullable: true, enum: [`MALE`, `FEMALE`, `NOT_SAY`]})
     gender: string
 
     @OneToMany(() => Activity, (activity) => activity.user_id)
@@ -28,7 +28,7 @@ export class User {
     @OneToMany(() => Training, (training) => training.user_id)
     training?: Training[]
 
-    @Column({nullable: false})
+    @Column({nullable: true})
     email: string
 
     @Column({nullable: true})

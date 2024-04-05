@@ -8,7 +8,7 @@ export class Training {
     id: number
 
     @ManyToOne(() => User, (user) => user.training)
-    user_id: boolean
+    user_id: number
 
     @Column({enum: ["RUNNING"]})
     type: string

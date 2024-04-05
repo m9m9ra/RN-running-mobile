@@ -11,11 +11,13 @@ import {Training} from "../entity/Training";
 import {Polyline} from "../entity/Polyline";
 import moment from "moment";
 import {pointToDistance} from "../utils/PointToDistance";
+import DataStore from "./modules/DataStore";
 
 class RootStore {
     // StoreModules
     public userStore: UserStore;
     public settingStore: SettingStore;
+    public dataStore: DataStore;
     public errorStore: ErrorStore;
 
     // ServicesModules
@@ -43,7 +45,8 @@ class RootStore {
 
         // StoreModules
         this.errorStore = new ErrorStore();
-        this.userStore = new UserStore(this.errorStore, this.stepCounter, this.geolocationService);
+        this.dataStore = new DataStore();
+        this.userStore = new UserStore(this.dataStore ,this.errorStore, this.stepCounter, this.geolocationService);
         this.settingStore = new SettingStore(this.errorStore);
 
         makeObservable(this, {
@@ -65,7 +68,7 @@ class RootStore {
         if (!this.isRunning) {
             await runInAction(async () => {
                 this.training = Object.assign(new Training(), {
-                    user_id: this.userStore.user.auth,
+                    user_id: this.userStore.user.user_id,
                     type: "RUNNING",
                     start_data: moment(new Date()).format(`h:mm a`),
                     start_step: this.stepCounter.stepCount,
@@ -143,6 +146,7 @@ class RootStore {
         } else {
             runInAction(() => {
                 this.isRunning = false;
+                this.training.polyline ? this.training.polyline = this.training.polyline : this.training.polyline = [];
                 clearInterval(this.intervalId);
                 clearInterval(this.intervalToSaveTraining);
                 this.training.end_data = moment(new Date()).format(`h:mm a`);

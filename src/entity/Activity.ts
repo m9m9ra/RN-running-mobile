@@ -7,7 +7,7 @@ export class Activity {
     id: number
 
     @ManyToOne(() => User, (user) => user.activity)
-    user_id: boolean
+    user_id: number
 
     @Column()
     step: number

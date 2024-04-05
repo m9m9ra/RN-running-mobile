@@ -37,7 +37,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
     const navigationState = useNavigation();
     const {stepCounter, userStore, training, geolocationService, settingStore} = useRootStore();
     const [filter, setFilter] = useState<string>(``);
-    const [sortedTraining, setSortedTraining] = useState<Training[]>(userStore.user.training);
+    const [sortedTraining, setSortedTraining] = useState<Training[]>(userStore.user.training ? userStore.user.training : []);
     const [sortedTrainingCount, setSortedTrainingCount] = useState<number>(4);
     const {t} = useTranslation();
 
@@ -91,11 +91,6 @@ export const HomeScreen = observer(({navigation, route}: props) => {
         setTimeout(() => {
             setRefreshing(false);
         }, 1240);
-
-        sortedTraining.sort((a, b) => {
-            // @ts-ignore
-            return moment(a.data, 'DD.MM.YY') - moment(b.data, 'DD.MM.YY');
-        });
     }, []);
     const renderItem = (item: any, index: number) => {
         return (
@@ -219,7 +214,19 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                 //     Math.random() * 100,
                                 //     Math.random() * 100
                                 // ]
-                                data: userStore.user.activity.map(item => item.step)
+                                data:
+                                        // userStore.user.activity
+                                        // ?
+                                        // userStore.user.activity.map(item => item.step)
+                                        // :
+                                        [
+                                            Math.random() * 100,
+                                            Math.random() * 100,
+                                            Math.random() * 100,
+                                            Math.random() * 100,
+                                            Math.random() * 100,
+                                            Math.random() * 100
+                                        ]
                             }
                         ]
                     }}
@@ -257,12 +264,14 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                 {/*    <FilterActivityScreen setFilter={setFilter}/>*/}
                 {/*</View>*/}
 
+                {/*<Text children={JSON.stringify(userStore.user.training)}/>*/}
+
                 <View style={{
                     gap: 12,
                     marginTop: 12
                 }}>
                     <Text children={`Recently activity`}/>
-                    {sortedTraining.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
+                    {userStore.user.training.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         return (
                                 <TouchableWithoutFeedback key={item.id}
                                                           onPress={() => {
