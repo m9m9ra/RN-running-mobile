@@ -1,4 +1,4 @@
-import {App} from "./src/App";
+import {App} from './src/layers/presentation/App';
 import {AppRegistry} from 'react-native';
 import {name as appName} from './app.json';
 import { Geocoder } from 'react-native-yamap';
