@@ -38,6 +38,7 @@ export const LoginScreen = observer(({navigation, route}: props) => {
         email: ``,
         password: ``,
         birthdate: ``,
+        auth: false,
         policy: false
     });
 

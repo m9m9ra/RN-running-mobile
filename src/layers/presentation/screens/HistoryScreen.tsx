@@ -1,12 +1,23 @@
-import {Image, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
+import {
+    Image,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
 import {useLayoutEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {observer} from "mobx-react-lite";
-import {Appbar, Avatar, Divider, Icon, Text} from "react-native-paper";
+import {Appbar, Avatar, Divider, Icon, MD3LightTheme, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {StackHeaderProps, StackScreenProps} from "@react-navigation/stack";
 import {MainStackParamList} from "../../../core/navigation/MainStack";
 import {useRootStore} from "../shared/store/RootStore";
+import {Training} from "../../domain/entity/Training";
+import YaMap, {Polyline} from "react-native-yamap";
+import {colorSchema} from "../../../core/utils/ColorSchema";
 
 type props = StackScreenProps<MainStackParamList, `HistoryScreen`>;
 export const HistoryScreen = observer(({navigation, route}: props) => {
@@ -14,7 +25,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
     const [languages, setLanguages] = useState<string[]>(Object.keys(i18n.options.resources));
     const [currentLanguages, setCurrentLanguages] = useState<string>(i18n.language);
     const [refreshing, setRefreshing] = useState<boolean>(false);
-    const {settingStore, geolocationService} = useRootStore();
+    const {settingStore, geolocationService, userStore} = useRootStore();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -85,30 +96,6 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
 
-                {!refreshing
-                        ?
-                        false
-                        // <YaMap nightMode={false}
-                        //        showUserPosition={false}
-                        //        mapType={"vector"}
-                        //        maxFps={30}
-                        //         // @ts-ignore
-                        //        interactive={false}
-                        //        logoPadding={{horizontal: 0, vertical: 0}}
-                        //        initialRegion={{
-                        //            ...route.params.training.polyline[0],
-                        //            zoom: 18
-                        //        }}
-                        //        style={{height: 220, borderRadius: 0}}>
-                        //     {/* todo - Ебучий полилайн */}
-                        //     <Polyline points={route.params.training.polyline != null
-                        //             ? route.params.training.polyline
-                        //             : [{...geolocationService.currentPosition}]}/>
-                        // </YaMap>
-                        :
-                        <View style={{height: 220, borderRadius: 0, backgroundColor: `#FFFFFF`}}/>
-                }
-
                 <View style={{
                     flexDirection: `row`,
                     width: `100%`,
@@ -141,196 +128,100 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
 
                 </View>
 
-                {/*<View style={{*/}
-                {/*    paddingHorizontal: 24,*/}
-                {/*    paddingTop: 12,*/}
-                {/*    gap: 12*/}
-                {/*}}>*/}
+                <View style={{
+                    gap: 12,
+                    marginTop: 12,
+                    paddingHorizontal: 24
+                }}>
+                    <Text children={`History`}
+                          style={style.headerLabel}/>
 
-                {/*    <Text children={t('TRAINING_RESULT')}*/}
-                {/*          style={{*/}
-                {/*              fontWeight: `700`,*/}
-                {/*              fontSize: 18,*/}
-                {/*              marginBottom: 8,*/}
-                {/*              letterSpacing: 0.8*/}
-                {/*          }}/>*/}
+                    {userStore.user.training.map((item: Training, index: number) => {
+                        return (
+                                <TouchableWithoutFeedback key={item.id}
+                                                          onPress={() => {
+                                                              // @ts-ignore
+                                                              navigation.navigate(`AboutTrainingScreen`, {training: item});
+                                                          }}>
+                                    <View style={{
+                                        elevation: 2,
+                                        borderRadius: 2,
+                                        backgroundColor: `#FFFFFF`,
+                                        height: 78,
+                                        flexDirection: `row`,
+                                    }}>
+                                        <YaMap nightMode={false}
+                                               showUserPosition={false}
+                                               mapType={"raster"}
+                                               maxFps={15}
+                                                // @ts-ignore
+                                               interactive={false}
+                                               logoPadding={{horizontal: 200, vertical: 200}}
+                                               initialRegion={{
+                                                   ...item.polyline[0],
+                                                   zoom: 19
+                                               }}
+                                               style={{width: 78, borderRadius: 2}}>
+                                            {/* todo - Ебучий полилайн */}
+                                            <Polyline points={item.polyline != null
+                                                    ? item.polyline
+                                                    : [{...geolocationService.currentPosition}]}/>
+                                        </YaMap>
 
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Icon size={22} source={`camera-timer`}/>*/}
-                {/*            <Text children={`Duration:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.duration}`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
+                                        <Divider style={{
+                                            width: 14
+                                        }}/>
 
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Icon size={22} source={`fire`}/>*/}
-                {/*            <Text children={`Kcal:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.kcal} kcal`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
+                                        <View style={{
+                                            paddingVertical: 4,
+                                            flex: 1,
+                                            flexDirection: `row`,
+                                            // alignItems: `center`,
+                                            justifyContent: `space-between`,
+                                            paddingRight: 10,
+                                            // gap: 4
+                                        }}>
+                                            <View>
+                                                <Text children={`${item.data}: ${item.start_data}`}
+                                                      style={{
+                                                          fontSize: 16,
+                                                          fontWeight: `700`
+                                                      }}/>
+                                                <Text children={`${item.distance == null ? `0.00` : item.distance.slice(0, 4)} km`}
+                                                      style={{
+                                                          fontSize: 18,
+                                                          fontWeight: `700`
+                                                      }}/>
+                                                <View style={{
+                                                    flexDirection: `row`,
+                                                    alignItems: `center`,
+                                                    justifyContent: `space-between`
+                                                }}>
+                                                    <Text children={`${t(`TOTAL_STEP`)}: ${item.step_count == null ? `0` : item.step_count}`}/>
+                                                    <Text children={`Kcal: ${item.step_count == null ? `0` : item.step_count}`}/>
+                                                    <Text children={`${item.duration == null ? `0.00` : item.duration}`}/>
+                                                </View>
+                                            </View>
 
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Icon size={22} source={`speedometer`}/>*/}
-                {/*            <Text children={`Average:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.average} km/min`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
-
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Icon size={22} source={`image-filter-hdr`}/>*/}
-                {/*            <Text children={`Distance:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.distance} km`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
-
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Image source={require(`./../assets/image/footprints.png`)}*/}
-                {/*                   style={{*/}
-                {/*                       height: 22,*/}
-                {/*                       width: 22*/}
-                {/*                   }}/>*/}
-                {/*            <Text children={`Total step:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.step_count}`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
-
-                {/*    <Divider style={{*/}
-                {/*        marginVertical: 6*/}
-                {/*    }}/>*/}
-
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Icon size={22} source={`speedometer`}/>*/}
-                {/*            <Text children={`Training start at:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.start_data}`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
-
-                {/*    <View style={{*/}
-                {/*        flexDirection: `row`,*/}
-                {/*        alignItems: `center`,*/}
-                {/*        justifyContent: `space-between`*/}
-                {/*    }}>*/}
-                {/*        <View style={{*/}
-                {/*            flexDirection: `row`,*/}
-                {/*            alignItems: `center`,*/}
-                {/*            gap: 4*/}
-                {/*        }}>*/}
-                {/*            <Icon size={22} source={`speedometer`}/>*/}
-                {/*            <Text children={`Training end at:`}*/}
-                {/*                  style={{*/}
-                {/*                      fontSize: 16,*/}
-                {/*                      fontWeight: `400`*/}
-                {/*                  }}/>*/}
-                {/*        </View>*/}
-                {/*        <Text children={`${route.params.training.end_data}`}*/}
-                {/*              style={{*/}
-                {/*                  fontSize: 16,*/}
-                {/*                  fontWeight: `400`*/}
-                {/*              }}/>*/}
-                {/*    </View>*/}
-                {/*</View>*/}
+                                            <View style={{
+                                                alignItems: `center`,
+                                                justifyContent: `center`
+                                            }}>
+                                                <TouchableOpacity disabled={false}
+                                                                  onPress={() => {
+                                                                      // @ts-ignore
+                                                                      navigation.navigate(`AboutTrainingScreen`, {training: item});
+                                                                  }}
+                                                                  children={<Icon size={32}
+                                                                                  color={colorSchema.primary}
+                                                                                  source={`chevron-right`}/>}/>
+                                            </View>
+                                        </View>
+                                    </View>
+                                </TouchableWithoutFeedback>
+                        )
+                    })}
+                </View>
             </ScrollView>
     )
 });

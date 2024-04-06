@@ -120,21 +120,21 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                     paddingHorizontal: 24
                 }}>
                     <View>
-                        <Text children={`0.00`}
+                        <Text children={`${route.params.training.distance ? route.params.training.distance : `0.00`}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.DISTANCE`)}
                               style={style.headerLabel}/>
                     </View>
 
                     <View>
-                        <Text children={`00:00`}
+                        <Text children={`${route.params.training.kcal ? route.params.training.kcal.toFixed(2) : `0.00`}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.CALORIES`)}
                               style={style.headerLabel}/>
                     </View>
 
                     <View>
-                        <Text children={`00:00`}
+                        <Text children={`${route.params.training.average ? route.params.training.average : `0.00`}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.AVERAGE`)}
                               style={style.headerLabel}/>

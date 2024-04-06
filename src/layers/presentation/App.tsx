@@ -16,7 +16,7 @@ registerTranslation('en-GB', enGB)
 
 export const App = observer(() => {
     const isDarkMode = useColorScheme() === 'dark';
-    const {userStore, settingStore, startStepCounterService, dataStore} = useRootStore();
+    const {userStore, settingStore, startStepCounterService, dataStore, initialize} = useRootStore();
     const {i18n} = useTranslation();
     const [loading, setLoading] = useState<boolean>(true);
 
@@ -59,6 +59,7 @@ export const App = observer(() => {
                                                         console.log(settingStore.settings);
                                                         console.log(userStore.auth, "App.tsx");
                                                         i18n.changeLanguage(settingStore.settings.language);
+                                                        initialize().then();
                                                         setLoading(false);
                                                     });
                                         })

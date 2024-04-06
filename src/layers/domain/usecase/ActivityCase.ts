@@ -10,7 +10,7 @@ export class ActivityCase extends ActivityRepository{
     public saveActivity = async (activity: Activity[]):Promise<Activity[] | null> => {
         const change = await this.activityRepository.save(activity)
         return change
-    }
+    };
 
     public getActivity = async (user: User):Promise<Activity[] | null> => {
         return await this.activityRepository.find({
@@ -18,7 +18,18 @@ export class ActivityCase extends ActivityRepository{
                 user_id: user.user_id
             }
         });
-    }
+    };
+
+    public getRemote = async (user: User):Promise<Activity[] | null> => {
+        const {data, error} = await supabase()
+            .from(`activity`)
+            .select()
+            .eq(`user_id`, user.user_id)
+
+        await this.saveActivity(data);
+
+        return data
+    };
 
     public observeStepCount = async (user_id: number, stepCounter: StepCounter): Promise<void> => {
         const saveStep: NodeJS.Timeout = setInterval(async () => {
@@ -69,6 +80,6 @@ export class ActivityCase extends ActivityRepository{
                         kcal: 1
                     });
             }
-        }, (60000 * 24));
+        }, (60000));
     };
 }

@@ -94,26 +94,46 @@ export class UserCase extends UserRepository{
     };
 
     public loginUser = async (user: User): Promise<User | null> => {
-        if (this.user && this.auth) {
-            return this.user
-        }
         // todo - Guest auth
         let remoteUser = await supabase()
             .from('user')
             .select()
             .eq('email', user.email);
 
-        if (remoteUser.data) {
+        console.log(remoteUser);
+
+        if (remoteUser.data.length >= 1) {
             return null;
         } else {
             remoteUser = await supabase()
                 .from('user')
-                .insert(user);
+                .insert({
+                    auth: user.auth,
+                    guest: user.guest,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    gender: user.gender,
+                    email: user.email,
+                    password: user.password,
+                    birthdate: user.birthdate,
+                    policy: user.policy,
+                    height: 172,
+                    weight: 64,
+                    phone: user.phone,
+                    token: user.token,
+                    avatar: user.avatar,
+                });
+
+            console.log(remoteUser, "insert");
 
             remoteUser = await supabase()
                 .from('user')
                 .select()
                 .eq('email', user.email);
+
+            console.log(remoteUser);
+
+            this.user = remoteUser.data[0];
 
             const {data, error} = await supabase().auth.signUp({
                 email: user.email,
@@ -123,7 +143,6 @@ export class UserCase extends UserRepository{
             console.log(data, error);
             console.log(await supabase().auth.getSession());
 
-            this.user = remoteUser.data[0];
             this.user.auth = true;
             this.user.guest = true;
             this.user.training = [];

@@ -8,6 +8,9 @@ import {GeolocationService} from "../services/GeolocationService";
 import {UserCase} from "../../../../domain/usecase/UserCase";
 import {ActivityCase} from "../../../../domain/usecase/ActivityCase";
 import moment from "moment";
+import {TrainingCase} from "../../../../domain/usecase/TrainingCase";
+import {PolylineCase} from "../../../../domain/usecase/PolylineCase";
+import LoadStorage from "../../../../domain/usecase/LoadStorage";
 
 export default class UserStore {
     public auth: boolean = false;
@@ -16,18 +19,24 @@ export default class UserStore {
 
     private errorStore: ErrorStore;
     private userCase: UserCase;
-    private activityCase: ActivityCase;
     private dataStore: DataStore;
     private stepCounter: StepCounter;
     private geolocationService: GeolocationService;
+
+    private activityCase: ActivityCase;
+    private trainingCase: TrainingCase;
+    private polylineCase: PolylineCase;
 
     constructor(dataStore, errorStore: ErrorStore, stepCounter: StepCounter, geolocationService: GeolocationService) {
         this.dataStore = dataStore;
         this.errorStore = errorStore;
         this.stepCounter = stepCounter;
         this.geolocationService = geolocationService;
+
         this.userCase = new UserCase();
-        this.activityCase = new ActivityCase();
+        this.activityCase = new ActivityCase()
+        this.trainingCase = new TrainingCase();
+        this.polylineCase = new PolylineCase();
 
         makeAutoObservable(this);
     };
@@ -57,10 +66,26 @@ export default class UserStore {
             this.auth = user.auth;
         })
 
+
         if (this.user.auth) {
-            await new ActivityCase().saveActivity(this.user.activity);
+            const userActivity = await this.activityCase.getRemote(user);
+            const userTraining = await this.trainingCase.getTrainingRemote(user.user_id);
+
+            await this.activityCase.saveActivity(userActivity);
+
+            await this.trainingCase.saveTrainingLocal(userTraining);
+
+            for (let i: number = 0; i < userTraining.length; i++) {
+                userTraining[i].polyline = await this.polylineCase.getPolylineRemote(userTraining[i].id);
+                console.log(userTraining[i].polyline, 'save line remote to local');
+
+                await this.polylineCase.saveLocal(userTraining[i].polyline);
+            }
+
             await this.updatePedometer();
             await new ActivityCase().observeStepCount(this.user.user_id, this.stepCounter);
+            await this.updateUserInfo();
+
             console.log(this.user);
         }
     };
@@ -87,14 +112,16 @@ export default class UserStore {
     };
 
     public userRegister = async (user: User): Promise<boolean> => {
-        const login = await this.userCase.loginUser(user);
+        const login = await this.userCase.loginUser({...user, auth: false});
+
+        console.log(login, 'login');
 
         runInAction(() => {
             this.user = login;
             this.auth = login.auth;
         });
 
-        if (this.user.auth) {
+        if (this.auth) {
             await new ActivityCase().observeStepCount(this.user.user_id, this.stepCounter);
         }
 
@@ -104,10 +131,12 @@ export default class UserStore {
     public userLogout = async (): Promise<any> => {
         const change = await this.userCase.userLogout();
 
+        await new LoadStorage().removeData();
+        this.stepCounter.stopPedometer();
+
         runInAction(() => {
             this.user = change;
             this.auth = change.auth;
-            console.log(this.user);
         });
     }
 };
