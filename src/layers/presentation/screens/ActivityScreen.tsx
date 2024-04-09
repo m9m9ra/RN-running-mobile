@@ -1,19 +1,21 @@
 import {ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
-import {useLayoutEffect} from "react";
-import {Appbar, Icon, Text} from "react-native-paper";
+import {useLayoutEffect, useState} from "react";
+import {Appbar, Button, Dialog, Icon, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {useTranslation} from "react-i18next";
 import {observer} from "mobx-react-lite";
 import {HomeStackParamList} from "../../../core/navigation/modules/HomeStack";
 import {useRootStore} from "../shared/store/RootStore";
 import {MapMini} from "../shared/ui/MapMini";
+import {requestLocationPermission} from "../../../core/utils/requestLocationPermission";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
     const {timer, toggleRunning} = useRootStore();
     const {training, isRunning} = useRootStore();
+    const [permission, setPermission] = useState<boolean>(true);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -22,9 +24,18 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
     }, []);
 
     const togleRunning = async () => {
-        const running = await toggleRunning();
-        !running ? // @ts-ignore
-                navigation.navigate(`AboutTrainingScreen`, {training: training}) : false;
+        const gpsPermission = await requestLocationPermission();
+        setPermission(gpsPermission);
+
+        console.log(isRunning, gpsPermission);
+
+        if (!isRunning && !gpsPermission) {
+
+        } else {
+            const running = await toggleRunning();
+            !running ? // @ts-ignore
+                    navigation.navigate(`AboutTrainingScreen`, {training: training}) : false;
+        }
     };
 
 
@@ -92,6 +103,32 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                 </Appbar.Header>
 
                 <MapMini/>
+
+                <Dialog visible={!permission}
+                        style={{
+                            borderRadius: 4,
+                            backgroundColor: `#FFF`
+                        }}
+                        onDismiss={() => setPermission(true)}>
+                    <Dialog.Title children={`GPS location`}
+                                  style={{
+                                      letterSpacing: 1.6
+                                  }}/>
+                    <Dialog.Content>
+                        <Text variant="bodyMedium"
+                              children={`This is simple dialog`}
+                              style={{
+                                  letterSpacing: 0.8
+                              }}/>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => setPermission(true)}
+                                labelStyle={{
+                                    letterSpacing: 0.8
+                                }}
+                                children={`Done`}/>
+                    </Dialog.Actions>
+                </Dialog>
 
                 <View style={{
                     paddingHorizontal: 24,

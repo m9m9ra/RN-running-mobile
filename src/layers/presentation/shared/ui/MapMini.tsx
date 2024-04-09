@@ -33,14 +33,14 @@ export const MapMini = observer(() => {
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
-                {/*<Text children={JSON.stringify(training != null ? training.polyline : training)}*/}
-                {/*      style={{*/}
-                {/*          position: `absolute`,*/}
-                {/*          top: 0,*/}
-                {/*          zIndex: 10,*/}
-                {/*          padding: 12,*/}
-                {/*          fontWeight: `700`*/}
-                {/*      }}/>*/}
+                <Text children={JSON.stringify(training != null ? training.polyline : training)}
+                      style={{
+                          position: `absolute`,
+                          top: 0,
+                          zIndex: 10,
+                          padding: 12,
+                          fontWeight: `700`
+                      }}/>
                 {!refreshing ?
                         <YaMap ref={yaMapRef}
                                nightMode={false}

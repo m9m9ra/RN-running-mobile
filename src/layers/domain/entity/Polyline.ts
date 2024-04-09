@@ -1,13 +1,13 @@
-import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
 import {Training} from "./Training";
 
 @Entity()
 export class Polyline {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn()
     id: number
 
     @ManyToOne(() => Training, (training) => training.polyline)
-    training_id: boolean
+    training_id: number
 
     @Column({type: "float"})
     lat: number

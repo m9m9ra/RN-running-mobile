@@ -27,7 +27,7 @@ export default class SettingStore {
             console.log(`Setting created`);
             const newSettings = Object.assign(new Settings, {
                 settings: true,
-                language: 'en',
+                language: 'ru', //default - ru
                 them: `LIGHT`
             });
             const setting = await this.settingRepository.save(newSettings);

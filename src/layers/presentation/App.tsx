@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {enGB, registerTranslation} from "react-native-paper-dates";
 import {observer} from "mobx-react-lite";
-import {PermissionsAndroid, SafeAreaView, StatusBar, useColorScheme} from "react-native";
+import {SafeAreaView, StatusBar, useColorScheme} from "react-native";
 import React, {useEffect, useState} from "react";
 import {getLocales} from "react-native-localize";
 import {MD3DarkTheme, MD3LightTheme, PaperProvider} from "react-native-paper";
@@ -26,21 +26,6 @@ export const App = observer(() => {
     useEffect(() => {
         console.log(getLocales());
 
-        async function requestLocationPermission() {
-            try {
-                const granted = await PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-                )
-                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-                    console.log("You can use locations ")
-                } else {
-                    console.log("Location permission denied")
-                }
-            } catch (err) {
-                console.warn(err)
-            }
-        };
-
         loading ?
                 storage.loadStorage()
                         .then(() => {
@@ -64,7 +49,6 @@ export const App = observer(() => {
                                                     });
                                         })
                             })
-                            requestLocationPermission().then();
                         })
                 :
                 false;

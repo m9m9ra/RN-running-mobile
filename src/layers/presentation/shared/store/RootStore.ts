@@ -73,55 +73,64 @@ class RootStore {
     };
 
     public toggleRunning = async (): Promise<boolean> => {
+        this.geolocationService.setLocation([]);
+        const current_data = moment(new Date()).format(`h:mm a`);
+        console.log(current_data);
+
         if (!this.isRunning) {
             await this.geolocationService.startGeolocation()
 
-            await runInAction(async () => {
+            runInAction(() => {
                 this.training = Object.assign(new Training(), {
                     user_id: this.userStore.user.user_id,
                     type: "RUNNING",
-                    start_data: moment(new Date()).format(`h:mm a`),
+                    start_data: current_data,
                     start_step: this.stepCounter.stepCount,
                     data: moment(new Date()).format(`MM/DD/YYYY`)
                 });
+            })
 
-                const change = await this.trainingCase.initTraining(this.training);
+            const change = await this.trainingCase.initTraining(this.training);
 
-                this.intervalToSaveTraining = setInterval(async () => {
-                    const newPolyline = Object.assign(new Polyline(), {
-                        training_id: this.training.id,
-                        lat: this.geolocationService.currentPosition.lat,
-                        lon: this.geolocationService.currentPosition.lon
-                    });
+            runInAction(() => {
+                this.training = change;
+            });
 
-                    await this.polylineCase.savePolyline(newPolyline);
+            this.intervalToSaveTraining = setInterval(async () => {
+                const newPolyline = Object.assign(new Polyline(), {
+                    training_id: this.training.id,
+                    lat: this.geolocationService.currentPosition.lat,
+                    lon: this.geolocationService.currentPosition.lon
+                });
+                console.log(this.training, `root store training`);
 
-                    const override = await this.trainingCase.getTraining(this.training);
+                await this.polylineCase.savePolyline(newPolyline);
 
-                    runInAction(() => {
-                        this.training = override;
+                const override = await this.trainingCase.getTraining(this.training);
 
-                        let currentDistance: number = 0;
-                        if (this.training.polyline.length > 1 && this.training.polyline) {
-                            for (let i = 0; i < this.training.polyline.length - 1; i++) {
-                                const distance = pointToDistance(
-                                    this.training.polyline[i].lat,
-                                    this.training.polyline[i].lon,
-                                    this.training.polyline[i + 1].lat,
-                                    this.training.polyline[i + 1].lon);
+                runInAction(() => {
+                    this.training = override;
 
-                                currentDistance += distance;
-                            }
+                    let currentDistance: number = 0;
+                    if (this.training.polyline.length > 1 && this.training.polyline) {
+                        for (let i = 0; i < this.training.polyline.length - 1; i++) {
+                            const distance = pointToDistance(
+                                this.training.polyline[i].lat,
+                                this.training.polyline[i].lon,
+                                this.training.polyline[i + 1].lat,
+                                this.training.polyline[i + 1].lon);
 
-                            this.seconds > 0 ? this.training.average = Number(currentDistance / this.seconds).toFixed(2) : this.training.average = `00.00`;
-
-                            this.training.distance = currentDistance.toFixed(2);
+                            currentDistance += distance;
                         }
 
-                    });
+                        this.seconds > 0 ? this.training.average = Number(currentDistance / this.seconds).toFixed(2) : this.training.average = `00.00`;
 
-                }, 10000);
-            });
+                        this.training.distance = currentDistance.toFixed(2);
+                    }
+
+                });
+
+            }, 10000);
 
             runInAction(() => {
                 this.isRunning = true;
@@ -169,14 +178,17 @@ class RootStore {
                 this.training = change;
             })
             this.geolocationService.setLocation([]);
-            await this.geolocationService.stopGeolocation();
+            // await this.geolocationService.stopGeolocation();
 
             return false;
         }
     };
 
     public startStepCounterService = async () => {
+        // await this.geolocationService.startGeolocation();
         await this.backgroundService.startBackgroundTask(this.stepCounter.startPedometer);
+        // await this.backgroundService.startBackgroundTask(this.geolocationService.startGeolocation);
+        // this.stepCounter.startPedometer();
     }
 
     public stopStepCounterService = async () => {

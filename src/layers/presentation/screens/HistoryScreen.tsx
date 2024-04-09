@@ -131,7 +131,8 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                 <View style={{
                     gap: 12,
                     marginTop: 12,
-                    paddingHorizontal: 24
+                    paddingHorizontal: 24,
+                    paddingBottom: 34
                 }}>
                     <Text children={`History`}
                           style={style.headerLabel}/>

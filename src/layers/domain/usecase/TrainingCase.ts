@@ -42,7 +42,7 @@ export class TrainingCase extends TrainingRepository{
     };
 
     public initTraining = async (training: Training): Promise<Training> => {
-        const {data, error} = await supabase()
+        await supabase()
             .from(`training`)
             .insert({
                 type: training.type,
@@ -59,7 +59,14 @@ export class TrainingCase extends TrainingRepository{
                 kcal: training.kcal,
                 user_id: training.user_id,
             })
+
+        const {data, error} = await supabase()
+            .from(`training`)
             .select()
+            .eq(`user_id`, training.user_id)
+            .eq(`data`, training.data)
+            .eq(`start_data`, training.start_data)
+            .eq(`type`, training.type)
 
         console.log(data[0]);
 
@@ -70,6 +77,7 @@ export class TrainingCase extends TrainingRepository{
 
         return await this.trainingRepository.findOne({
             where: {
+                id: data[0].id,
                 type: training.type,
                 distance: training.distance,
                 average: training.average,
@@ -102,7 +110,6 @@ export class TrainingCase extends TrainingRepository{
                 start_data: training.start_data,
                 end_data: training.end_data,
                 data: training.data,
-                // kcal: training.kcal,
                 kcal: 2,
                 user_id: user_id,
             })

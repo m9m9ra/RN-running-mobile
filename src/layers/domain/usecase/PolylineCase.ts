@@ -6,7 +6,7 @@ export class PolylineCase extends PolylineRepository {
     public polyline: Polyline[] = [];
 
     public savePolyline = async (polyline: Polyline): Promise<Polyline[]> => {
-        const {data, error} = await supabase()
+        await supabase()
             .from(`polyline`)
             .insert({
                 lat: polyline.lat,
@@ -14,8 +14,12 @@ export class PolylineCase extends PolylineRepository {
                 training_id: polyline.training_id,
             });
 
-        console.log(data, error, "poly");
-        await this.polylineRepository.save([polyline])
+        const {data, error} = await supabase()
+            .from(`polyline`)
+            .select()
+            .eq(`training_id`, polyline.training_id)
+
+        await this.polylineRepository.save(data.length > 1 ? data : [polyline])
 
         return await this.polylineRepository.find({
             where: {
