@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import {enGB, registerTranslation} from "react-native-paper-dates";
 import {observer} from "mobx-react-lite";
-import {SafeAreaView, StatusBar, useColorScheme} from "react-native";
+import {PermissionsAndroid, SafeAreaView, StatusBar, useColorScheme} from "react-native";
 import React, {useEffect, useState} from "react";
 import {getLocales} from "react-native-localize";
 import {MD3DarkTheme, MD3LightTheme, PaperProvider} from "react-native-paper";
@@ -11,6 +11,7 @@ import {NavigationContainer} from "@react-navigation/native";
 import {MainStack} from "../../core/navigation/MainStack";
 import {AuthStack} from "../../core/navigation/AuthStack";
 import {Colors} from "react-native/Libraries/NewAppScreen";
+import {LoadingScreen} from "./screens/LoadingScreen";
 registerTranslation('en-GB', enGB)
 
 
@@ -53,7 +54,25 @@ export const App = observer(() => {
                 :
                 false;
 
-
+        try {
+            PermissionsAndroid.request(
+                    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+                    {
+                        title: 'Prodman Running location Permission',
+                        message:
+                                'Prodman Running App needs access to your location ',
+                        buttonPositive: 'OK',
+                    }
+            ).then((granted) => {
+                if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+                    console.log("You can use the location")
+                } else {
+                    console.log("location permission denied")
+                }
+            })
+        } catch (err) {
+            console.warn(err)
+        }
     }, []);
 
     return (
@@ -61,12 +80,16 @@ export const App = observer(() => {
             <SafeAreaView style={{backgroundColor: settingStore.them == "DARK" ? Colors.lighter : Colors.darker, flex: 1}}>
                 <StatusBar barStyle={settingStore.them == "DARK" ? `light-content` : 'dark-content'}
                            backgroundColor={settingStore.them !== "DARK" ? Colors.lighter : Colors.darker}/>
-                <NavigationContainer independent={true}>
-                    {userStore.auth ?
-                        <MainStack/>
+                {loading ?
+                        <LoadingScreen/>
                         :
-                        <AuthStack/>}
-                </NavigationContainer>
+                        <NavigationContainer independent={true}>
+                            {userStore.auth ?
+                                    <MainStack/>
+                                    :
+                                    <AuthStack/>}
+                        </NavigationContainer>
+                }
             </SafeAreaView>
         </PaperProvider>
     );

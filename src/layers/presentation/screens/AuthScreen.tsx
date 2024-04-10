@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
+import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
 import {StackScreenProps} from "@react-navigation/stack";
 import {Appbar, Icon, Text, TextInput} from "react-native-paper";
 import {useTranslation} from "react-i18next";
@@ -12,10 +12,12 @@ import {colorSchema} from "../../../core/utils/ColorSchema";
 
 type props = StackScreenProps<AuthStackParamList, `AuthScreen`>;
 export const AuthScreen = observer(({navigation, route}: props) => {
-    const {t} = useTranslation();
-    const [email, setEmail] = useState<string>(``);
-    const [password, setPassword] = useState<string>(``);
     const {userStore} = useRootStore();
+    const {t} = useTranslation();
+    const [email, setEmail] = useState<string>(userStore.user ? userStore.user.email : ``);
+    const [password, setPassword] = useState<string>(``);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -37,12 +39,27 @@ export const AuthScreen = observer(({navigation, route}: props) => {
                     </Appbar.Header>
                 )
             }
-        })
+        });
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 550)
     }, []);
 
+    const userAuth = async () => {
+        setRefreshing(true)
+        await userStore.userAuth(password, email)
+                .then(() => {
+                    setRefreshing(false);
+                })
+    };
+
     return (
-        <ScrollView contentContainerStyle={style.container}>
+        <ScrollView contentContainerStyle={style.container}
+                    refreshControl={<RefreshControl refreshing={refreshing}
+                                                    onRefresh={() => {}}/>}>
             <TextInput value={email}
+                       disabled={refreshing}
                        onChangeText={text => setEmail(text)}
                        mode={`outlined`}
                        placeholder={`Email`}
@@ -50,6 +67,7 @@ export const AuthScreen = observer(({navigation, route}: props) => {
                        inputMode={`email`}
                        style={{}}/>
             <TextInput value={password}
+                       disabled={refreshing}
                        onChangeText={text => setPassword(text)}
                        mode={`outlined`}
                        secureTextEntry
@@ -58,10 +76,8 @@ export const AuthScreen = observer(({navigation, route}: props) => {
                        placeholder={t(`PASSWORD`)}
                        style={{}}/>
 
-            <TouchableWithoutFeedback disabled={false}
-                                      onPress={async () => {
-                                          await userStore.userAuth(password, email);
-                                      }}>
+            <TouchableWithoutFeedback disabled={refreshing}
+                                      onPress={userAuth}>
                 <View style={{
                     backgroundColor: colorSchema.primary,
                     paddingHorizontal: 9,
@@ -70,7 +86,7 @@ export const AuthScreen = observer(({navigation, route}: props) => {
                     justifyContent: `space-between`,
                     elevation: 4
                 }}>
-                    <TouchableOpacity disabled={false}
+                    <TouchableOpacity disabled={refreshing}
                                       children={<Text children={t(`SIGN_IN`).toUpperCase()}
                                                       style={{
                                                           color: `#FFFFFF`,
@@ -78,17 +94,13 @@ export const AuthScreen = observer(({navigation, route}: props) => {
                                                           letterSpacing: 2.6,
                                                           fontWeight: `700`
                                                       }}/>}
-                                      onPress={async () => {
-                                          await userStore.userAuth(password, email);
-                                      }}/>
-                    <TouchableOpacity disabled={false}
+                                      onPress={userAuth}/>
+                    <TouchableOpacity disabled={refreshing}
                                       children={<Icon size={18} source={`arrow-right`} color={`#FFFFFF`}/>}
-                                      onPress={async () => {
-                                          await userStore.userAuth(password, email);
-                                      }}/>
+                                      onPress={userAuth}/>
                 </View>
             </TouchableWithoutFeedback>
-            <TouchableOpacity disabled={false}
+            <TouchableOpacity disabled={refreshing}
                               children={<Text children={t(`FORGOT_PASSWORD`).toUpperCase()}
                                               style={{
                                                   fontSize: 14,

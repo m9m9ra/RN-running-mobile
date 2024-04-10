@@ -1,13 +1,21 @@
-import {Image, RefreshControl, ScrollView, StyleSheet, TouchableWithoutFeedback, View} from "react-native";
+import {
+    Image,
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
 import {observer} from "mobx-react-lite"
-import {Text} from "react-native-paper";
-import {DrawerScreenProps} from "@react-navigation/drawer";
+import {Appbar, Icon, Text} from "react-native-paper";
+import {DrawerHeaderProps, DrawerScreenProps} from "@react-navigation/drawer";
 import {useLayoutEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {MainStackParamList} from "../../../core/navigation/MainStack";
 import {useRootStore} from "../shared/store/RootStore";
-import {AppBar} from "../shared/ui/AppBar";
 import {Activity} from "../../domain/entity/Activity";
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
 // @ts-ignore
 type props = DrawerScreenProps<MainStackParamList, `PedometerScreen`>;
@@ -19,9 +27,40 @@ export const PedometerScreen = observer(({navigation, route}: props) => {
     useLayoutEffect(() => {
         navigation.setOptions({
             headerShown: true,
-            header: () => {
+            header: (props: DrawerHeaderProps) => {
+
                 return (
-                        <AppBar title={t(`DRAWER_MENU.PEDOMETER`)} action={() => navigation.goBack()}/>
+                        <Appbar.Header elevated
+                                       style={{
+                                           paddingRight: 12,
+                                           paddingLeft: 16,
+                                           backgroundColor: Colors.lighter,
+                                           justifyContent: `space-between`
+                                       }}>
+                            <TouchableOpacity disabled={false}
+                                              onPress={() => {
+                                                  navigation.goBack();
+                                              }}
+                                              children={<Icon size={24}
+                                                              source={"arrow-left"}/>}/>
+                            {/* <Badge children={3}/> */}
+                            <Appbar.Header mode={`small`}
+                                           children={<Text children={`${t("DRAWER_MENU.PEDOMETER")}`}
+                                                           style={{
+                                                               width: `82%`,
+                                                               fontWeight: `700`,
+                                                               letterSpacing: 1,
+                                                               textAlign: `center`
+                                                           }}/>}
+                                           style={{
+                                               backgroundColor: Colors.lighter
+                                           }}/>
+                            <TouchableOpacity disabled={false}
+                                              onPress={() => {
+                                              }}
+                                              children={<Icon size={26}
+                                                              source={"dots-vertical"}/>}/>
+                        </Appbar.Header>
                 )
             }
         })
@@ -39,6 +78,7 @@ export const PedometerScreen = observer(({navigation, route}: props) => {
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
+
                 {userStore.user.activity.map((item: Activity, index: number) => {
                     return (
                             <TouchableWithoutFeedback disabled={false}

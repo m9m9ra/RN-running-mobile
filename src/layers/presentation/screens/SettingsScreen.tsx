@@ -23,8 +23,9 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                 return (
                         <Appbar.Header elevated
                                        style={{
-                                           paddingHorizontal: 18,
-                                           backgroundColor: Colors.lighter
+                                           paddingHorizontal: 16,
+                                           backgroundColor: Colors.lighter,
+                                           justifyContent: `space-between`
                                        }}>
                             <TouchableOpacity disabled={false}
                                               onPress={() => {
@@ -51,7 +52,7 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                                                       setRefreshing(false);
                                                   }, 1450)
                                               }}
-                                              children={<Icon size={28}
+                                              children={<Icon size={26}
                                                               source={"content-save-cog-outline"}/>}/>
                         </Appbar.Header>
                 )

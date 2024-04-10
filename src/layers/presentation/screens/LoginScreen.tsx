@@ -354,7 +354,7 @@ export const LoginScreen = observer(({navigation, route}: props) => {
 
                 <View style={style.actionContainer}>
 
-                    <TouchableWithoutFeedback disabled={false}
+                    <TouchableWithoutFeedback disabled={refreshing}
                                               onPress={async () => userLogin()}>
                         <View style={{
                             backgroundColor: `black`,
@@ -364,7 +364,7 @@ export const LoginScreen = observer(({navigation, route}: props) => {
                             justifyContent: `space-between`,
                             elevation: 4
                         }}>
-                            <TouchableOpacity disabled={false}
+                            <TouchableOpacity disabled={refreshing}
                                               children={<Text children={t(`START`).toUpperCase()}
                                                               style={{
                                                                   color: `#FFFFFF`,
@@ -373,14 +373,14 @@ export const LoginScreen = observer(({navigation, route}: props) => {
                                                                   fontWeight: `700`
                                                               }}/>}
                                               onPress={async () => userLogin()}/>
-                            <TouchableOpacity disabled={false}
+                            <TouchableOpacity disabled={refreshing}
                                               children={<Icon size={18} source={`arrow-right`} color={`#FFFFFF`}/>}
                                               onPress={async () => userLogin()}/>
                         </View>
                     </TouchableWithoutFeedback>
                     <View style={{flexDirection: `row`, alignItems: `center`, flexWrap: `wrap`}}>
 
-                        <TouchableOpacity disabled={false}
+                        <TouchableOpacity disabled={refreshing}
                                           children={<Text children={`Private policy`}
                                                           style={{
                                                               fontSize: 14,

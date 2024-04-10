@@ -25,6 +25,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
     const [languages, setLanguages] = useState<string[]>(Object.keys(i18n.options.resources));
     const [currentLanguages, setCurrentLanguages] = useState<string>(i18n.language);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [sortedTrainingCount, setSortedTrainingCount] = useState<number>(10);
     const {settingStore, geolocationService, userStore} = useRootStore();
 
     useLayoutEffect(() => {
@@ -137,7 +138,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                     <Text children={`History`}
                           style={style.headerLabel}/>
 
-                    {userStore.user.training.map((item: Training, index: number) => {
+                    {userStore.user.training.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         return (
                                 <TouchableWithoutFeedback key={item.id}
                                                           onPress={() => {
@@ -154,7 +155,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                                         <YaMap nightMode={false}
                                                showUserPosition={false}
                                                mapType={"raster"}
-                                               maxFps={15}
+                                               maxFps={5}
                                                 // @ts-ignore
                                                interactive={false}
                                                logoPadding={{horizontal: 200, vertical: 200}}
@@ -166,7 +167,11 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                                             {/* todo - Ебучий полилайн */}
                                             <Polyline points={item.polyline != null
                                                     ? item.polyline
-                                                    : [{...geolocationService.currentPosition}]}/>
+                                                    : [{...geolocationService.currentPosition}]}
+                                                      strokeColor={colorSchema.primary}
+                                                      strokeWidth={3}
+                                                      outlineColor={`#FFFFFF`}
+                                                      outlineWidth={2}/>
                                         </YaMap>
 
                                         <Divider style={{
@@ -222,6 +227,30 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                                 </TouchableWithoutFeedback>
                         )
                     })}
+
+                    {sortedTrainingCount < userStore.user.training.length
+                            ?
+                            <TouchableOpacity disabled={false}
+                                              onPress={() => {
+                                                  setRefreshing(true);
+                                                  setSortedTrainingCount(sortedTrainingCount + 7);
+                                                  setTimeout(() => {
+                                                      setRefreshing(false);
+                                                  }, 250);
+                                              }}
+                                              style={{
+                                                  alignItems: `center`,
+                                                  justifyContent: `center`,
+                                                  marginTop: 4
+                                              }}
+                                              children={<Text children={`Load more`}
+                                                              style={{
+                                                                  fontSize: 16,
+                                                                  color: MD3LightTheme.colors.primary
+                                                              }}/>}/>
+                            :
+                            false
+                    }
                 </View>
             </ScrollView>
     )

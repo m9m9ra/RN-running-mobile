@@ -2,12 +2,16 @@ import {DrawerHeaderProps, DrawerScreenProps} from "@react-navigation/drawer";
 import {MainStackParamList} from "../../../core/navigation/MainStack";
 import {observer} from "mobx-react-lite";
 import {useTranslation} from "react-i18next";
-import {useLayoutEffect, useState} from "react";
+import {useCallback, useLayoutEffect, useRef, useState} from "react";
 import {useRootStore} from "../shared/store/RootStore";
-import {Appbar, Divider, Icon, Text} from "react-native-paper";
+import {Appbar, Button, Chip, Divider, Icon, Menu, Modal, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {Image, RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
-import YaMap, {Polyline} from "react-native-yamap";
+import YaMap, {Marker, Polyline} from "react-native-yamap";
+import ViewShot, {captureScreen} from "react-native-view-shot";
+import {colorSchema} from "../../../core/utils/ColorSchema";
+import Share from 'react-native-share';
+import {shareScreen} from "../../../core/utils/ShareScreen";
 
 
 type props = DrawerScreenProps<MainStackParamList, `AboutTrainingScreen`>;
@@ -16,6 +20,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
     const [languages, setLanguages] = useState<string[]>(Object.keys(i18n.options.resources));
     const [currentLanguages, setCurrentLanguages] = useState<string>(i18n.language);
     const [refreshing, setRefreshing] = useState<boolean>(false);
+    const [showMenu, setShowMenu] = useState<boolean>(false);
     const {settingStore, geolocationService} = useRootStore();
 
     useLayoutEffect(() => {
@@ -44,12 +49,13 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                                   children={<Icon size={28}
                                                                   source={"arrow-left"}/>}/>
                                 <Appbar.Header mode={`small`}
-                                               children={<Text children={t(`TRAINING_RESULT`)}
-                                                               style={{
-                                                                   fontWeight: `700`,
-                                                                   letterSpacing: 1,
-                                                                   textAlign: `center`
-                                                               }}/>}
+                                               children={<Text
+                                                       children={`${t(`TRAINING_RESULT`)}: ${route.params.training.data}`}
+                                                       style={{
+                                                           fontWeight: `700`,
+                                                           letterSpacing: 1,
+                                                           textAlign: `center`
+                                                       }}/>}
                                                style={{
                                                    backgroundColor: Colors.lighter
                                                }}/>
@@ -60,7 +66,8 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                 paddingRight: 12,
                                 gap: 8
                             }}>
-                                <TouchableOpacity disabled={false}
+                                <TouchableOpacity disabled={true}
+                                                  onPress={() => shareScreen()}
                                                   children={<Icon size={22}
                                                                   source={`share-variant`}/>}/>
 
@@ -81,33 +88,94 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
         }, 1450);
     };
 
+
+
     return (
             <ScrollView horizontal={false}
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
+                {/*<View style={{*/}
+                {/*    position: `absolute`,*/}
+                {/*    height: 100,*/}
+                {/*    top: 12,*/}
+                {/*    right: 5,*/}
+                {/*    zIndex: 15,*/}
+                {/*    gap: 8,*/}
+                {/*    backgroundColor: Colors.lighter*/}
+                {/*}}>*/}
+                {/*    <Chip children={`Delete`}*/}
+                {/*          mode={`flat`}*/}
+                {/*          style={{*/}
+                {/*              backgroundColor: Colors.lighter*/}
+                {/*          }}*/}
+                {/*          icon="trash-can-outline"*/}
+                {/*          onPress={() => console.log('Pressed')}/>*/}
+                {/*</View>*/}
 
                 {!refreshing
                         ?
                         <YaMap nightMode={false}
                                showUserPosition={false}
                                mapType={"vector"}
-                               maxFps={30}
+                               maxFps={45}
                                 // @ts-ignore
-                               interactive={false}
+                               interactive={true}
                                logoPadding={{horizontal: 0, vertical: 0}}
                                initialRegion={{
                                    ...route.params.training.polyline[0],
-                                   zoom: 18
+                                   zoom: 17
                                }}
-                               style={{height: 220, borderRadius: 0}}>
+                               style={{height: 260, borderRadius: 0}}>
+                            <Marker point={route.params.training.polyline != null && route.params.training.polyline.length > 2
+                                    ? route.params.training.polyline[0]
+                                    : {...geolocationService.currentPosition}}
+                                    children={<View style={{
+                                        backgroundColor: colorSchema.primary,
+                                        alignItems: `center`,
+                                        justifyContent: `center`,
+                                        width: 22,
+                                        height: 22,
+                                        borderRadius: 100,
+                                        borderColor: `#FFFFFF`,
+                                        borderWidth: 1
+                                    }}>
+                                        <Text children={`0`}
+                                              style={{
+                                                  fontSize: 14,
+                                                  color: `#FFFFFF`
+                                              }}/>
+                                    </View>}/>
+                            <Marker point={route.params.training.polyline != null && route.params.training.polyline.length > 2
+                                    ? route.params.training.polyline[route.params.training.polyline.length - 1]
+                                    : {...geolocationService.currentPosition}}
+                                    children={<View style={{
+                                        backgroundColor: colorSchema.primary,
+                                        alignItems: `center`,
+                                        justifyContent: `center`,
+                                        width: 22,
+                                        height: 22,
+                                        borderRadius: 100,
+                                        borderColor: `#FFFFFF`,
+                                        borderWidth: 1
+                                    }}>
+                                        <Text children={`${route.params.training.distance != null ? route.params.training.distance.slice(0, 2) : 0}`}
+                                              style={{
+                                                  fontSize: 14,
+                                                  color: `#FFFFFF`
+                                              }}/>
+                                    </View>}/>
                             {/* todo - Ебучий полилайн */}
                             <Polyline points={route.params.training.polyline != null
                                     ? route.params.training.polyline
-                                    : [{...geolocationService.currentPosition}]}/>
+                                    : [{...geolocationService.currentPosition}]}
+                                      strokeColor={colorSchema.primary}
+                                      strokeWidth={6}
+                                      outlineColor={`#FFFFFF`}
+                                      outlineWidth={1.4}/>
                         </YaMap>
                         :
-                        <View style={{height: 220, borderRadius: 0, backgroundColor: `#FFFFFF`}}/>
+                        <View style={{height: 260, borderRadius: 0, backgroundColor: `#FFFFFF`}}/>
                 }
 
                 <View style={{
@@ -119,24 +187,39 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                     borderBottomWidth: 1,
                     paddingHorizontal: 24
                 }}>
-                    <View>
+                    <View style={{
+                        alignItems: `center`
+                    }}>
                         <Text children={`${route.params.training.distance ? route.params.training.distance : `0.00`}`}
-                              style={style.headerScore}/>
-                        <Text children={t(`ACTION.DISTANCE`)}
+                              style={{
+                                  ...style.headerScore,
+                                  letterSpacing: -1
+                              }}/>
+                        <Text children={`${t(`ACTION.DISTANCE`)} [km]`}
                               style={style.headerLabel}/>
                     </View>
 
-                    <View>
+                    <View style={{
+                        alignItems: `center`
+                    }}>
+                        <Text children={`${route.params.training.duration ? route.params.training.duration : `00:00:00`}`}
+                              style={{
+                                  ...style.headerScore,
+                                  letterSpacing: -1
+                              }}/>
+                        <Text children={t(`ACTION.DURATION`)}
+                              style={style.headerLabel}/>
+                    </View>
+
+                    <View style={{
+                        alignItems: `center`
+                    }}>
                         <Text children={`${route.params.training.kcal ? route.params.training.kcal.toFixed(2) : `0.00`}`}
-                              style={style.headerScore}/>
+                              style={{
+                                  ...style.headerScore,
+                                  letterSpacing: -1
+                              }}/>
                         <Text children={t(`ACTION.CALORIES`)}
-                              style={style.headerLabel}/>
-                    </View>
-
-                    <View>
-                        <Text children={`${route.params.training.average ? route.params.training.average : `0.00`}`}
-                              style={style.headerScore}/>
-                        <Text children={t(`ACTION.AVERAGE`)}
                               style={style.headerLabel}/>
                     </View>
 
@@ -155,6 +238,31 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                               marginBottom: 8,
                               letterSpacing: 0.8
                           }}/>
+
+                    <View style={{
+                        flexDirection: `row`,
+                        alignItems: `center`,
+                        justifyContent: `space-between`
+                    }}>
+                        <View style={{
+                            flexDirection: `row`,
+                            alignItems: `center`,
+                            gap: 4
+                        }}>
+                            <Icon size={22} source={`speedometer`}/>
+                            <Text children={`Average speed:`}
+                                  style={{
+                                      fontSize: 16,
+                                      fontWeight: `400`
+                                  }}/>
+                        </View>
+
+                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} km/min`}
+                              style={{
+                                  fontSize: 16,
+                                  fontWeight: `400`
+                              }}/>
+                    </View>
 
                     <View style={{
                         flexDirection: `row`,
@@ -198,31 +306,6 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                   }}/>
                         </View>
                         <Text children={`${route.params.training.kcal != null ? route.params.training.kcal : 1} kcal`}
-                              style={{
-                                  fontSize: 16,
-                                  fontWeight: `400`
-                              }}/>
-                    </View>
-
-                    <View style={{
-                        flexDirection: `row`,
-                        alignItems: `center`,
-                        justifyContent: `space-between`
-                    }}>
-                        <View style={{
-                            flexDirection: `row`,
-                            alignItems: `center`,
-                            gap: 4
-                        }}>
-                            <Icon size={22} source={`speedometer`}/>
-                            <Text children={`Average:`}
-                                  style={{
-                                      fontSize: 16,
-                                      fontWeight: `400`
-                                  }}/>
-                        </View>
-
-                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} km/min`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -339,11 +422,14 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
 
 const style = StyleSheet.create({
     container: {
-        flexGrow: 1
+        flexGrow: 1,
+        paddingBottom: 34
     },
     headerScore: {
         fontSize: 28,
         fontWeight: `700`
     },
-    headerLabel: {}
+    headerLabel: {
+        letterSpacing: -0.3
+    }
 });

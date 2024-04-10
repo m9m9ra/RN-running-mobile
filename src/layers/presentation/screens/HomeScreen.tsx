@@ -213,10 +213,10 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                 //     Math.random() * 100
                                 // ]
                                 data:
-                                        // userStore.user.activity
-                                        // ?
-                                        // userStore.user.activity.map(item => item.step)
-                                        // :
+                                // userStore.user.activity
+                                // ?
+                                // userStore.user.activity.map(item => item.step)
+                                // :
                                         [
                                             Math.random() * 100,
                                             Math.random() * 100,
@@ -230,8 +230,8 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                     }}
                                width={Dimensions.get("window").width - 48} // from react-native
                                height={220}
-                               // yAxisLabel="$"
-                               // yAxisSuffix="k"
+                            // yAxisLabel="$"
+                            // yAxisSuffix="k"
                                yAxisInterval={1} // optional, defaults to 1
                                chartConfig={{
                                    backgroundColor: "#A7A7A7",
@@ -268,7 +268,13 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                     gap: 12,
                     marginTop: 12
                 }}>
-                    <Text children={`Recently activity`}/>
+                    <Text children={`Recently activity`}
+                          style={{
+                              color: `gray`,
+                              fontSize: 14,
+                              fontWeight: `700`,
+                              letterSpacing: 2
+                          }}/>
                     {userStore.user.training.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         return (
                                 <TouchableWithoutFeedback key={item.id}
@@ -298,7 +304,11 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                             {/* todo - Ебучий полилайн */}
                                             <Polyline points={item.polyline != null
                                                     ? item.polyline
-                                                    : [{...geolocationService.currentPosition}]}/>
+                                                    : [{...geolocationService.currentPosition}]}
+                                                      strokeColor={colorSchema.primary}
+                                                      strokeWidth={3}
+                                                      outlineColor={`#FFFFFF`}
+                                                      outlineWidth={2}/>
                                         </YaMap>
 
                                         <Divider style={{

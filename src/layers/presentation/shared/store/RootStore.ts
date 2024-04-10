@@ -78,7 +78,7 @@ class RootStore {
         console.log(current_data);
 
         if (!this.isRunning) {
-            await this.geolocationService.startGeolocation()
+            this.geolocationService.startGeolocation()
 
             runInAction(() => {
                 this.training = Object.assign(new Training(), {
@@ -178,7 +178,7 @@ class RootStore {
                 this.training = change;
             })
             this.geolocationService.setLocation([]);
-            // await this.geolocationService.stopGeolocation();
+            this.geolocationService.stopGeolocation();
 
             return false;
         }

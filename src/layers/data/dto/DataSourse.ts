@@ -1,4 +1,5 @@
 import {DataSource} from "typeorm";
+import {Notification} from "../../domain/entity/Notification";
 import {Polyline} from "../../domain/entity/Polyline";
 import {Training} from "../../domain/entity/Training";
 import {Activity} from "../../domain/entity/Activity";
@@ -11,5 +12,5 @@ export const dataSourse = new DataSource({
     location: `default`,
     logging: [`error`, `schema`], //`query`,
     synchronize: true,
-    entities: [Polyline, Training, Activity, Settings, User]
+    entities: [Polyline, Training, Activity, Settings, User, Notification]
 });

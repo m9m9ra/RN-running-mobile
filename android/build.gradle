@@ -6,7 +6,12 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 33
         targetSdkVersion = 33
-        googlePlayServicesVersion = "9.8.0"
+        //googlePlayServicesVersion = "9.8.0"
+
+        // Any of the following will work
+        //googlePlayServicesVersion      = "17.0.0"
+        // playServicesVersion         = "17.0.0"
+        playServicesLocationVersion = "21.0.1" // <----- ADD THIS LINE
 
         // We use NDK 23 which has both M1 support and is the side-by-side NDK version from AGP.
         ndkVersion = "23.1.7779620"

@@ -80,6 +80,6 @@ export class ActivityCase extends ActivityRepository{
                         kcal: 1
                     });
             }
-        }, (60000));
+        }, (60000 * 25));
     };
 }
