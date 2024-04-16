@@ -13,6 +13,7 @@ import {pointToDistance} from "../../../../core/utils/PointToDistance";
 import {createContext, useContext} from "react";
 import {TrainingCase} from "../../../domain/usecase/TrainingCase";
 import {PolylineCase} from "../../../domain/usecase/PolylineCase";
+import {KcalPerMinute} from "../../../../core/utils/KcalCalc";
 
 class RootStore {
     // StoreModules
@@ -106,6 +107,10 @@ class RootStore {
 
                 await this.polylineCase.savePolyline(newPolyline);
 
+                const Kcal = KcalPerMinute({height: 172, weight: 64, averageSpeed: this.training.average});
+                this.training.kcal = Number(Kcal) * this.seconds;
+                console.log(Kcal, this.training.kcal);
+
                 const override = await this.trainingCase.getTraining(this.training);
 
                 runInAction(() => {
@@ -130,7 +135,7 @@ class RootStore {
 
                 });
 
-            }, 10000);
+            }, 7000);
 
             runInAction(() => {
                 this.isRunning = true;

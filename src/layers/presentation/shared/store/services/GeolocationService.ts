@@ -68,7 +68,7 @@ export class GeolocationService {
             },
             {
                 distanceFilter: 0,
-                interval: 9000,
+                interval: 7000,
                 fastestInterval: 5000,
                 accuracy: {
                     android: 'high',

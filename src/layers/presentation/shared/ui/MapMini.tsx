@@ -3,7 +3,7 @@ import {observer} from "mobx-react-lite";
 import YaMap, {Marker, Point, Polyline} from "react-native-yamap";
 import {createRef, useEffect, useState} from "react";
 import {useRootStore} from "../store/RootStore";
-import {Icon, Text} from "react-native-paper";
+import {Icon, MD3LightTheme, Text} from "react-native-paper";
 import {colorSchema} from "../../../../core/utils/ColorSchema";
 
 export const MapMini = observer(() => {
@@ -47,7 +47,7 @@ export const MapMini = observer(() => {
                                nightMode={false}
                                showUserPosition={false}
                                mapType={"vector"}
-                               maxFps={60}
+                               maxFps={40}
                                initialRegion={{
                                    ...geolocationService.currentPosition,
                                    zoom: 19
@@ -59,6 +59,7 @@ export const MapMini = observer(() => {
                                         y: 0
                                     }}
                                     children={<Icon size={16}
+                                                    color={MD3LightTheme.colors.primary}
                                                     source={`circle-slice-8`}/>}/>
                             {/* todo - Ебучий полилайн */}
                             <Polyline points={training != null

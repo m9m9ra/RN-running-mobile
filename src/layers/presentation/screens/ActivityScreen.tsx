@@ -9,6 +9,7 @@ import {HomeStackParamList} from "../../../core/navigation/modules/HomeStack";
 import {useRootStore} from "../shared/store/RootStore";
 import {MapMini} from "../shared/ui/MapMini";
 import {requestLocationPermission} from "../../../core/utils/requestLocationPermission";
+import {openSettings} from "react-native-permissions";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
@@ -30,11 +31,13 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
         console.log(isRunning, gpsPermission);
 
         if (!isRunning && !gpsPermission) {
-
         } else {
             const running = await toggleRunning();
-            !running ? // @ts-ignore
-                    navigation.navigate(`AboutTrainingScreen`, {training: training}) : false;
+            if (!running) {
+                // @ts-ignore
+                navigation.navigate(`AboutTrainingScreen`, {training: training})
+            } else {
+            }
         }
     };
 
@@ -86,7 +89,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                         </View>
 
                         <View>
-                            <Text children={`00:00`}
+                            <Text children={`${training && training.kcal ? training.kcal : `0.00`}`}
                                   style={style.headerScore}/>
                             <Text children={t(`ACTION.CALORIES`)}
                                   style={style.headerLabel}/>
@@ -109,24 +112,29 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                             borderRadius: 4,
                             backgroundColor: `#FFF`
                         }}
-                        onDismiss={() => setPermission(true)}>
+                        onDismiss={() => {
+                            setPermission(true);
+                        }}>
                     <Dialog.Title children={`GPS location`}
                                   style={{
                                       letterSpacing: 1.6
                                   }}/>
                     <Dialog.Content>
                         <Text variant="bodyMedium"
-                              children={`This is simple dialog`}
+                              children={`Prodman Running App needs access to your location always`}
                               style={{
                                   letterSpacing: 0.8
                               }}/>
                     </Dialog.Content>
                     <Dialog.Actions>
-                        <Button onPress={() => setPermission(true)}
+                        <Button onPress={() => {
+                            setPermission(true);
+                            openSettings().then(r => {});
+                        }}
                                 labelStyle={{
                                     letterSpacing: 0.8
                                 }}
-                                children={`Done`}/>
+                                children={`Open settings`}/>
                     </Dialog.Actions>
                 </Dialog>
 

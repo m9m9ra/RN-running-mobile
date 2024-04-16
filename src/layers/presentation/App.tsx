@@ -12,6 +12,7 @@ import {MainStack} from "../../core/navigation/MainStack";
 import {AuthStack} from "../../core/navigation/AuthStack";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {LoadingScreen} from "./screens/LoadingScreen";
+import {openSettings, PERMISSIONS, request} from "react-native-permissions";
 registerTranslation('en-GB', enGB)
 
 
@@ -55,23 +56,25 @@ export const App = observer(() => {
                 false;
 
         try {
-            PermissionsAndroid.request(
-                    PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+            request(
+                    PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
                     {
                         title: 'Prodman Running location Permission',
                         message:
-                                'Prodman Running App needs access to your location ',
+                                'Prodman Running App needs access to your location always',
                         buttonPositive: 'OK',
                     }
             ).then((granted) => {
+                console.log(granted)
                 if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                     console.log("You can use the location")
                 } else {
                     console.log("location permission denied")
+                    openSettings().then(r => {})
                 }
             })
         } catch (err) {
-            console.warn(err)
+            console.warn(err);
         }
     }, []);
 

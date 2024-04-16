@@ -214,7 +214,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                     <View style={{
                         alignItems: `center`
                     }}>
-                        <Text children={`${route.params.training.kcal ? route.params.training.kcal.toFixed(2) : `0.00`}`}
+                        <Text children={`${route.params.training.kcal ? route.params.training.kcal : `0.00`}`}
                               style={{
                                   ...style.headerScore,
                                   letterSpacing: -1
@@ -305,7 +305,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                       fontWeight: `400`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.kcal != null ? route.params.training.kcal : 1} kcal`}
+                        <Text children={`${route.params.training.kcal != null ? route.params.training.kcal : `0.00`} kcal`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
