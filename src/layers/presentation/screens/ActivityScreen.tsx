@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
+import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {useLayoutEffect, useState} from "react";
 import {Appbar, Button, Dialog, Icon, Text} from "react-native-paper";
@@ -10,13 +10,16 @@ import {useRootStore} from "../shared/store/RootStore";
 import {MapMini} from "../shared/ui/MapMini";
 import {requestLocationPermission} from "../../../core/utils/requestLocationPermission";
 import {openSettings} from "react-native-permissions";
+import {useNetInfo} from "@react-native-community/netinfo";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
     const {timer, toggleRunning} = useRootStore();
-    const {training, isRunning} = useRootStore();
+    const {training, isRunning, runningStore} = useRootStore();
     const [permission, setPermission] = useState<boolean>(true);
+    const [refreshing, setRefreshing] = useState<boolean>(false);
+    const { type, isConnected } = useNetInfo();
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -28,22 +31,34 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
         const gpsPermission = await requestLocationPermission();
         setPermission(gpsPermission);
 
-        console.log(isRunning, gpsPermission);
+        console.log(runningStore.isRunning, gpsPermission);
 
         if (!isRunning && !gpsPermission) {
         } else {
-            const running = await toggleRunning();
-            if (!running) {
-                // @ts-ignore
-                navigation.navigate(`AboutTrainingScreen`, {training: training})
-            } else {
-            }
+            setRefreshing(true);
+            runningStore.toggleRunning()
+                    .then((running) => {
+                        setRefreshing(false);
+                        if (!running) {
+                            // @ts-ignore
+                            navigation.navigate(`AboutTrainingStack`, {training: runningStore.training})
+                        } else {
+                        }
+                    });
         }
     };
 
+    const onRefresh = () => {
+        setRefreshing(true);
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 450)
+    };
 
     return (
             <ScrollView horizontal={false}
+                        refreshControl={<RefreshControl refreshing={refreshing}
+                                                        onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
                 <Appbar.Header mode={`small`}
                                elevated
@@ -56,7 +71,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     {/*<View style={{*/}
                     {/*    width: `100%`,*/}
                     {/*    flexDirection: `row`,*/}
-                    {/*    alignItems: `flex-end`,*/}
+                    {/*    alignItems: `center`,*/}
                     {/*    justifyContent: `flex-end`*/}
                     {/*}}>*/}
                     {/*    <Icon size={24}*/}
@@ -65,14 +80,33 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     {/*</View>*/}
 
                     <View style={{
-                        alignItems: `center`,
-                        marginTop: 24
+                        flexDirection: `row`,
+                        justifyContent: `space-between`,
+                        marginTop: 24,
+                        width: `100%`
                     }}>
-                        <Text disabled={false}
-                              children={`${timer}`}
-                              style={style.headerText}/>
-                        <Text children={t(`ACTION.DURATION`)}
-                              style={style.headerLabel}/>
+                        <View>
+
+                        </View>
+                        <View style={{
+                            alignItems: `center`
+                        }}>
+                            <Text disabled={false}
+                                  children={`${runningStore.timer}`}
+                                  style={style.headerText}/>
+                            <Text children={t(`ACTION.DURATION`)}
+                                  style={style.headerLabel}/>
+                        </View>
+                        <View style={{
+                            paddingTop: 14
+                        }}>
+                            {/*<Icon size={24}*/}
+                            {/*      source={`map-marker`}*/}
+                            {/*      color={`green`}/>*/}
+                            <Icon size={24}
+                                  source={`connection`}
+                                  color={isConnected ? `green` : `red`}/>
+                        </View>
                     </View>
 
                     <View style={{
@@ -82,21 +116,21 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                         marginTop: 24
                     }}>
                         <View>
-                            <Text children={`${training && training.distance ? training.distance : `0.00`}`}
+                            <Text children={`${runningStore.training && runningStore.training.distance ? runningStore.training.distance : `0.00`}`}
                                   style={style.headerScore}/>
                             <Text children={t(`ACTION.DISTANCE`)}
                                   style={style.headerLabel}/>
                         </View>
 
                         <View>
-                            <Text children={`${training && training.kcal ? training.kcal : `0.00`}`}
+                            <Text children={`${runningStore.training && runningStore.training.kcal ? runningStore.training.kcal : `0.00`}`}
                                   style={style.headerScore}/>
                             <Text children={t(`ACTION.CALORIES`)}
                                   style={style.headerLabel}/>
                         </View>
 
                         <View>
-                            <Text children={`${training && training.average ? training.average : `00:00`}`}
+                            <Text children={`${runningStore.training && runningStore.training.average ? runningStore.training.average : `00:00`}`}
                                   style={style.headerScore}/>
                             <Text children={t(`ACTION.AVERAGE`)}
                                   style={style.headerLabel}/>
@@ -105,7 +139,10 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     </View>
                 </Appbar.Header>
 
-                <MapMini/>
+                {!refreshing ?
+                        <MapMini/>
+                        :
+                        false}
 
                 <Dialog visible={!permission}
                         style={{
@@ -145,7 +182,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     left: 0,
                     right: 0
                 }}>
-                    <TouchableWithoutFeedback disabled={false}
+                    <TouchableWithoutFeedback disabled={refreshing}
                                               onPress={async () => togleRunning()}>
                         <View style={{
                             backgroundColor: `black`,
@@ -155,10 +192,10 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                             justifyContent: `space-between`,
                             elevation: 4
                         }}>
-                            <TouchableOpacity disabled={false}
+                            <TouchableOpacity disabled={refreshing}
                                     //END_TIMER
                                               children={<Text
-                                                      children={`${isRunning ? t(`ACTION.END_TIMER`) : t(`ACTION.START_TIMER`)}`.toUpperCase()}
+                                                      children={`${runningStore.isRunning ? t(`ACTION.END_TIMER`) : t(`ACTION.START_TIMER`)}`.toUpperCase()}
                                                       style={{
                                                           color: `#FFFFFF`,
                                                           fontSize: 13,
@@ -166,7 +203,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                           fontWeight: `700`
                                                       }}/>}
                                               onPress={async () => togleRunning()}/>
-                            <TouchableOpacity disabled={false}
+                            <TouchableOpacity disabled={refreshing}
                                               children={<Icon size={18} source={`arrow-right`} color={`#FFFFFF`}/>}
                                               onPress={async () => togleRunning()}/>
                         </View>

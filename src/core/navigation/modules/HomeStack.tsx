@@ -34,9 +34,12 @@ export const HomeStack = observer(({navigation, route}: props) => {
                            header: (props: BottomTabHeaderProps) => <AppBar title={props.options.headerTitle}
                                                                             action={() => props.navigation.goBack()}/>,
                            tabBarStyle: {
-                               height: 54,
-                               paddingBottom: 4,
+                               height: 56,
+                               paddingBottom: 8,
+                               paddingTop: 4,
                                backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter,
+                               borderTopWidth: 1,
+                               borderTopColor: colorSchema.secondary
                            },
                            tabBarHideOnKeyboard: true
                        }}>

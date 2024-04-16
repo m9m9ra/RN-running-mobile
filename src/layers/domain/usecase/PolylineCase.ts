@@ -27,6 +27,27 @@ export class PolylineCase extends PolylineRepository {
             }
         });
     };
+    public savePolylineLocal = async (polyline: Polyline): Promise<Polyline[]> => {
+        const isUniq = await this.polylineRepository.findOne({
+            where: {
+                lat: polyline.lat,
+                lon: polyline.lon,
+                training_id: polyline.training_id
+            }
+        });
+
+        if (isUniq != null) {
+
+        } else {
+            await this.polylineRepository.save([polyline]);
+        }
+
+        return await this.polylineRepository.find({
+            where: {
+                training_id: polyline.training_id
+            }
+        });
+    };
 
     public getPolylineRemote = async (training_id: number): Promise<Polyline[]> => {
         const {data, error} = await supabase().from(`polyline`).select().eq('training_id', training_id);

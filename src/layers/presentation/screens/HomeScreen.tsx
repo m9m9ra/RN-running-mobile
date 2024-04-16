@@ -162,17 +162,58 @@ export const HomeScreen = observer(({navigation, route}: props) => {
 
                 <TotalStep useStore={true}/>
 
-                <View>
-                    <FlatList data={data}
-                              horizontal
-                              showsHorizontalScrollIndicator={false}
-                              contentContainerStyle={{
-                                  gap: 24,
-                                  paddingVertical: 24
-                              }}
-                              pagingEnabled
-                              renderItem={item => renderItem(item.item, item.index)}/>
+                <View style={{
+                    paddingVertical: 24,
+                    gap: 12
+                }}>
+                    <Text children={`ACTIVITY STREAK`}
+                          style={{
+                              fontSize: 18,
+                              fontWeight: `700`,
+                              letterSpacing: 2.4
+                          }}/>
+
+                    <View style={{
+                        flexDirection: `row`,
+                        alignItems: `center`
+                    }}>
+                        <Icon size={44}
+                              source={`lightning-bolt-outline`}/>
+                        <View>
+                            <View style={{
+                                flexDirection: `row`,
+                                alignItems: `center`,
+                                justifyContent: `flex-end`
+                            }}>
+                                <Text children={`${userStore.user.training.length}`}
+                                      style={{
+                                          fontSize: 24,
+                                          fontWeight: `700`,
+                                          letterSpacing: 2.4
+                                      }}/>
+                                <Text children={`activity`}
+                                      style={{
+                                          fontSize: 16,
+                                          fontWeight: `700`,
+                                          letterSpacing: 2.4
+                                      }}/>
+                            </View>
+                            <Text children={`total activity streak`}/>
+                        </View>
+                    </View>
                 </View>
+
+                {/*<View>*/}
+                {/*    <FlatList data={data}*/}
+                {/*              horizontal*/}
+                {/*              showsHorizontalScrollIndicator={false}*/}
+                {/*              contentContainerStyle={{*/}
+                {/*                  gap: 24,*/}
+                {/*                  paddingVertical: 24*/}
+                {/*              }}*/}
+                {/*              pagingEnabled*/}
+                {/*              renderItem={item => renderItem(item.item, item.index)}/>*/}
+                {/*</View>*/}
 
                 <View>
                     <View style={{
@@ -192,68 +233,69 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                               // @ts-ignore
                                               navigation.navigate(`HistoryScreen`);
                                           }}
-                                          children={<Text children={`History`}
+                                          children={<Text children={`Show more`}
                                                           style={{
                                                               fontSize: 16,
                                                               fontWeight: `600`,
                                                               color: MD3LightTheme.colors.primary,
-                                                              letterSpacing: 1
+                                                              letterSpacing: 1,
+                                                              textDecorationLine: `underline`
                                                           }}/>}/>
                     </View>
-                    <LineChart data={{
-                        labels: ["Day", "March", "April", "May", "June"],
-                        datasets: [
-                            {
-                                // data: [
-                                //     Math.random() * 100,
-                                //     Math.random() * 100,
-                                //     Math.random() * 100,
-                                //     Math.random() * 100,
-                                //     Math.random() * 100,
-                                //     Math.random() * 100
-                                // ]
-                                data:
-                                // userStore.user.activity
-                                // ?
-                                // userStore.user.activity.map(item => item.step)
-                                // :
-                                        [
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100,
-                                            Math.random() * 100
-                                        ]
-                            }
-                        ]
-                    }}
-                               width={Dimensions.get("window").width - 48} // from react-native
-                               height={220}
-                            // yAxisLabel="$"
-                            // yAxisSuffix="k"
-                               yAxisInterval={1} // optional, defaults to 1
-                               chartConfig={{
-                                   backgroundColor: "#A7A7A7",
-                                   backgroundGradientFrom: "#A7A7A7",
-                                   backgroundGradientTo: "#000000",
-                                   decimalPlaces: 2, // optional, defaults to 2dp
-                                   color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                   labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                                   style: {
-                                       borderRadius: 4
-                                   },
-                                   propsForDots: {
-                                       r: "6",
-                                       strokeWidth: "2",
-                                       stroke: "#ffa726"
-                                   }
-                               }}
-                               bezier
-                               style={{
-                                   marginVertical: 8,
-                                   borderRadius: 4
-                               }}/>
+                    {/*<LineChart data={{*/}
+                    {/*    labels: ["Day", "March", "April", "May", "June"],*/}
+                    {/*    datasets: [*/}
+                    {/*        {*/}
+                    {/*            // data: [*/}
+                    {/*            //     Math.random() * 100,*/}
+                    {/*            //     Math.random() * 100,*/}
+                    {/*            //     Math.random() * 100,*/}
+                    {/*            //     Math.random() * 100,*/}
+                    {/*            //     Math.random() * 100,*/}
+                    {/*            //     Math.random() * 100*/}
+                    {/*            // ]*/}
+                    {/*            data:*/}
+                    {/*            // userStore.user.activity*/}
+                    {/*            // ?*/}
+                    {/*            // userStore.user.activity.map(item => item.step)*/}
+                    {/*            // :*/}
+                    {/*                    [*/}
+                    {/*                        Math.random() * 100,*/}
+                    {/*                        Math.random() * 100,*/}
+                    {/*                        Math.random() * 100,*/}
+                    {/*                        Math.random() * 100,*/}
+                    {/*                        Math.random() * 100,*/}
+                    {/*                        Math.random() * 100*/}
+                    {/*                    ]*/}
+                    {/*        }*/}
+                    {/*    ]*/}
+                    {/*}}*/}
+                    {/*           width={Dimensions.get("window").width - 48} // from react-native*/}
+                    {/*           height={220}*/}
+                    {/*        // yAxisLabel="$"*/}
+                    {/*        // yAxisSuffix="k"*/}
+                    {/*           yAxisInterval={1} // optional, defaults to 1*/}
+                    {/*           chartConfig={{*/}
+                    {/*               backgroundColor: "#A7A7A7",*/}
+                    {/*               backgroundGradientFrom: "#A7A7A7",*/}
+                    {/*               backgroundGradientTo: "#000000",*/}
+                    {/*               decimalPlaces: 2, // optional, defaults to 2dp*/}
+                    {/*               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,*/}
+                    {/*               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,*/}
+                    {/*               style: {*/}
+                    {/*                   borderRadius: 4*/}
+                    {/*               },*/}
+                    {/*               propsForDots: {*/}
+                    {/*                   r: "6",*/}
+                    {/*                   strokeWidth: "2",*/}
+                    {/*                   stroke: "#ffa726"*/}
+                    {/*               }*/}
+                    {/*           }}*/}
+                    {/*           bezier*/}
+                    {/*           style={{*/}
+                    {/*               marginVertical: 8,*/}
+                    {/*               borderRadius: 4*/}
+                    {/*           }}/>*/}
                 </View>
 
                 {/*<View style={{*/}
@@ -280,7 +322,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                 <TouchableWithoutFeedback key={item.id}
                                                           onPress={() => {
                                                               // @ts-ignore
-                                                              navigation.navigate(`AboutTrainingScreen`, {training: item});
+                                                              navigation.navigate(`AboutTrainingStack`, {training: item});
                                                           }}>
                                     <View style={{
                                         elevation: 2,
@@ -289,27 +331,37 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                         height: 78,
                                         flexDirection: `row`,
                                     }}>
-                                        <YaMap nightMode={false}
-                                               showUserPosition={false}
-                                               mapType={"raster"}
-                                               maxFps={15}
-                                                // @ts-ignore
-                                               interactive={false}
-                                               logoPadding={{horizontal: 200, vertical: 200}}
-                                               initialRegion={{
-                                                   ...item.polyline[0],
-                                                   zoom: 19
-                                               }}
-                                               style={{width: 78, borderRadius: 2}}>
-                                            {/* todo - Ебучий полилайн */}
-                                            <Polyline points={item.polyline != null
-                                                    ? item.polyline
-                                                    : [{...geolocationService.currentPosition}]}
-                                                      strokeColor={colorSchema.primary}
-                                                      strokeWidth={3}
-                                                      outlineColor={`#FFFFFF`}
-                                                      outlineWidth={2}/>
-                                        </YaMap>
+                                        <View style={{
+                                            width: 60,
+                                            borderRadius: 2,
+                                            alignItems: `flex-end`,
+                                            justifyContent: `center`
+                                        }}>
+                                            <Icon size={48}
+                                                  color={`gray`}
+                                                  source={`run-fast`}/>
+                                        </View>
+                                        {/*<YaMap nightMode={false}*/}
+                                        {/*       showUserPosition={false}*/}
+                                        {/*       mapType={"raster"}*/}
+                                        {/*       maxFps={15}*/}
+                                        {/*        // @ts-ignore*/}
+                                        {/*       interactive={false}*/}
+                                        {/*       logoPadding={{horizontal: 200, vertical: 200}}*/}
+                                        {/*       initialRegion={{*/}
+                                        {/*           ...item.polyline[0],*/}
+                                        {/*           zoom: 19*/}
+                                        {/*       }}*/}
+                                        {/*       style={{width: 78, borderRadius: 2}}>*/}
+                                        {/*    /!* todo - Ебучий полилайн *!/*/}
+                                        {/*    <Polyline points={item.polyline != null*/}
+                                        {/*            ? item.polyline*/}
+                                        {/*            : [{...geolocationService.currentPosition}]}*/}
+                                        {/*              strokeColor={colorSchema.primary}*/}
+                                        {/*              strokeWidth={3}*/}
+                                        {/*              outlineColor={`#FFFFFF`}*/}
+                                        {/*              outlineWidth={2}/>*/}
+                                        {/*</YaMap>*/}
 
                                         <Divider style={{
                                             width: 14
@@ -353,7 +405,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                                 <TouchableOpacity disabled={false}
                                                                   onPress={() => {
                                                                       // @ts-ignore
-                                                                      navigation.navigate(`AboutTrainingScreen`, {training: item});
+                                                                      navigation.navigate(`AboutTrainingStack`, {training: item});
                                                                   }}
                                                                   children={<Icon size={32}
                                                                                   color={colorSchema.primary}

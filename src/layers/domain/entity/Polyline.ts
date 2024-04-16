@@ -1,9 +1,9 @@
-import {Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Training} from "./Training";
 
 @Entity()
 export class Polyline {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number
 
     @ManyToOne(() => Training, (training) => training.polyline)

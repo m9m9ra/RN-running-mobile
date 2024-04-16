@@ -13,6 +13,7 @@ import {AuthStack} from "../../core/navigation/AuthStack";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {LoadingScreen} from "./screens/LoadingScreen";
 import {openSettings, PERMISSIONS, request} from "react-native-permissions";
+import {useNetInfo} from "@react-native-community/netinfo";
 registerTranslation('en-GB', enGB)
 
 
@@ -21,12 +22,14 @@ export const App = observer(() => {
     const {userStore, settingStore, startStepCounterService, dataStore, initialize} = useRootStore();
     const {i18n} = useTranslation();
     const [loading, setLoading] = useState<boolean>(true);
+    const { type, isConnected } = useNetInfo();
 
     const storage = new LoadStorage();
 
-
+    // todo - netInfo ?
     useEffect(() => {
         console.log(getLocales());
+        console.log(type, isConnected);
 
         loading ?
                 storage.loadStorage()

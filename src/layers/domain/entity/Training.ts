@@ -1,10 +1,10 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { User } from "./User";
 import {Polyline} from "./Polyline";
 
 @Entity()
 export class Training {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
     id: number
 
     @ManyToOne(() => User, (user) => user.training)
@@ -53,6 +53,6 @@ export class Training {
     data?: string
 
     @Column({nullable: true})
-    kcal: number
+    kcal: string
 
 }

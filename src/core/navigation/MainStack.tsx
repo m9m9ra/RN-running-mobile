@@ -3,13 +3,13 @@ import {Settings} from "../../layers/domain/entity/Settings";
 import {Training} from "../../layers/domain/entity/Training";
 import {createStackNavigator} from "@react-navigation/stack";
 import {LanguageScreen} from "../../layers/presentation/screens/LanguageScreen";
-import {AboutTrainingScreen} from "../../layers/presentation/screens/AboutTrainingScreen";
 import {HistoryScreen} from "../../layers/presentation/screens/HistoryScreen";
+import {AboutTrainingStack} from "./modules/AboutTrainingStack";
 
 export type MainStackParamList = {
     DrawerStack: DrawerStackParamList,
     LanguageScreen: Settings | any,
-    AboutTrainingScreen: {
+    AboutTrainingStack: {
         training: Training
     },
     HistoryScreen: any
@@ -18,32 +18,26 @@ export type MainStackParamList = {
 const Stack = createStackNavigator<MainStackParamList>();
 export const MainStack = () => {
     return (
-        <Stack.Navigator initialRouteName={`DrawerStack`}
-                         detachInactiveScreens={false}
-                          screenOptions={{
-                              headerShown: false
-                          }}>
+            <Stack.Navigator initialRouteName={`DrawerStack`}
+                             detachInactiveScreens={false}
+                             screenOptions={{
+                                 headerShown: false
+                             }}>
 
-            <Stack.Screen name={`DrawerStack`}
-                           component={DrawerStack}/>
+                <Stack.Screen name={`DrawerStack`}
+                              component={DrawerStack}/>
 
-            <Stack.Screen name={`LanguageScreen`}
-                           options={{
+                <Stack.Screen name={`LanguageScreen`}
+                              options={{}}
+                              component={LanguageScreen}/>
 
-                           }}
-                           component={LanguageScreen}/>
+                <Stack.Screen name={`AboutTrainingStack`}
+                              options={{}}
+                              component={AboutTrainingStack}/>
 
-            <Stack.Screen name={`AboutTrainingScreen`}
-                           options={{
-
-                           }}
-                           component={AboutTrainingScreen}/>
-
-            <Stack.Screen name={`HistoryScreen`}
-                           options={{
-
-                           }}
-                           component={HistoryScreen}/>
-        </Stack.Navigator>
+                <Stack.Screen name={`HistoryScreen`}
+                              options={{}}
+                              component={HistoryScreen}/>
+            </Stack.Navigator>
     )
 }

@@ -22,25 +22,25 @@ export class GeolocationService {
             setLocation: action
         });
 
-        Geolocation.getCurrentPosition(position => {
-            console.log(position);
-            this.currentPosition = {
-                lon: position.coords.longitude,
-                lat: position.coords.latitude
-            };
-        }, () => {
-        }, {
-            timeout: 5000,
-            maximumAge: 10000,
-            enableHighAccuracy: false,
-            distanceFilter: 0,
-            forceRequestLocation: true,
-            accuracy: {
-                android: 'high',
-                ios: 'best',
-            },
-            showLocationDialog: true
-        });
+        // Geolocation.getCurrentPosition(position => {
+        //     console.log(position);
+        //     this.currentPosition = {
+        //         lon: position.coords.longitude,
+        //         lat: position.coords.latitude
+        //     };
+        // }, () => {
+        // }, {
+        //     timeout: 5000,
+        //     maximumAge: 10000,
+        //     enableHighAccuracy: false,
+        //     distanceFilter: 0,
+        //     forceRequestLocation: true,
+        //     accuracy: {
+        //         android: 'high',
+        //         ios: 'best',
+        //     },
+        //     showLocationDialog: true
+        // });
     }
 
     public setLocation = (polyline: Point[]): void => {
@@ -68,7 +68,7 @@ export class GeolocationService {
             },
             {
                 distanceFilter: 0,
-                interval: 7000,
+                interval: 5000,
                 fastestInterval: 5000,
                 accuracy: {
                     android: 'high',

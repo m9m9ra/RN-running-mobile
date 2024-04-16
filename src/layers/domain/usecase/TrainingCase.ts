@@ -41,6 +41,47 @@ export class TrainingCase extends TrainingRepository{
         return await this.trainingRepository.save(training);
     };
 
+    public updateTrainingLocal = async (training: Training): Promise<Training> => {
+        await this.trainingRepository.save(training);
+
+        return await this.trainingRepository.findOne({
+            where: {
+                id: training.id
+            },
+            relations: {
+                polyline: true
+            }
+        })
+    };
+
+    public initTrainingLocal = async (training: Training): Promise<Training> => {
+        const newTraining = await this.trainingRepository.save({
+            ...training
+        });
+
+        return await this.trainingRepository.findOne({
+            where: {
+                id: newTraining.id,
+                type: training.type,
+                distance: training.distance,
+                average: training.average,
+                duration: training.duration,
+                circle: training.circle,
+                start_step: training.start_step,
+                end_step: training.end_step,
+                step_count: training.step_count,
+                start_data: training.start_data,
+                end_data: training.end_data,
+                data: training.data,
+                kcal: training.kcal,
+                user_id: training.user_id
+            },
+            relations: {
+                polyline: true
+            }
+        })
+    };
+
     public initTraining = async (training: Training): Promise<Training> => {
         await supabase()
             .from(`training`)

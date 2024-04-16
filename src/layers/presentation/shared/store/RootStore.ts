@@ -14,6 +14,7 @@ import {createContext, useContext} from "react";
 import {TrainingCase} from "../../../domain/usecase/TrainingCase";
 import {PolylineCase} from "../../../domain/usecase/PolylineCase";
 import {KcalPerMinute} from "../../../../core/utils/KcalCalc";
+import {RunningStore} from "./modules/RunningStore";
 
 class RootStore {
     // StoreModules
@@ -21,6 +22,7 @@ class RootStore {
     public settingStore: SettingStore;
     public dataStore: DataStore;
     public errorStore: ErrorStore;
+    public runningStore: RunningStore;
 
     // ServicesModules
     public isRunning: boolean = false;
@@ -54,6 +56,11 @@ class RootStore {
             this.stepCounter, 
             this.geolocationService);
 
+        this.runningStore = new RunningStore(
+            this.stepCounter,
+            this.userStore
+            );
+
         this.settingStore = new SettingStore(this.errorStore);
 
         makeObservable(this, {
@@ -73,6 +80,7 @@ class RootStore {
         this.polylineCase = new PolylineCase();
     };
 
+    // todo - deprecated
     public toggleRunning = async (): Promise<boolean> => {
         this.geolocationService.setLocation([]);
         const current_data = moment(new Date()).format(`h:mm a`);
@@ -108,8 +116,8 @@ class RootStore {
                 await this.polylineCase.savePolyline(newPolyline);
 
                 const Kcal = KcalPerMinute({height: 172, weight: 64, averageSpeed: this.training.average});
-                this.training.kcal = Number(Kcal) * this.seconds;
-                console.log(Kcal, this.training.kcal);
+                // this.training.kcal = Number(Kcal) * this.seconds;
+                // console.log(Kcal, this.training.kcal);
 
                 const override = await this.trainingCase.getTraining(this.training);
 
@@ -135,7 +143,7 @@ class RootStore {
 
                 });
 
-            }, 7000);
+            }, 5000);
 
             runInAction(() => {
                 this.isRunning = true;

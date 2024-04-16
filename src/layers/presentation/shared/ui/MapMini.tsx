@@ -1,40 +1,23 @@
 import {RefreshControl, ScrollView, StyleSheet, View} from "react-native";
 import {observer} from "mobx-react-lite";
-import YaMap, {Marker, Point, Polyline} from "react-native-yamap";
-import {createRef, useEffect, useState} from "react";
+import YaMap, {Marker, Polyline} from "react-native-yamap";
+import {createRef, useEffect, useLayoutEffect, useState} from "react";
 import {useRootStore} from "../store/RootStore";
 import {Icon, MD3LightTheme, Text} from "react-native-paper";
 import {colorSchema} from "../../../../core/utils/ColorSchema";
 
 export const MapMini = observer(() => {
-    const {training, geolocationService} = useRootStore();
+    const {runningStore} = useRootStore();
     const yaMapRef = createRef<YaMap>();
-    const [refreshing, setRefreshing] = useState<boolean>(false);
-    const [defaultPosition, setDefaultPosition] = useState({
-        lat: 54.7065,
-        lon: 20.511,
-    });
 
     useEffect(() => {
-        setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 360)
+        yaMapRef.current.fitAllMarkers();
     }, []);
-
-    const onRefresh = () => {
-        setRefreshing(true);
-        setTimeout(() => {
-            setRefreshing(false);
-        }, 560)
-    };
 
     return (
             <ScrollView horizontal={false}
-                        refreshControl={<RefreshControl refreshing={refreshing}
-                                                        onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
-                {/*<Text children={JSON.stringify(training != null ? training.polyline : training)}*/}
+                {/*<Text children={JSON.stringify(runningStore.training != null ? runningStore.training.polyline : runningStore.training)}*/}
                 {/*      style={{*/}
                 {/*          position: `absolute`,*/}
                 {/*          top: 0,*/}
@@ -42,35 +25,33 @@ export const MapMini = observer(() => {
                 {/*          padding: 12,*/}
                 {/*          fontWeight: `700`*/}
                 {/*      }}/>*/}
-                {!refreshing ?
-                        <YaMap ref={yaMapRef}
-                               nightMode={false}
-                               showUserPosition={false}
-                               mapType={"vector"}
-                               maxFps={40}
-                               initialRegion={{
-                                   ...geolocationService.currentPosition,
-                                   zoom: 19
-                               }}
-                               style={{flex: 1}}>
-                            <Marker point={{...geolocationService.currentPosition}}
-                                    anchor={{
-                                        x: 0,
-                                        y: 0
-                                    }}
-                                    children={<Icon size={16}
-                                                    color={MD3LightTheme.colors.primary}
-                                                    source={`circle-slice-8`}/>}/>
-                            {/* todo - Ебучий полилайн */}
-                            <Polyline points={training != null
-                                    ? training.polyline
-                                    : [{...geolocationService.currentPosition}]}
-                                      strokeColor={colorSchema.primary}
-                                      strokeWidth={6}
-                                      outlineColor={`#FFFFFF`}
-                                      outlineWidth={1.4}/>
-                        </YaMap>
-                        : false}
+                <YaMap ref={yaMapRef}
+                       nightMode={false}
+                       showUserPosition={false}
+                       mapType={"vector"}
+                       maxFps={40}
+                       initialRegion={{
+                           ...runningStore.currentPosition,
+                           zoom: 19
+                       }}
+                       style={{flex: 1}}>
+                    <Marker point={{...runningStore.currentPosition}}
+                            anchor={{
+                                x: 0,
+                                y: 0
+                            }}
+                            children={<Icon size={16}
+                                            color={MD3LightTheme.colors.primary}
+                                            source={`circle-slice-8`}/>}/>
+                    {/* todo - Ебучий полилайн */}
+                    <Polyline points={runningStore.training != null
+                            ? runningStore.training.polyline
+                            : [{...runningStore.currentPosition}]}
+                              strokeColor={colorSchema.primary}
+                              strokeWidth={6}
+                              outlineColor={`#FFFFFF`}
+                              outlineWidth={1.4}/>
+                </YaMap>
             </ScrollView>
     );
 });

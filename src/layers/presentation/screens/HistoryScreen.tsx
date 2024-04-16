@@ -7,7 +7,7 @@ import {
     TouchableWithoutFeedback,
     View
 } from "react-native";
-import {useLayoutEffect, useState} from "react";
+import {createRef, useEffect, useLayoutEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {observer} from "mobx-react-lite";
 import {Appbar, Avatar, Divider, Icon, MD3LightTheme, Text} from "react-native-paper";
@@ -138,12 +138,22 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                     <Text children={`History`}
                           style={style.headerLabel}/>
 
-                    {userStore.user.training.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
+                    {userStore.user.training.reverse().slice(0, sortedTrainingCount).map((item: Training, index: number) => {
+                        const yaMapRef = createRef<YaMap>();
+
+                        // yaMapRef.current.fitMarkers(item.polyline);
+
                         return (
                                 <TouchableWithoutFeedback key={item.id}
                                                           onPress={() => {
+                                                              // // @ts-ignore
+                                                              // navigation.navigate(`AboutTrainingScreen`, {
+                                                              //     // @ts-ignore
+                                                              //     screen: `AboutTrainingScreen`,
+                                                              //     params: {training: item}
+                                                              // });
                                                               // @ts-ignore
-                                                              navigation.navigate(`AboutTrainingScreen`, {training: item});
+                                                              navigation.navigate(`AboutTrainingStack`, {training: item});
                                                           }}>
                                     <View style={{
                                         elevation: 2,
@@ -152,7 +162,8 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                                         height: 78,
                                         flexDirection: `row`,
                                     }}>
-                                        <YaMap nightMode={false}
+                                        <YaMap ref={yaMapRef}
+                                               nightMode={false}
                                                showUserPosition={false}
                                                mapType={"raster"}
                                                maxFps={5}
@@ -216,7 +227,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                                                 <TouchableOpacity disabled={false}
                                                                   onPress={() => {
                                                                       // @ts-ignore
-                                                                      navigation.navigate(`AboutTrainingScreen`, {training: item});
+                                                                      navigation.navigate(`AboutTrainingStack`, {training: item});
                                                                   }}
                                                                   children={<Icon size={32}
                                                                                   color={colorSchema.primary}

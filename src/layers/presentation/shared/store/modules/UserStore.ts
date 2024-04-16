@@ -90,18 +90,6 @@ export default class UserStore {
         }
     };
 
-    private updatePedometer = async (): Promise<void> => {
-        let dayActivity: number;
-        this.user.activity.forEach(item => {
-            console.log(item.data);
-            console.log(moment(new Date()).format("L"));
-            if (item.data == moment(new Date()).format("L")) {
-                dayActivity = item.step
-            }
-        })
-        dayActivity ? this.stepCounter.setStepCount(dayActivity) : false;
-    }
-
     public updateUserInfo = async (): Promise<void> => {
         const user = await this.userCase.updateUser();
 
@@ -138,5 +126,17 @@ export default class UserStore {
             this.user = change;
             this.auth = change.auth;
         });
-    }
+    };
+
+    private updatePedometer = async (): Promise<void> => {
+        let dayActivity: number;
+        this.user.activity.forEach(item => {
+            console.log(item.data);
+            console.log(moment(new Date()).format("L"));
+            if (item.data == moment(new Date()).format("L")) {
+                dayActivity = item.step
+            }
+        })
+        dayActivity ? this.stepCounter.setStepCount(dayActivity) : false;
+    };
 };
