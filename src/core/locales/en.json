@@ -70,6 +70,11 @@
       "HISTORY": "History",
       "ACTIVITY": "Activity",
       "PROFILE": "Profile"
+    },
+
+    "SETTINGS_MENU": {
+      "PRIVACY": "Privacy and Security",
+      "TRAINING": "Training setting"
     }
   }
 }

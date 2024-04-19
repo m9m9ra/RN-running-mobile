@@ -55,6 +55,7 @@ export const TotalStep = observer(({useStore = false, step}: props) => {
                                   titleColor="black"
                                   duration={3450}
                                   delay={1}
+                                  strokeLinecap={`square`}
 
                                   activeStrokeColor={MD3LightTheme.colors.primary}
                                   activeStrokeSecondaryColor={'#C25AFF'}

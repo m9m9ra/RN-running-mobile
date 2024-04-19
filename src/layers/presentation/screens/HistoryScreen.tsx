@@ -135,8 +135,15 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                     paddingHorizontal: 24,
                     paddingBottom: 34
                 }}>
-                    <Text children={`History`}
-                          style={style.headerLabel}/>
+                    {/*<Text children={`History`}*/}
+                    {/*      style={style.headerLabel}/>*/}
+
+                    <Text children={`history`.toUpperCase()}
+                          style={{
+                              fontSize: 16,
+                              fontWeight: `700`,
+                              letterSpacing: 2.4
+                          }}/>
 
                     {userStore.user.training.reverse().slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         const yaMapRef = createRef<YaMap>();

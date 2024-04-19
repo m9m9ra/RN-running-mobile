@@ -7,4 +7,8 @@ export class UploadCase {
 
         return
     };
+
+    public uploadTrainingInfo = async (): Promise<any> => {
+        return
+    };
 }

@@ -1,6 +1,6 @@
 import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, View} from "react-native";
 import {observer} from "mobx-react-lite";
-import {Appbar, Avatar, Caption, Icon, List, Text, Title} from "react-native-paper";
+import {Appbar, Avatar, Caption, Divider, Icon, List, Text, Title} from "react-native-paper";
 import {DrawerHeaderProps, DrawerScreenProps} from "@react-navigation/drawer";
 import {useLayoutEffect, useState} from "react";
 import {Colors} from "react-native/Libraries/NewAppScreen";
@@ -139,6 +139,32 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                                       onPress={() => {
                                           navigation.navigate("LanguageScreen", settingStore.settings);
                                       }}
+                                      children={<List.Item title={`${t("SETTINGS_MENU.TRAINING")}`}
+                                                           // right={() => <Text children={`${t("SETTINGS_MENU.PRIVACY")}`}
+                                                           //                    style={{
+                                                           //                        fontWeight: `700`
+                                                           //                    }}/>}
+                                                           left={() => <List.Icon color={'gray'}
+                                                                                  icon="lightning-bolt-outline"/>}/>}/>
+                    <Divider/>
+
+                    <TouchableOpacity disabled={refreshing}
+                                      onPress={() => {
+                                          navigation.navigate("LanguageScreen", settingStore.settings);
+                                      }}
+                                      children={<List.Item title={`${t("SETTINGS_MENU.PRIVACY")}`}
+                                                           // right={() => <Text children={`${t("SETTINGS_MENU.PRIVACY")}`}
+                                                           //                    style={{
+                                                           //                        fontWeight: `700`
+                                                           //                    }}/>}
+                                                           left={() => <List.Icon color={'gray'}
+                                                                                  icon="lock-outline"/>}/>}/>
+                    <Divider/>
+
+                    <TouchableOpacity disabled={refreshing}
+                                      onPress={() => {
+                                          navigation.navigate("LanguageScreen", settingStore.settings);
+                                      }}
                                       children={<List.Item title={`${t("LANGUAGE")}`}
                                                            right={() => <Text children={`${t("TRANSLATE")}`}
                                                                               style={{
@@ -146,6 +172,7 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                                                                               }}/>}
                                                            left={() => <List.Icon color={'gray'}
                                                                                   icon="google-translate"/>}/>}/>
+                    <Divider/>
                 </View>
 
             </ScrollView>

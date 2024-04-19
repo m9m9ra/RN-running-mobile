@@ -160,22 +160,71 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                           }}/>
                 </View>
 
-                <TotalStep useStore={true}/>
-
                 <View style={{
-                    paddingVertical: 24,
-                    gap: 12
+                    paddingVertical: 0,
+                    gap: 8
                 }}>
-                    <Text children={`ACTIVITY STREAK`}
+
+                    <Text children={`day activity`.toUpperCase()}
                           style={{
                               fontSize: 18,
                               fontWeight: `700`,
                               letterSpacing: 2.4
                           }}/>
 
+                    <TouchableWithoutFeedback disabled={false}
+                                              onPress={() => {
+                                                  // @ts-ignore
+                                                  navigation.navigate(`PedometerScreen`);
+                                              }}
+                                              children={<TotalStep useStore={true}/>}/>
+                </View>
+
+                <View style={{
+                    paddingVertical: 34,
+                    gap: 20
+                }}>
+                    {/*<Text children={`ACTIVITY STREAK`}*/}
+                    {/*      style={{*/}
+                    {/*          fontSize: 18,*/}
+                    {/*          fontWeight: `700`,*/}
+                    {/*          letterSpacing: 2.4*/}
+                    {/*      }}/>*/}
+
+                    <View>
+                        <View style={{
+                            flexDirection: `row`,
+                            alignItems: `center`,
+                            justifyContent: `space-between`,
+                            marginBottom: 12
+                        }}>
+                            <Text children={`ACTIVITY STREAK`.toUpperCase()}
+                                  style={{
+                                      fontSize: 18,
+                                      fontWeight: `700`,
+                                      letterSpacing: 2.4
+                                  }}/>
+
+                            <TouchableOpacity disabled={false}
+                                              onPress={() => {
+                                                  // @ts-ignore
+                                                  navigation.navigate(`HistoryScreen`);
+                                              }}
+                                              children={<Text children={`Show more`}
+                                                              style={{
+                                                                  fontSize: 16,
+                                                                  fontWeight: `600`,
+                                                                  color: MD3LightTheme.colors.primary,
+                                                                  letterSpacing: 1,
+                                                                  textDecorationLine: `underline`
+                                                              }}/>}/>
+                        </View>
+                    </View>
+
                     <View style={{
                         flexDirection: `row`,
-                        alignItems: `center`
+                        alignItems: `center`,
+                        gap: 12
                     }}>
                         <Icon size={44}
                               source={`lightning-bolt-outline`}/>
@@ -183,7 +232,8 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                             <View style={{
                                 flexDirection: `row`,
                                 alignItems: `center`,
-                                justifyContent: `flex-end`
+                                justifyContent: `flex-end`,
+                                gap: 4
                             }}>
                                 <Text children={`${userStore.user.training.length}`}
                                       style={{
@@ -195,128 +245,50 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                       style={{
                                           fontSize: 16,
                                           fontWeight: `700`,
-                                          letterSpacing: 2.4
+                                          letterSpacing: 2.4,
+                                          textAlignVertical: `bottom`
                                       }}/>
                             </View>
-                            <Text children={`total activity streak`}/>
+                            <Text children={`total activity streak`}
+                                  style={{}}/>
                         </View>
                     </View>
                 </View>
-
-                {/*<View>*/}
-                {/*    <FlatList data={data}*/}
-                {/*              horizontal*/}
-                {/*              showsHorizontalScrollIndicator={false}*/}
-                {/*              contentContainerStyle={{*/}
-                {/*                  gap: 24,*/}
-                {/*                  paddingVertical: 24*/}
-                {/*              }}*/}
-                {/*              pagingEnabled*/}
-                {/*              renderItem={item => renderItem(item.item, item.index)}/>*/}
-                {/*</View>*/}
-
-                <View>
-                    <View style={{
-                        flexDirection: `row`,
-                        alignItems: `center`,
-                        justifyContent: `space-between`
-                    }}>
-                        <Text children={t(`MY_ACTIVITY`)}
-                              style={{
-                                  fontSize: 24,
-                                  fontWeight: `700`,
-                                  letterSpacing: 2.4
-                              }}/>
-
-                        <TouchableOpacity disabled={false}
-                                          onPress={() => {
-                                              // @ts-ignore
-                                              navigation.navigate(`HistoryScreen`);
-                                          }}
-                                          children={<Text children={`Show more`}
-                                                          style={{
-                                                              fontSize: 16,
-                                                              fontWeight: `600`,
-                                                              color: MD3LightTheme.colors.primary,
-                                                              letterSpacing: 1,
-                                                              textDecorationLine: `underline`
-                                                          }}/>}/>
-                    </View>
-                    {/*<LineChart data={{*/}
-                    {/*    labels: ["Day", "March", "April", "May", "June"],*/}
-                    {/*    datasets: [*/}
-                    {/*        {*/}
-                    {/*            // data: [*/}
-                    {/*            //     Math.random() * 100,*/}
-                    {/*            //     Math.random() * 100,*/}
-                    {/*            //     Math.random() * 100,*/}
-                    {/*            //     Math.random() * 100,*/}
-                    {/*            //     Math.random() * 100,*/}
-                    {/*            //     Math.random() * 100*/}
-                    {/*            // ]*/}
-                    {/*            data:*/}
-                    {/*            // userStore.user.activity*/}
-                    {/*            // ?*/}
-                    {/*            // userStore.user.activity.map(item => item.step)*/}
-                    {/*            // :*/}
-                    {/*                    [*/}
-                    {/*                        Math.random() * 100,*/}
-                    {/*                        Math.random() * 100,*/}
-                    {/*                        Math.random() * 100,*/}
-                    {/*                        Math.random() * 100,*/}
-                    {/*                        Math.random() * 100,*/}
-                    {/*                        Math.random() * 100*/}
-                    {/*                    ]*/}
-                    {/*        }*/}
-                    {/*    ]*/}
-                    {/*}}*/}
-                    {/*           width={Dimensions.get("window").width - 48} // from react-native*/}
-                    {/*           height={220}*/}
-                    {/*        // yAxisLabel="$"*/}
-                    {/*        // yAxisSuffix="k"*/}
-                    {/*           yAxisInterval={1} // optional, defaults to 1*/}
-                    {/*           chartConfig={{*/}
-                    {/*               backgroundColor: "#A7A7A7",*/}
-                    {/*               backgroundGradientFrom: "#A7A7A7",*/}
-                    {/*               backgroundGradientTo: "#000000",*/}
-                    {/*               decimalPlaces: 2, // optional, defaults to 2dp*/}
-                    {/*               color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,*/}
-                    {/*               labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,*/}
-                    {/*               style: {*/}
-                    {/*                   borderRadius: 4*/}
-                    {/*               },*/}
-                    {/*               propsForDots: {*/}
-                    {/*                   r: "6",*/}
-                    {/*                   strokeWidth: "2",*/}
-                    {/*                   stroke: "#ffa726"*/}
-                    {/*               }*/}
-                    {/*           }}*/}
-                    {/*           bezier*/}
-                    {/*           style={{*/}
-                    {/*               marginVertical: 8,*/}
-                    {/*               borderRadius: 4*/}
-                    {/*           }}/>*/}
-                </View>
-
-                {/*<View style={{*/}
-                {/*    marginTop: 12*/}
-                {/*}}>*/}
-                {/*    <FilterActivityScreen setFilter={setFilter}/>*/}
-                {/*</View>*/}
-
-                {/*<Text children={JSON.stringify(userStore.user.training)}/>*/}
 
                 <View style={{
                     gap: 12,
                     marginTop: 12
                 }}>
-                    <Text children={`Recently activity`}
-                          style={{
-                              color: `gray`,
-                              fontSize: 14,
-                              fontWeight: `700`,
-                              letterSpacing: 2
-                          }}/>
+                    <View>
+                        <View style={{
+                            flexDirection: `row`,
+                            alignItems: `center`,
+                            justifyContent: `space-between`,
+                            marginBottom: 12
+                        }}>
+                            <Text children={`recent activity`.toUpperCase()}
+                                  style={{
+                                      fontSize: 18,
+                                      fontWeight: `700`,
+                                      letterSpacing: 2.4
+                                  }}/>
+
+                            <TouchableOpacity disabled={false}
+                                              onPress={() => {
+                                                  // @ts-ignore
+                                                  navigation.navigate(`HistoryScreen`);
+                                              }}
+                                              children={<Text children={`Show more`}
+                                                              style={{
+                                                                  fontSize: 16,
+                                                                  fontWeight: `600`,
+                                                                  color: MD3LightTheme.colors.primary,
+                                                                  letterSpacing: 1,
+                                                                  textDecorationLine: `underline`
+                                                              }}/>}/>
+                        </View>
+                    </View>
+
                     {userStore.user.training.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         return (
                                 <TouchableWithoutFeedback key={item.id}
@@ -341,27 +313,6 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                                   color={`gray`}
                                                   source={`run-fast`}/>
                                         </View>
-                                        {/*<YaMap nightMode={false}*/}
-                                        {/*       showUserPosition={false}*/}
-                                        {/*       mapType={"raster"}*/}
-                                        {/*       maxFps={15}*/}
-                                        {/*        // @ts-ignore*/}
-                                        {/*       interactive={false}*/}
-                                        {/*       logoPadding={{horizontal: 200, vertical: 200}}*/}
-                                        {/*       initialRegion={{*/}
-                                        {/*           ...item.polyline[0],*/}
-                                        {/*           zoom: 19*/}
-                                        {/*       }}*/}
-                                        {/*       style={{width: 78, borderRadius: 2}}>*/}
-                                        {/*    /!* todo - Ебучий полилайн *!/*/}
-                                        {/*    <Polyline points={item.polyline != null*/}
-                                        {/*            ? item.polyline*/}
-                                        {/*            : [{...geolocationService.currentPosition}]}*/}
-                                        {/*              strokeColor={colorSchema.primary}*/}
-                                        {/*              strokeWidth={3}*/}
-                                        {/*              outlineColor={`#FFFFFF`}*/}
-                                        {/*              outlineWidth={2}/>*/}
-                                        {/*</YaMap>*/}
 
                                         <Divider style={{
                                             width: 14
@@ -417,29 +368,29 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                         )
                     })}
 
-                    {sortedTrainingCount < userStore.user.training.length
-                            ?
-                            <TouchableOpacity disabled={false}
-                                              onPress={() => {
-                                                  setRefreshing(true);
-                                                  setSortedTrainingCount(sortedTrainingCount + 7);
-                                                  setTimeout(() => {
-                                                      setRefreshing(false);
-                                                  }, 250);
-                                              }}
-                                              style={{
-                                                  alignItems: `center`,
-                                                  justifyContent: `center`,
-                                                  marginTop: 4
-                                              }}
-                                              children={<Text children={`Load more`}
-                                                              style={{
-                                                                  fontSize: 16,
-                                                                  color: MD3LightTheme.colors.primary
-                                                              }}/>}/>
-                            :
-                            false
-                    }
+                    {/*{sortedTrainingCount < userStore.user.training.length*/}
+                    {/*        ?*/}
+                    {/*        <TouchableOpacity disabled={false}*/}
+                    {/*                          onPress={() => {*/}
+                    {/*                              setRefreshing(true);*/}
+                    {/*                              setSortedTrainingCount(sortedTrainingCount + 7);*/}
+                    {/*                              setTimeout(() => {*/}
+                    {/*                                  setRefreshing(false);*/}
+                    {/*                              }, 250);*/}
+                    {/*                          }}*/}
+                    {/*                          style={{*/}
+                    {/*                              alignItems: `center`,*/}
+                    {/*                              justifyContent: `center`,*/}
+                    {/*                              marginTop: 4*/}
+                    {/*                          }}*/}
+                    {/*                          children={<Text children={`Load more`}*/}
+                    {/*                                          style={{*/}
+                    {/*                                              fontSize: 16,*/}
+                    {/*                                              color: MD3LightTheme.colors.primary*/}
+                    {/*                                          }}/>}/>*/}
+                    {/*        :*/}
+                    {/*        false*/}
+                    {/*}*/}
                 </View>
 
             </ScrollView>

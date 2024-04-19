@@ -27,6 +27,21 @@ export class PolylineCase extends PolylineRepository {
             }
         });
     };
+
+    public uploadPolyline = async (polyline: Polyline[]): Promise<Polyline[]> => {
+        polyline.forEach(item => {
+            supabase()
+                .from(`polyline`)
+                .insert({
+                    lat: item.lat,
+                    lon: item.lon,
+                    training_id: item.training_id,
+                });
+        });
+
+        return
+    };
+
     public savePolylineLocal = async (polyline: Polyline): Promise<Polyline[]> => {
         const isUniq = await this.polylineRepository.findOne({
             where: {

@@ -37,10 +37,6 @@ export class TrainingCase extends TrainingRepository{
         });
     };
 
-    public saveTrainingLocal = async (training: Training[]): Promise<Training[]> => {
-        return await this.trainingRepository.save(training);
-    };
-
     public updateTrainingLocal = async (training: Training): Promise<Training> => {
         await this.trainingRepository.save(training);
 
@@ -82,6 +78,44 @@ export class TrainingCase extends TrainingRepository{
         })
     };
 
+    public saveTrainingLocal = async (training: Training): Promise<Training> => {
+        return await this.trainingRepository.save(training);
+    };
+
+    public uploadTrainingInfo = async (training: Training): Promise<Training> => {
+        await supabase()
+            .from(`training`)
+            .insert({
+                type: training.type,
+                distance: training.distance,
+                average: training.average,
+                average_pace: training.average_pace,
+                polyline: training.polyline,
+                duration: training.duration,
+                circle: training.circle,
+                start_step: training.start_step,
+                end_step: training.end_step,
+                step_count: training.step_count,
+                start_data: training.start_data,
+                end_data: training.end_data,
+                data: training.data,
+                kcal: training.kcal,
+                user_id: training.user_id,
+            })
+
+        const {data, error} = await supabase()
+            .from(`training`)
+            .select()
+            .eq(`user_id`, training.user_id)
+            .eq(`data`, training.data)
+            .eq(`start_data`, training.start_data)
+            .eq(`type`, training.type)
+
+        console.log(data[0]);
+
+        return await this.trainingRepository.save(training);
+    };
+
     public initTraining = async (training: Training): Promise<Training> => {
         await supabase()
             .from(`training`)
@@ -89,6 +123,7 @@ export class TrainingCase extends TrainingRepository{
                 type: training.type,
                 distance: training.distance,
                 average: training.average,
+                average_pace: training.average_pace,
                 duration: training.duration,
                 circle: training.circle,
                 start_step: training.start_step,
@@ -143,6 +178,7 @@ export class TrainingCase extends TrainingRepository{
                 type: training.type,
                 distance: training.distance,
                 average: training.average,
+                average_pace: training.average_pace,
                 duration: training.duration,
                 circle: training.circle,
                 start_step: training.start_step,

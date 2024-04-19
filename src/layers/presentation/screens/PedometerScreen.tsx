@@ -78,6 +78,12 @@ export const PedometerScreen = observer(({navigation, route}: props) => {
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
+                <Text children={`pedometer activity`.toUpperCase()}
+                      style={{
+                          fontSize: 18,
+                          fontWeight: `700`,
+                          letterSpacing: 2.4
+                      }}/>
 
                 {userStore.user.activity.map((item: Activity, index: number) => {
                     return (

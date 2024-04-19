@@ -17,11 +17,23 @@ export class Training {
     @OneToMany(() => Polyline, (polyline) => polyline.training_id)
     polyline?: Polyline[]
 
+    @Column({nullable: false, default: false})
+    remote?: boolean
+
     @Column({nullable: true})
     distance?: string
 
     @Column({nullable: true})
+    max_speed?: string
+
+    @Column({nullable: true})
     average?: string
+
+    @Column({nullable: true})
+    average_pace?: string
+
+    @Column({nullable: true})
+    average_step?: string
 
     // todo - Или ms => number || "00:00:00" => sting.data
     @Column({nullable: true})

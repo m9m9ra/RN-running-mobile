@@ -6,8 +6,7 @@ import {Training} from "../../../layers/domain/entity/Training";
 import {FeedTrainingScreen} from "../../../layers/presentation/screens/FeedTrainingScreen";
 import {ResultTrainingScreen} from "../../../layers/presentation/screens/ResultTrainingScreen";
 import {useLayoutEffect} from "react";
-import {BottomTabHeaderProps} from "@react-navigation/bottom-tabs";
-import {Appbar, Icon, Text} from "react-native-paper";
+import {Appbar, Icon, MD3Colors, MD3LightTheme, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {TouchableOpacity, View} from "react-native";
 import {shareScreen} from "../../utils/ShareScreen";
@@ -18,8 +17,12 @@ export type AboutTrainingStackParamList = {
     AboutTrainingScreen: {
         training: Training
     },
-    FeedTrainingScreen: any,
-    ResultTrainingScreen: any
+    FeedTrainingScreen: {
+        training: Training
+    },
+    ResultTrainingScreen: {
+        training: Training
+    }
 }
 
 type props = StackScreenProps<MainStackParamList, `AboutTrainingStack`>;
@@ -33,8 +36,7 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
             header: (props: StackHeaderProps) => {
 
                 return (
-                        <Appbar.Header
-                                       style={{
+                        <Appbar.Header style={{
                                            backgroundColor: Colors.lighter,
                                            justifyContent: `space-between`
                                        }}>
@@ -70,6 +72,12 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
                                 paddingRight: 12,
                                 gap: 8
                             }}>
+                                <View style={{
+                                    backgroundColor: route.params.training.remote ? MD3LightTheme.colors.primary : MD3Colors.error30,
+                                    borderRadius: 100,
+                                    height: 8,
+                                    width: 8
+                                }}/>
                                 <TouchableOpacity disabled={true}
                                                   onPress={() => shareScreen()}
                                                   children={<Icon size={22}
@@ -116,6 +124,9 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
                             component={AboutTrainingScreen}/>
 
                 <Tab.Screen name={`FeedTrainingScreen`}
+                            initialParams={{
+                                training: route.params.training
+                            }}
                             options={{
                                 tabBarShowLabel: false,
                                 tabBarIcon: () => {
@@ -128,6 +139,9 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
                             component={FeedTrainingScreen}/>
 
                 <Tab.Screen name={`ResultTrainingScreen`}
+                            initialParams={{
+                                training: route.params.training
+                            }}
                             options={{
                                 tabBarShowLabel: false,
                                 tabBarIcon: () => {

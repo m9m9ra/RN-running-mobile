@@ -1,4 +1,4 @@
-import {isLocationEnabled} from "react-native-android-location-enabler";
+import {isLocationEnabled, promptForEnableLocationIfNeeded} from "react-native-android-location-enabler";
 import {PermissionsAndroid,} from "react-native";
 
 export const requestLocationPermission = async (): Promise<boolean> => {
@@ -7,17 +7,21 @@ export const requestLocationPermission = async (): Promise<boolean> => {
 
         return  PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION
-        ).then((granted) => {
-            console.log(granted, checkEnabled, `wtf`);
-            console.log(granted === PermissionsAndroid.RESULTS.GRANTED, `wtf`);
-            if (granted === PermissionsAndroid.RESULTS.GRANTED && checkEnabled) {
-                return true
-            } else {
-                return false
+        ).then(async (granted) => {
+            try {
+                const enableResult = await promptForEnableLocationIfNeeded();
+                console.log('enableResult', enableResult);
+                // The user has accepted to enable the location services
+                // data can be :
+                //  - "already-enabled" if the location services has been already enabled
+                //  - "enabled" if user has clicked on OK button in the popup
+            } catch (error: unknown) {
+                throw new Error(String(error));
             }
+            return granted === PermissionsAndroid.RESULTS.GRANTED;
         })
     } catch (err) {
-        console.warn(err);
-        return false
+        throw new Error(String(err));
     }
+    return false
 };

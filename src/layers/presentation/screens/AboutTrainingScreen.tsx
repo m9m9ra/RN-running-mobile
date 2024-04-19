@@ -19,7 +19,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
 
     useEffect(() => {
         yaMapRef.current.fitMarkers(route.params.training.polyline);
-        yaMapRef.current.fitAllMarkers();
+        // yaMapRef.current.fitAllMarkers();
     }, [route.params.training]);
 
     const onRefresh = () => {
@@ -37,6 +37,17 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
+
+                {/*<Text children={JSON.stringify(route.params.training)}*/}
+                {/*      style={{*/}
+                {/*          position: `absolute`,*/}
+                {/*          top: 14,*/}
+                {/*          left: 24,*/}
+                {/*          right: 24,*/}
+                {/*          zIndex: 1000,*/}
+                {/*          fontWeight: `700`,*/}
+                {/*          fontSize: 14*/}
+                {/*      }}/>*/}
 
                 <YaMap ref={yaMapRef}
                        nightMode={false}
@@ -83,7 +94,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                 borderColor: `#FFFFFF`,
                                 borderWidth: 1
                             }}>
-                                <Text children={`${route.params.training.distance != null ? route.params.training.distance.slice(0, 2) : 0}`}
+                                <Text children={`${route.params.training.distance != null ? Number(route.params.training.distance).toFixed(0) : 0}`}
                                       style={{
                                           fontSize: 14,
                                           color: `#FFFFFF`
@@ -146,8 +157,8 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
 
                 </View>
 
-                {/*todo - Training result -------------------------------------------------------------------*/}
 
+                {/*todo - Training result -------------------------------------------------------------------*/}
                 <View style={{
                     paddingHorizontal: 24,
                     paddingTop: 12,
@@ -180,7 +191,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                   }}/>
                         </View>
 
-                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} km/min`}
+                        <Text children={`${route.params.training.average_pace != null ? route.params.training.average_pace : `0.00`} min/km`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -230,7 +241,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                   }}/>
                         </View>
 
-                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} km/min`}
+                        <Text children={`${route.params.training.max_speed != null ? route.params.training.max_speed : `0.00`} km/min`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -277,13 +288,13 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                        height: 34,
                                        width: 34
                                    }}/>
-                            <Text children={`Total step:`}
+                            <Text children={`Average step:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
                                   }}/>
                         </View>
-                        <Text children={`${route.params.training.step_count != null ? route.params.training.step_count : 1} step`}
+                        <Text children={`${route.params.training.average_step != null ? route.params.training.average_step : 1} step/min`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -305,7 +316,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                        height: 34,
                                        width: 34
                                    }}/>
-                            <Text children={`Average step:`}
+                            <Text children={`Total step:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`

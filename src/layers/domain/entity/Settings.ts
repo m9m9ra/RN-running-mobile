@@ -10,4 +10,10 @@ export class Settings {
 
     @Column({nullable: true, default: "light", enum: ["DARK", "LIGHT"]})
     them: string
+
+    @Column({nullable: false, default: false})
+    gpsAlways: boolean
+
+    @Column({nullable: false, default: false})
+    mapZoom: boolean
 }
