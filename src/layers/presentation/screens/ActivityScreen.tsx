@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {useLayoutEffect, useState} from "react";
-import {Appbar, Button, Dialog, Icon, MD3Colors, Text} from "react-native-paper";
+import {Appbar, Button, Dialog, FAB, Icon, MD3Colors, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {useTranslation} from "react-i18next";
 import {observer} from "mobx-react-lite";
@@ -20,6 +20,7 @@ import {openSettings} from "react-native-permissions";
 import {useNetInfo} from "@react-native-community/netinfo";
 import CircularProgress from "react-native-circular-progress-indicator";
 import {promptForEnableLocationIfNeeded} from "react-native-android-location-enabler";
+import {colorSchema} from "../../../core/utils/ColorSchema";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
@@ -32,6 +33,8 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
 
     const [countdown, setCountdown] = useState<number>(10);
     const [countdownAvailible, setCountdownAvailible] = useState<boolean>(false);
+
+    const [runningPause, setRunningPause] = useState<boolean>(false);
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -63,6 +66,9 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                             setCountdown(10);
                         })
             }, 10000);
+        } else if (runningStore.isRunning && !runningStore.isRunningPause) {
+            setRunningPause(true);
+            return
         } else {
             setRefreshing(true);
             runningStore.toggleRunning()
@@ -111,7 +117,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                         </View>
                         <View style={{
                             alignItems: `center`,
-                            paddingLeft: 18
+                            paddingLeft: 18,
                         }}>
                             <Text disabled={false}
                                   children={`${runningStore.timer}`}
@@ -123,6 +129,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                             paddingTop: 14,
                             flexDirection: `row`,
                             alignItems: `flex-start`,
+                            paddingRight: runningStore.isRunningPause ? 0 : 24,
                             gap: 4
                         }}>
                             <TouchableOpacity disabled={false}
@@ -136,12 +143,19 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                                   fontSize: 13,
                                                                   color: runningStore.gpsEnable ? `green` : MD3Colors.error30
                                                               }}/>}/>
-                            {/*<Icon size={24}*/}
-                            {/*      source={`map-marker`}*/}
-                            {/*      color={gpsStatus ? `green` : MD3Colors.error30}/>*/}
-                            {/*<Icon size={24}*/}
-                            {/*      source={`connection`}*/}
-                            {/*      color={isConnected ? `green`: MD3Colors.error30}/>*/}
+                            {runningStore.isRunningPause
+                                    ?
+                                    <View style={{
+                                        position: `relative`,
+                                        top: 5
+                                    }}>
+                                        <Icon size={20}
+                                              source={`pause`}
+                                              color={`black`}/>
+                                    </View>
+                                    :
+                                    false
+                            }
                         </View>
                     </View>
 
@@ -158,7 +172,9 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                   style={style.headerLabel}/>
                         </View>
 
-                        <View>
+                        <View style={{
+                            alignItems: `center`
+                        }}>
                             <Text children={`${// @ts-ignore
                                     runningStore.training && runningStore.training.kcal !== Infinity && runningStore.training.kcal !== null
                                             ?
@@ -231,6 +247,101 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                         false
                 }
 
+                {runningPause ?
+                        <TouchableWithoutFeedback disabled={false}
+                                                  onPress={() => {
+                                                      setRunningPause(false);
+                                                  }}>
+                            <View style={{
+                                zIndex: 9999,
+                                position: `absolute`,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                top: 190,
+                                alignItems: `center`,
+                                justifyContent: `center`,
+                                backgroundColor: `#0000008B`,
+                                paddingBottom: 80
+                            }}>
+                                <View style={{
+                                    backgroundColor: `#FFF`,
+                                    borderRadius: 4,
+                                    width: 180,
+                                    height: 140,
+                                    paddingHorizontal: 16,
+                                    paddingVertical: 12,
+                                    gap: 24
+                                }}>
+                                    <View style={{
+                                        flexDirection: `row`,
+                                        alignItems: `center`,
+                                        justifyContent: `space-between`,
+                                        paddingHorizontal: 4
+                                    }}>
+                                        <Text children={`Running state`}/>
+                                        <Icon size={24}
+                                              source={`close-box-outline`}/>
+                                    </View>
+                                    <View style={{
+                                        flexDirection: `row`,
+                                        alignItems: `center`,
+                                        justifyContent: `space-between`,
+                                    }}>
+                                        <TouchableOpacity disabled={false}
+                                                          onPress={async () => {
+                                                              if (runningStore.isRunning) {
+                                                                  setRefreshing(true);
+                                                                  setRunningPause(false);
+                                                                  runningStore.toggleRunning()
+                                                                          .then((running) => {
+                                                                              setRefreshing(false);
+                                                                              if (!running) {
+                                                                                  setCountdown(10);
+                                                                                  // @ts-ignore
+                                                                                  navigation.navigate(`AboutTrainingStack`, {training: runningStore.training})
+                                                                              } else {
+                                                                                  throw new Error(`??? Activity Screen`);
+                                                                              }
+                                                                          });
+                                                              }
+                                                          }}
+                                                          style={{
+                                                              width: 58,
+                                                              height: 58,
+                                                              backgroundColor: `#FFF`,
+                                                              borderRadius: 4,
+                                                              alignItems: `center`,
+                                                              justifyContent: `center`,
+                                                              elevation: 4
+                                                          }}
+                                                          children={<Icon size={24}
+                                                                          source={`stop`}/>}/>
+
+                                        <TouchableOpacity disabled={false}
+                                                          onPress={async () => {
+                                                              await runningStore.pauseRunning();
+                                                              setRunningPause(false);
+                                                          }}
+                                                          style={{
+                                                              width: 58,
+                                                              height: 58,
+                                                              backgroundColor: `#FFF`,
+                                                              borderRadius: 4,
+                                                              alignItems: `center`,
+                                                              justifyContent: `center`,
+                                                              elevation: 4
+                                                          }}
+                                                          children={<Icon size={24}
+                                                                          source={`pause`}/>}/>
+                                    </View>
+                                </View>
+                            </View>
+                        </TouchableWithoutFeedback>
+                        :
+                        false
+                }
+
                 <Dialog visible={!permission}
                         style={{
                             borderRadius: 4,
@@ -283,7 +394,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                             <TouchableOpacity disabled={refreshing}
                                     //END_TIMER
                                               children={<Text
-                                                      children={`${runningStore.isRunning ? t(`ACTION.END_TIMER`) : t(`ACTION.START_TIMER`)}`.toUpperCase()}
+                                                      children={`${runningStore.isRunning && !runningStore.isRunningPause ? t(`ACTION.END_TIMER`) : t(`ACTION.START_TIMER`)}`.toUpperCase()}
                                                       style={{
                                                           color: `#FFFFFF`,
                                                           fontSize: 13,

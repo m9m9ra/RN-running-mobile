@@ -69,7 +69,7 @@ export class RunningStore {
         //     },
         //     showLocationDialog: true
         // });
-        this.runTrackBackground();
+        !this.isRunning ? this.runTrackBackground() : false;
 
         makeAutoObservable(this);
     };
@@ -98,120 +98,12 @@ export class RunningStore {
                 this.training = change;
             });
 
-            // todo - GPS tracker ----------------------------------------------------
-            this.watchId = Geolocation.watchPosition(
-                async (position) => {
-                    runInAction(() => {
-                        this.gpsEnable = false;
-                    });
-
-                    const currentPosition = {
-                        lon: position.coords.longitude,
-                        lat: position.coords.latitude
-                    };
-
-                    const newPolyline = Object.assign(new Polyline(), {
-                        training_id: this.training.id,
-                        lat: currentPosition.lat,
-                        lon: currentPosition.lon
-                    });
-
-                    await this.polylineCase.savePolylineLocal(newPolyline);
-
-                    const kcalPerMinute = KcalPerMinute({height: 172, weight: 64, averageSpeed: this.training.average});
-                    const Kcal = (Number(kcalPerMinute) * (this.minute * 60 + this.seconds / 60)).toFixed(2);
-                    const override = await this.trainingCase.getTraining(this.training);
-
-                    runInAction(() => {
-                        this.training = override;
-                        this.training.kcal = Number(Kcal) !== Infinity ? Kcal : this.training.kcal;
-
-                        // todo - Не забудь, а то запомнишь!!!
-                        this.currentPosition = {
-                            lon: position.coords.longitude,
-                            lat: position.coords.latitude
-                        };
-
-                        let currentDistance: number = 0;
-                        if (this.training.polyline.length > 1 && this.training.polyline) {
-                            for (let i = 0; i < this.training.polyline.length - 1; i++) {
-                                const distance = pointToDistance(
-                                    this.training.polyline[i].lat,
-                                    this.training.polyline[i].lon,
-                                    this.training.polyline[i + 1].lat,
-                                    this.training.polyline[i + 1].lon);
-
-                                currentDistance += distance;
-                            }
-                            this.training.distance = currentDistance.toFixed(2);
-
-                            if (Number(this.training.distance) > 0.01) {
-                                this.training.average = (Number(this.training.distance) / this.minute).toFixed(2)
-                            } else {
-                                this.training.average = `0.00`;
-                            }
-
-                            let time: number;
-
-                            // todo - avg
-                            if (this.hour > 0 && this.minute > 0) {
-                                time = this.hour > 0 ? this.hour * 60 * 60 + this.minute * 60: this.minute * 60 + this.seconds;
-                            } else if (this.minute > 0) {
-                                time = this.minute * 60 + this.seconds;
-                            } else {
-                                time = this.seconds
-                            }
-                            // time = this.hour > 0 ? this.hour * 60 + this.minute : this.minute;
-                            const average_pace = ((time / 60) / Number(this.training.distance)).toFixed(2);
-
-                            this.training.average_pace = Number(average_pace) !== Infinity ? average_pace : this.training.average_pace;
-
-                            if (this.training.average > this.training.max_speed) {
-                                this.training.max_speed = this.training.average;
-                            }
-                        }
-                    });
-                },
-                async (error) => {
-                    // todo - error catch
-                    console.log(`error`, error);
-                    runInAction(() => {
-                        this.gpsEnable = false;
-                    });
-                    throw new Error(`Какой-то умник выключил gps во время бега :с` + JSON.stringify(error));
-                },
-                {
-                    distanceFilter: 0,
-                    interval: 1250,
-                    fastestInterval: 900,
-                    accuracy: {
-                        android: 'high',
-                        ios: 'best',
-                    },
-                    //high - false is good
-                    enableHighAccuracy: false,
-                    showsBackgroundLocationIndicator: true,
-                })
-
-            runInAction(() => {
-                this.intervalId = setInterval(() => {
-                    runInAction(() => {
-                        this.seconds += 1;
-                        if (this.seconds >= 60) {
-                            this.minute += 1;
-                            this.seconds = 0;
-                        }
-                        if (this.minute >= 60) {
-                            this.minute = 0;
-                            this.hour += 1;
-                        }
-                        this.timer = `${this.hour < 10 ? '0' + this.hour : this.hour}:${this.minute < 10 ? '0' + this.minute : this.minute}:${this.seconds < 10 ? '0' + this.seconds : this.seconds}`;
-                        // this.training.duration = this.timer;
-                    })
-                }, 1000);
-            });
+            await this.startRunning();
 
             return true;
+        } else if (this.isRunning && this.isRunningPause) {
+            await this.startRunning();
+            return true
         } else {
             Geolocation.clearWatch(this.watchId);
             Geolocation.stopObserving();
@@ -219,6 +111,7 @@ export class RunningStore {
             runInAction(() => {
                 clearInterval(this.intervalId);
                 clearInterval(this.intervalToSaveTraining);
+                this.isRunningPause = false;
 
                 this.isRunning = false;
                 this.training.polyline ? this.training.polyline = this.training.polyline : this.training.polyline = [];
@@ -250,6 +143,133 @@ export class RunningStore {
 
             return false;
         }
+    };
+
+    private startRunning = async (): Promise<void> => {
+        runInAction(() => {
+            this.isRunningPause = false;
+        });
+
+        // todo - GPS tracker ----------------------------------------------------
+        this.watchId = Geolocation.watchPosition(
+            async (position) => {
+                runInAction(() => {
+                    this.gpsEnable = true;
+                });
+
+                const currentPosition = {
+                    lon: position.coords.longitude,
+                    lat: position.coords.latitude
+                };
+
+                const newPolyline = Object.assign(new Polyline(), {
+                    training_id: this.training.id,
+                    lat: currentPosition.lat,
+                    lon: currentPosition.lon
+                });
+
+                await this.polylineCase.savePolylineLocal(newPolyline);
+
+                const kcalPerMinute = KcalPerMinute({height: 172, weight: 64, averageSpeed: this.training.average});
+                const Kcal = (Number(kcalPerMinute) * (this.minute * 60 + this.seconds / 60)).toFixed(2);
+                const override = await this.trainingCase.getTraining(this.training);
+
+                runInAction(() => {
+                    this.training = override;
+                    this.training.kcal = Number(Kcal) !== Infinity ? String(parseInt(Kcal)) : this.training.kcal;
+
+                    // todo - Не забудь, а то запомнишь!!!
+                    this.currentPosition = {
+                        lon: position.coords.longitude,
+                        lat: position.coords.latitude
+                    };
+
+                    let currentDistance: number = 0;
+                    if (this.training.polyline.length > 1 && this.training.polyline) {
+                        for (let i = 0; i < this.training.polyline.length - 1; i++) {
+                            const distance = pointToDistance(
+                                this.training.polyline[i].lat,
+                                this.training.polyline[i].lon,
+                                this.training.polyline[i + 1].lat,
+                                this.training.polyline[i + 1].lon);
+
+                            currentDistance += distance;
+                        }
+                        this.training.distance = currentDistance.toFixed(2);
+
+                        if (Number(this.training.distance) > 0.01) {
+                            this.training.average = (Number(this.training.distance) / this.minute).toFixed(2)
+                        } else {
+                            this.training.average = `0.00`;
+                        }
+
+                        let time: number;
+
+                        // todo - avg
+                        if (this.hour > 0 && this.minute > 0) {
+                            time = this.hour > 0 ? this.hour * 60 * 60 + this.minute * 60: this.minute * 60 + this.seconds;
+                        } else if (this.minute > 0) {
+                            time = this.minute * 60 + this.seconds;
+                        } else {
+                            time = this.seconds
+                        }
+                        // time = this.hour > 0 ? this.hour * 60 + this.minute : this.minute;
+                        const average_pace = ((time / 60) / Number(this.training.distance)).toFixed(2);
+
+                        this.training.average_pace = Number(average_pace) !== Infinity ? average_pace : this.training.average_pace;
+
+                        if (this.training.average > this.training.max_speed) {
+                            this.training.max_speed = this.training.average;
+                        }
+                    }
+                });
+            },
+            async (error) => {
+                // todo - error catch
+                console.log(`error`, error);
+                runInAction(() => {
+                    this.gpsEnable = false;
+                });
+                throw new Error(`Какой-то умник выключил gps во время бега :с` + JSON.stringify(error));
+            },
+            {
+                distanceFilter: 0,
+                interval: 1250,
+                fastestInterval: 900,
+                accuracy: {
+                    android: 'high',
+                    ios: 'best',
+                },
+                //high - false is good
+                enableHighAccuracy: false,
+                showsBackgroundLocationIndicator: true,
+            })
+
+        runInAction(() => {
+            this.intervalId = setInterval(() => {
+                runInAction(() => {
+                    this.seconds += 1;
+                    if (this.seconds >= 60) {
+                        this.minute += 1;
+                        this.seconds = 0;
+                    }
+                    if (this.minute >= 60) {
+                        this.minute = 0;
+                        this.hour += 1;
+                    }
+                    this.timer = `${this.hour < 10 ? '0' + this.hour : this.hour}:${this.minute < 10 ? '0' + this.minute : this.minute}:${this.seconds < 10 ? '0' + this.seconds : this.seconds}`;
+                    // this.training.duration = this.timer;
+                })
+            }, 1000);
+        });
+    };
+
+    public pauseRunning = async (): Promise<void> => {
+        Geolocation.clearWatch(this.watchId);
+        clearInterval(this.intervalId);
+        runInAction(() => {
+            this.isRunningPause = true;
+        })
     };
 
     private runTrackBackground = (): void => {
@@ -298,6 +318,7 @@ export class RunningStore {
                     {
                         distanceFilter: 0,
                         interval: 60000,
+                        // interval: 2000,
                         fastestInterval: 5000,
                         accuracy: {
                             android: 'high',
