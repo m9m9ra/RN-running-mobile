@@ -61,7 +61,10 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                         //     ...route.params.training.polyline[0],
                         //     zoom: 17
                         // }}
-                       style={{height: 260, borderRadius: 0}}>
+                       style={{
+                           height: 260,
+                           borderRadius: 0
+                       }}>
                     <Marker point={route.params.training.polyline != null && route.params.training.polyline.length > 2
                             ? route.params.training.polyline[0]
                             : {...geolocationService.currentPosition}}
@@ -109,6 +112,10 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                               outlineColor={`#FFFFFF`}
                               outlineWidth={1.4}/>
                 </YaMap>
+                <Divider style={{
+                    height: 2,
+                    backgroundColor: colorSchema.secondary
+                }}/>
 
                 <View style={{
                     flexDirection: `row`,
@@ -184,7 +191,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                             gap: 8
                         }}>
                             <Icon size={34} source={`timer-outline`}/>
-                            <Text children={`Average pace:`}
+                            <Text children={`${t(`PROGRESS.AVERAGE_PACE`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
@@ -209,14 +216,14 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                             gap: 8
                         }}>
                             <Icon size={34} source={`speedometer-medium`}/>
-                            <Text children={`Average speed:`}
+                            <Text children={`${t(`PROGRESS.AVERAGE_SPEED`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
                                   }}/>
                         </View>
 
-                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} km/min`}
+                        <Text children={`${route.params.training.average != null ? route.params.training.average : `0.00`} kph`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -234,14 +241,14 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                             gap: 8
                         }}>
                             <Icon size={34} source={`speedometer`}/>
-                            <Text children={`Max.speed:`}
+                            <Text children={`${t(`PROGRESS.MAX_SPEED`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
                                   }}/>
                         </View>
 
-                        <Text children={`${route.params.training.max_speed != null ? route.params.training.max_speed : `0.00`} km/min`}
+                        <Text children={`${route.params.training.max_speed != null ? route.params.training.max_speed : `0.00`} kph`}
                               style={{
                                   fontSize: 16,
                                   fontWeight: `400`
@@ -259,7 +266,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                             gap: 8
                         }}>
                             <Icon size={34} source={`fire`}/>
-                            <Text children={`Calories:`}
+                            <Text children={`${t(`PROGRESS.CALORIES`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
@@ -288,7 +295,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                        height: 34,
                                        width: 34
                                    }}/>
-                            <Text children={`Average step:`}
+                            <Text children={`${t(`PROGRESS.AVERAGE_STEP`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
@@ -316,7 +323,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                                        height: 34,
                                        width: 34
                                    }}/>
-                            <Text children={`Total step:`}
+                            <Text children={`${t(`PROGRESS.TOTAL_STEP`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
@@ -344,7 +351,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                             gap: 4
                         }}>
                             <Icon size={32} source={`timer-sand`}/>
-                            <Text children={`Training start at:`}
+                            <Text children={`${t(`PROGRESS.START_AT`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`
@@ -368,7 +375,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                             gap: 4
                         }}>
                             <Icon size={32} source={`timer-sand-complete`}/>
-                            <Text children={`Training end at:`}
+                            <Text children={`${t(`PROGRESS.END_AT`)}:`}
                                   style={{
                                       fontSize: 16,
                                       fontWeight: `700`

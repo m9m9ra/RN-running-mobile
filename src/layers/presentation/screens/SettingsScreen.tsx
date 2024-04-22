@@ -135,31 +135,31 @@ export const SettingsScreen = observer(({navigation, route}: props) => {
                               letterSpacing: 0.8
                           }}/>
 
-                    <TouchableOpacity disabled={refreshing}
-                                      onPress={() => {
-                                          navigation.navigate("LanguageScreen", settingStore.settings);
-                                      }}
-                                      children={<List.Item title={`${t("SETTINGS_MENU.TRAINING")}`}
-                                                           // right={() => <Text children={`${t("SETTINGS_MENU.PRIVACY")}`}
-                                                           //                    style={{
-                                                           //                        fontWeight: `700`
-                                                           //                    }}/>}
-                                                           left={() => <List.Icon color={'gray'}
-                                                                                  icon="lightning-bolt-outline"/>}/>}/>
-                    <Divider/>
+                    {/*<TouchableOpacity disabled={refreshing}*/}
+                    {/*                  onPress={() => {*/}
+                    {/*                      navigation.navigate("TrainingsSettingsScreen", settingStore.settings);*/}
+                    {/*                  }}*/}
+                    {/*                  children={<List.Item title={`${t("SETTINGS_MENU.TRAINING")}`}*/}
+                    {/*                                       // right={() => <Text children={`${t("SETTINGS_MENU.PRIVACY")}`}*/}
+                    {/*                                       //                    style={{*/}
+                    {/*                                       //                        fontWeight: `700`*/}
+                    {/*                                       //                    }}/>}*/}
+                    {/*                                       left={() => <List.Icon color={'gray'}*/}
+                    {/*                                                              icon="lightning-bolt-outline"/>}/>}/>*/}
+                    {/*<Divider/>*/}
 
-                    <TouchableOpacity disabled={refreshing}
-                                      onPress={() => {
-                                          navigation.navigate("LanguageScreen", settingStore.settings);
-                                      }}
-                                      children={<List.Item title={`${t("SETTINGS_MENU.PRIVACY")}`}
-                                                           // right={() => <Text children={`${t("SETTINGS_MENU.PRIVACY")}`}
-                                                           //                    style={{
-                                                           //                        fontWeight: `700`
-                                                           //                    }}/>}
-                                                           left={() => <List.Icon color={'gray'}
-                                                                                  icon="lock-outline"/>}/>}/>
-                    <Divider/>
+                    {/*<TouchableOpacity disabled={refreshing}*/}
+                    {/*                  onPress={() => {*/}
+                    {/*                      navigation.navigate("LanguageScreen", settingStore.settings);*/}
+                    {/*                  }}*/}
+                    {/*                  children={<List.Item title={`${t("SETTINGS_MENU.PRIVACY")}`}*/}
+                    {/*                                       // right={() => <Text children={`${t("SETTINGS_MENU.PRIVACY")}`}*/}
+                    {/*                                       //                    style={{*/}
+                    {/*                                       //                        fontWeight: `700`*/}
+                    {/*                                       //                    }}/>}*/}
+                    {/*                                       left={() => <List.Icon color={'gray'}*/}
+                    {/*                                                              icon="lock-outline"/>}/>}/>*/}
+                    {/*<Divider/>*/}
 
                     <TouchableOpacity disabled={refreshing}
                                       onPress={() => {

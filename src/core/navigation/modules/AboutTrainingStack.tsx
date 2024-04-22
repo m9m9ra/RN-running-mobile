@@ -12,6 +12,7 @@ import {TouchableOpacity, View} from "react-native";
 import {shareScreen} from "../../utils/ShareScreen";
 import {useTranslation} from "react-i18next";
 import {colorSchema} from "../../utils/ColorSchema";
+import {ProgressStackParamList} from "./ProgressStack";
 
 export type AboutTrainingStackParamList = {
     AboutTrainingScreen: {
@@ -25,7 +26,7 @@ export type AboutTrainingStackParamList = {
     }
 }
 
-type props = StackScreenProps<MainStackParamList, `AboutTrainingStack`>;
+type props = StackScreenProps<ProgressStackParamList, `AboutTrainingStack`>;
 const Tab = createMaterialTopTabNavigator<AboutTrainingStackParamList>();
 export const AboutTrainingStack = ({navigation, route}: props) => {
     const {t} = useTranslation();
@@ -56,7 +57,7 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
                                                                   source={"arrow-left"}/>}/>
                                 <Appbar.Header mode={`small`}
                                                children={<Text
-                                                       children={`${t(`TRAINING_RESULT`)}: ${route.params.training.data}`}
+                                                       children={`${route.params.training.data} - ${route.params.training.start_data}`}
                                                        style={{
                                                            fontWeight: `700`,
                                                            letterSpacing: 1,
@@ -78,7 +79,7 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
                                     height: 8,
                                     width: 8
                                 }}/>
-                                <TouchableOpacity disabled={true}
+                                <TouchableOpacity disabled={false}
                                                   onPress={() => shareScreen()}
                                                   children={<Icon size={22}
                                                                   source={`share-variant`}/>}/>

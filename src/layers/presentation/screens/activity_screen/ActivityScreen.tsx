@@ -1,26 +1,18 @@
-import {
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
-} from "react-native";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
-import {useLayoutEffect, useState} from "react";
-import {Appbar, Button, Dialog, FAB, Icon, MD3Colors, Text} from "react-native-paper";
-import {Colors} from "react-native/Libraries/NewAppScreen";
-import {useTranslation} from "react-i18next";
+import {HomeStackParamList} from "../../../../core/navigation/modules/HomeStack";
 import {observer} from "mobx-react-lite";
-import {HomeStackParamList} from "../../../core/navigation/modules/HomeStack";
-import {useRootStore} from "../shared/store/RootStore";
-import {MapMini} from "../shared/ui/MapMini";
-import {requestLocationPermission} from "../../../core/utils/requestLocationPermission";
-import {openSettings} from "react-native-permissions";
+import {useTranslation} from "react-i18next";
+import {useRootStore} from "../../shared/store/RootStore";
+import {useLayoutEffect, useState} from "react";
 import {useNetInfo} from "@react-native-community/netinfo";
-import CircularProgress from "react-native-circular-progress-indicator";
+import {requestLocationPermission} from "../../../../core/utils/requestLocationPermission";
+import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
+import {Appbar, Button, Dialog, Icon, MD3Colors, Text} from "react-native-paper";
+import {Colors} from "react-native/Libraries/NewAppScreen";
 import {promptForEnableLocationIfNeeded} from "react-native-android-location-enabler";
-import {colorSchema} from "../../../core/utils/ColorSchema";
+import {MapMini} from "../../shared/ui/MapMini";
+import CircularProgress from "react-native-circular-progress-indicator";
+import {openSettings} from "react-native-permissions";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
@@ -180,7 +172,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                             ?
                                             runningStore.training.kcal
                                             :
-                                            `0.00`}`}
+                                            `0`}`}
                                   style={style.headerScore}/>
                             <Text children={t(`ACTION.CALORIES`)}
                                   style={style.headerLabel}/>
@@ -279,7 +271,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                         justifyContent: `space-between`,
                                         paddingHorizontal: 4
                                     }}>
-                                        <Text children={`Running state`}/>
+                                        <Text children={``}/>
                                         <Icon size={24}
                                               source={`close-box-outline`}/>
                                     </View>

@@ -1,18 +1,13 @@
 import {DrawerStack, DrawerStackParamList} from "./modules/DrawerStack";
 import {Settings} from "../../layers/domain/entity/Settings";
-import {Training} from "../../layers/domain/entity/Training";
 import {createStackNavigator} from "@react-navigation/stack";
 import {LanguageScreen} from "../../layers/presentation/screens/LanguageScreen";
-import {HistoryScreen} from "../../layers/presentation/screens/HistoryScreen";
-import {AboutTrainingStack} from "./modules/AboutTrainingStack";
+import {TrainingsSettingsScreen} from "../../layers/presentation/screens/settings_screen/TrainingSettingsScreen";
 
 export type MainStackParamList = {
     DrawerStack: DrawerStackParamList,
     LanguageScreen: Settings | any,
-    AboutTrainingStack: {
-        training: Training
-    },
-    HistoryScreen: any
+    TrainingsSettingsScreen: Settings | any,
 }
 
 const Stack = createStackNavigator<MainStackParamList>();
@@ -31,13 +26,10 @@ export const MainStack = () => {
                               options={{}}
                               component={LanguageScreen}/>
 
-                <Stack.Screen name={`AboutTrainingStack`}
+                <Stack.Screen name={`TrainingsSettingsScreen`}
                               options={{}}
-                              component={AboutTrainingStack}/>
+                              component={TrainingsSettingsScreen}/>
 
-                <Stack.Screen name={`HistoryScreen`}
-                              options={{}}
-                              component={HistoryScreen}/>
             </Stack.Navigator>
     )
 }

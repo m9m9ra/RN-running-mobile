@@ -78,7 +78,7 @@ export const PedometerScreen = observer(({navigation, route}: props) => {
                         refreshControl={<RefreshControl refreshing={refreshing}
                                                         onRefresh={onRefresh}/>}
                         contentContainerStyle={style.container}>
-                <Text children={`pedometer activity`.toUpperCase()}
+                <Text children={`${t("PROGRESS.PEDOMETER_ACTIVITY")}`.toUpperCase()}
                       style={{
                           fontSize: 18,
                           fontWeight: `700`,

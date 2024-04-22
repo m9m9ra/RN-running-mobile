@@ -1,3 +1,11 @@
+import {
+    RefreshControl,
+    ScrollView,
+    StyleSheet,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View
+} from "react-native";
 import {BottomTabHeaderProps, BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {HomeStackParamList} from "../../../core/navigation/modules/HomeStack";
 import {observer} from "mobx-react-lite";
@@ -7,26 +15,14 @@ import {useRootStore} from "../shared/store/RootStore";
 import {Training} from "../../domain/entity/Training";
 import {useTranslation} from "react-i18next";
 import {Appbar, Avatar, Divider, Icon, MD3LightTheme, Text} from "react-native-paper";
-import {
-    Dimensions,
-    RefreshControl,
-    ScrollView,
-    StyleSheet,
-    TouchableOpacity,
-    TouchableWithoutFeedback,
-    View
-} from "react-native";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {daysInMonth} from "../../../core/utils/DayInMonth";
 import moment from "moment";
 import {TotalStep} from "../shared/ui/TotalStep";
-import {FlatList} from "react-native-gesture-handler";
-import {LineChart} from "react-native-chart-kit";
-import YaMap, {Polyline} from "react-native-yamap";
 import {colorSchema} from "../../../core/utils/ColorSchema";
 
 
-type props = BottomTabScreenProps<HomeStackParamList, `HomeScreen`>;
+type props = BottomTabScreenProps<HomeStackParamList, `ProgressStack`>;
 
 export const HomeScreen = observer(({navigation, route}: props) => {
     const [data, setData] = useState<Array<number>>([]);
@@ -41,8 +37,8 @@ export const HomeScreen = observer(({navigation, route}: props) => {
 
     useLayoutEffect(() => {
         navigation.setOptions({
+            headerShown: true,
             header: (props: BottomTabHeaderProps) => {
-
                 return (
                         <Appbar.Header elevated
                                        style={{
@@ -59,7 +55,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                             <Appbar.Header mode={`small`}
                                            children={<Text children={t(`DRAWER_MENU.PROGRESS`)}
                                                            style={{
-                                                               width: `82%`,
+                                                               width: `73%`,
                                                                fontWeight: `700`,
                                                                letterSpacing: 1,
                                                                textAlign: `center`
@@ -67,11 +63,34 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                            style={{
                                                backgroundColor: settingStore.them == "DARK" ? Colors.darker : Colors.lighter
                                            }}/>
-                            <Avatar.Text label="M9"
-                                         style={{
-                                             backgroundColor: `#A7A7A7`
-                                         }}
-                                         size={34}/>
+                            <View style={{
+                                flexDirection: `row`,
+                                alignItems: `center`,
+                                gap: 14
+                            }}>
+                                {userStore.isNotRemoteTrainingStatus
+                                        ?
+                                        <TouchableOpacity disabled={false}
+                                                          onPress={async () => {
+                                                              setRefreshing(true);
+                                                              userStore.uploadLocalTraining()
+                                                                      .then(() => {
+                                                                          setRefreshing(false);
+                                                                      });
+                                                          }}
+                                                          children={<Icon size={24}
+                                                                          source={`cloud-upload-outline`}/>}/>
+                                        :
+                                        <View style={{
+                                            width: 24
+                                        }}/>
+                                }
+                                <Avatar.Text label="M9"
+                                             style={{
+                                                 backgroundColor: `#A7A7A7`
+                                             }}
+                                             size={34}/>
+                            </View>
                         </Appbar.Header>
                 )
             }
@@ -155,19 +174,19 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                           }}/>
                     <Text children={`${t(`GREETINGS`)} ${userStore.user.firstName}`}
                           style={{
-                              fontSize: 24,
+                              fontSize: 22,
                               fontWeight: `700`
                           }}/>
                 </View>
 
                 <View style={{
                     paddingVertical: 0,
-                    gap: 8
+                    gap: 6
                 }}>
 
-                    <Text children={`day activity`.toUpperCase()}
+                    <Text children={`${t("PROGRESS.DAY_ACTIVITY")}`.toUpperCase()}
                           style={{
-                              fontSize: 18,
+                              fontSize: 17,
                               fontWeight: `700`,
                               letterSpacing: 2.4
                           }}/>
@@ -182,7 +201,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
 
                 <View style={{
                     paddingVertical: 34,
-                    gap: 20
+                    gap: 18
                 }}>
                     {/*<Text children={`ACTIVITY STREAK`}*/}
                     {/*      style={{*/}
@@ -196,11 +215,11 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                             flexDirection: `row`,
                             alignItems: `center`,
                             justifyContent: `space-between`,
-                            marginBottom: 12
+                            marginBottom: 8
                         }}>
-                            <Text children={`ACTIVITY STREAK`.toUpperCase()}
+                            <Text children={`${t("PROGRESS.ACTIVITY_STREAK")}`.toUpperCase()}
                                   style={{
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       fontWeight: `700`,
                                       letterSpacing: 2.4
                                   }}/>
@@ -212,7 +231,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                               }}
                                               children={<Text children={`Show more`}
                                                               style={{
-                                                                  fontSize: 16,
+                                                                  fontSize: 14,
                                                                   fontWeight: `600`,
                                                                   color: MD3LightTheme.colors.primary,
                                                                   letterSpacing: 1,
@@ -241,15 +260,16 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                           fontWeight: `700`,
                                           letterSpacing: 2.4
                                       }}/>
-                                <Text children={`activity`}
+                                <Text children={`${t("PROGRESS.ACTIVITY")}`.toLowerCase()}
                                       style={{
                                           fontSize: 16,
                                           fontWeight: `700`,
                                           letterSpacing: 2.4,
-                                          textAlignVertical: `bottom`
+                                          textAlignVertical: `bottom`,
+                                          textAlign: `left`
                                       }}/>
                             </View>
-                            <Text children={`total activity streak`}
+                            <Text children={`${t("PROGRESS.TOTAL_STREAK")}`.toLowerCase()}
                                   style={{}}/>
                         </View>
                     </View>
@@ -264,11 +284,11 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                             flexDirection: `row`,
                             alignItems: `center`,
                             justifyContent: `space-between`,
-                            marginBottom: 12
+                            marginBottom: 10
                         }}>
-                            <Text children={`recent activity`.toUpperCase()}
+                            <Text children={`${t("PROGRESS.RECENT_ACTIVITY")}`.toUpperCase()}
                                   style={{
-                                      fontSize: 18,
+                                      fontSize: 17,
                                       fontWeight: `700`,
                                       letterSpacing: 2.4
                                   }}/>
@@ -280,7 +300,7 @@ export const HomeScreen = observer(({navigation, route}: props) => {
                                               }}
                                               children={<Text children={`Show more`}
                                                               style={{
-                                                                  fontSize: 16,
+                                                                  fontSize: 14,
                                                                   fontWeight: `600`,
                                                                   color: MD3LightTheme.colors.primary,
                                                                   letterSpacing: 1,

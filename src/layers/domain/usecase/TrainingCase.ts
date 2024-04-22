@@ -82,6 +82,45 @@ export class TrainingCase extends TrainingRepository{
         return await this.trainingRepository.save(training);
     };
 
+    public uploadLocalTrainigManual = async (localTraining: Training[], user_id: number): Promise<void> => {
+        localTraining.forEach((training) => {
+            supabase()
+                .from(`training`)
+                .insert({
+                    user_id: user_id,
+                    type: training.type,
+                    polyline: training.polyline,
+                    remote: true,
+
+                    distance: training.distance,
+                    max_speed: training.max_speed,
+                    average: training.average,
+                    average_pace: training.average_pace,
+                    average_step: training.average_step,
+
+                    duration: training.duration,
+                    circle: training.circle,
+                    start_step: training.start_step,
+                    end_step: training.end_step,
+                    step_count: training.step_count,
+                    start_data: training.start_data,
+                    end_data: training.end_data,
+                    data: training.data,
+                    kcal: training.kcal,
+
+                }).then((data) => {
+                console.log(data);
+            })
+        });
+
+        const update = localTraining.map((training) => {
+            training.remote = true;
+            return training;
+        })
+
+        await this.trainingRepository.save(update);
+    };
+
     public uploadTrainingInfo = async (training: Training): Promise<Training> => {
         await supabase()
             .from(`training`)

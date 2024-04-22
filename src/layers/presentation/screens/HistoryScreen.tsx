@@ -13,13 +13,13 @@ import {observer} from "mobx-react-lite";
 import {Appbar, Avatar, Divider, Icon, MD3LightTheme, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {StackHeaderProps, StackScreenProps} from "@react-navigation/stack";
-import {MainStackParamList} from "../../../core/navigation/MainStack";
 import {useRootStore} from "../shared/store/RootStore";
 import {Training} from "../../domain/entity/Training";
 import YaMap, {Polyline} from "react-native-yamap";
 import {colorSchema} from "../../../core/utils/ColorSchema";
+import {ProgressStackParamList} from "../../../core/navigation/modules/ProgressStack";
 
-type props = StackScreenProps<MainStackParamList, `HistoryScreen`>;
+type props = StackScreenProps<ProgressStackParamList, `HistoryScreen`>;
 export const HistoryScreen = observer(({navigation, route}: props) => {
     const {t, i18n} = useTranslation();
     const [languages, setLanguages] = useState<string[]>(Object.keys(i18n.options.resources));
@@ -27,6 +27,12 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
     const [refreshing, setRefreshing] = useState<boolean>(false);
     const [sortedTrainingCount, setSortedTrainingCount] = useState<number>(10);
     const {settingStore, geolocationService, userStore} = useRootStore();
+
+    const [totalResult, setTotalResult] = useState({
+        distance: 0,
+        calories: 0,
+        average_pace: 0
+    });
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -84,6 +90,26 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
         });
     }, [navigation]);
 
+    useEffect(() => {
+        const total = {
+            distance: 0,
+            calories: 0,
+            average_pace: 0
+        };
+
+        userStore.user.training.forEach(training => {
+            total.distance += Number(training.distance);
+            total.calories += Number(training.kcal);
+            total.average_pace += Number(training.average_pace);
+            // total.average += training.distance;
+        });
+
+        total.distance = Number(total.distance.toFixed(2));
+        total.average_pace = Number(total.average_pace.toFixed(2));
+
+        setTotalResult(total);
+    }, []);
+
     const onRefresh = () => {
         setRefreshing(true);
         setTimeout(() => {
@@ -107,21 +133,21 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                     paddingHorizontal: 24
                 }}>
                     <View>
-                        <Text children={`0.00`}
+                        <Text children={`${totalResult.distance}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.DISTANCE`)}
                               style={style.headerLabel}/>
                     </View>
 
                     <View>
-                        <Text children={`00:00`}
+                        <Text children={`${totalResult.calories}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.CALORIES`)}
                               style={style.headerLabel}/>
                     </View>
 
                     <View>
-                        <Text children={`00:00`}
+                        <Text children={`${totalResult.average_pace}`}
                               style={style.headerScore}/>
                         <Text children={t(`ACTION.AVERAGE`)}
                               style={style.headerLabel}/>
@@ -138,7 +164,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                     {/*<Text children={`History`}*/}
                     {/*      style={style.headerLabel}/>*/}
 
-                    <Text children={`history`.toUpperCase()}
+                    <Text children={`${t("PROGRESS.HISTORY")}`.toUpperCase()}
                           style={{
                               fontSize: 16,
                               fontWeight: `700`,
@@ -280,7 +306,8 @@ const style = StyleSheet.create({
     },
     headerScore: {
         fontSize: 28,
-        fontWeight: `700`
+        fontWeight: `700`,
+        textAlign: `center`
     },
     headerLabel: {}
 });

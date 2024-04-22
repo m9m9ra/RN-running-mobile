@@ -53,10 +53,10 @@
     },
 
     "ACTION": {
-      "DURATION": "Продолжительность",
+      "DURATION": "Длительность",
       "DISTANCE": "Дистанция",
       "CALORIES": "Калории [ккал]",
-      "AVERAGE": "Ср.скp [м/мин]",
+      "AVERAGE": "Ср.скp [м/км]",
 
       "START_TIMER": "Начать пробежку",
       "END_TIMER": "Закончить пробежку",
@@ -75,6 +75,26 @@
     "SETTINGS_MENU": {
       "PRIVACY": "Конфиденциальность",
       "TRAINING": "Настройки тренировки"
+    },
+
+    "PROGRESS": {
+      "DAY_ACTIVITY": "Ваша активность",
+      "ACTIVITY_STREAK": "Полоса активности",
+      "RECENT_ACTIVITY": "Недавняя активность",
+      "ACTIVITY": "Активности",
+      "TOTAL_STREAK": "общая полоса активности",
+
+      "AVERAGE_PACE": "Средний темп",
+      "AVERAGE_SPEED": "Средняя скорость",
+      "MAX_SPEED": "Макc.скорость",
+      "CALORIES": "Калории",
+      "AVERAGE_STEP": "Средний шаг",
+      "TOTAL_STEP": "Всего шагов",
+      "START_AT": "Начало тренировки",
+      "END_AT": "Окончание тренировки",
+
+      "HISTORY": "История",
+      "PEDOMETER_ACTIVITY": "Активность шагов"
     }
   }
 }

@@ -7,7 +7,7 @@ import {Icon, MD3LightTheme} from "react-native-paper";
 import {colorSchema} from "../../../../core/utils/ColorSchema";
 
 export const MapMini = observer(() => {
-    const {runningStore} = useRootStore();
+    const {runningStore, settingStore} = useRootStore();
     const yaMapRef = createRef<YaMap>();
     const [zoom, setZoom] = useState<number>(19);
 
@@ -29,7 +29,7 @@ export const MapMini = observer(() => {
                        maxFps={45}
                        initialRegion={{
                            ...runningStore.currentPosition,
-                           zoom: 19
+                           zoom: 18.4
                        }}
                        style={{flex: 1}}>
                     <Marker point={{...runningStore.currentPosition}}

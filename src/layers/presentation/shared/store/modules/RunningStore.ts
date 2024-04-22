@@ -197,15 +197,9 @@ export class RunningStore {
                         }
                         this.training.distance = currentDistance.toFixed(2);
 
-                        if (Number(this.training.distance) > 0.01) {
-                            this.training.average = (Number(this.training.distance) / this.minute).toFixed(2)
-                        } else {
-                            this.training.average = `0.00`;
-                        }
-
                         let time: number;
 
-                        // todo - avg
+                        // todo - avg_pace
                         if (this.hour > 0 && this.minute > 0) {
                             time = this.hour > 0 ? this.hour * 60 * 60 + this.minute * 60: this.minute * 60 + this.seconds;
                         } else if (this.minute > 0) {
@@ -218,9 +212,19 @@ export class RunningStore {
 
                         this.training.average_pace = Number(average_pace) !== Infinity ? average_pace : this.training.average_pace;
 
+                        // todo - avg_speed
+                        if (Number(this.training.distance) > 0.01) {
+                            this.training.average = (Number(this.training.distance) / (time / 60 / 60)).toFixed(2)
+                        } else {
+                            this.training.average = `0.00`;
+                        }
+
                         if (this.training.average > this.training.max_speed) {
                             this.training.max_speed = this.training.average;
                         }
+
+                        console.log(this.training.average, `avg`);
+                        console.log(this.training.max_speed, `max_speed`);
                     }
                 });
             },

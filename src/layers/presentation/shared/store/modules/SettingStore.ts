@@ -28,7 +28,8 @@ export default class SettingStore {
             const newSettings = Object.assign(new Settings, {
                 settings: true,
                 language: 'ru', //default - ru
-                them: `LIGHT`
+                them: `LIGHT`,
+                mapZoom: 19
             });
             const setting = await this.settingRepository.save(newSettings);
             runInAction(() => {
@@ -39,19 +40,26 @@ export default class SettingStore {
     };
 
     public changeSetting = async (setting: Settings): Promise<boolean> => {
-        const currentSetting: Settings = await this.settingRepository.findOne({});
-
-        if (currentSetting != null) {
-            await this.settingRepository.save({
-                ...currentSetting,
+        const current = await this.settingRepository.find({
+            where: {
+                settings: true || false
+            }
+        });
+        if (current[0] != null) {
+            const change = await this.settingRepository.save({
+                ...current[0],
                 ...setting
             });
+            runInAction(() => {
+                this.settings = change;
+            })
             return true;
         } else {
             const newSettings = Object.assign(new Settings, {
                 settings: true,
                 language: "en",
-                them: `LIGHT`
+                them: `LIGHT`,
+                mapZoom: 19
             });
             await this.settingRepository.save(newSettings);
         }

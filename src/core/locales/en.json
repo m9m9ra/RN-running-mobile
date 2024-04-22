@@ -75,6 +75,26 @@
     "SETTINGS_MENU": {
       "PRIVACY": "Privacy and Security",
       "TRAINING": "Training setting"
+    },
+
+    "PROGRESS": {
+      "DAY_ACTIVITY": "Day activity",
+      "ACTIVITY_STREAK": "Activity streak",
+      "RECENT_ACTIVITY": "Recent activity",
+      "ACTIVITY": "Activity",
+      "TOTAL_STREAK": "total activity streak",
+
+      "AVERAGE_PACE": "Average pace",
+      "AVERAGE_SPEED": "Average speed",
+      "MAX_SPEED": "Max.speed",
+      "CALORIES": "Calories",
+      "AVERAGE_STEP": "Average step",
+      "TOTAL_STEP": "Total step",
+      "START_AT": "Training start at",
+      "END_AT": "Training end at",
+
+      "HISTORY": "History",
+      "PEDOMETER_ACTIVITY": "Pedometer activity"
     }
   }
 }

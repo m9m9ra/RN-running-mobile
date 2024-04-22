@@ -8,13 +8,13 @@ import {AppBar} from "../../../layers/presentation/shared/ui/AppBar";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {Icon} from "react-native-paper";
 import {colorSchema} from "../../utils/ColorSchema";
-import {HomeScreen} from "../../../layers/presentation/screens/HomeScreen";
-import {ActivityScreen} from "../../../layers/presentation/screens/ActivityScreen";
 import {ProfileScreen} from "../../../layers/presentation/screens/ProfileScreen";
+import {ProgressStack, ProgressStackParamList} from "./ProgressStack";
+import {ActivityScreen} from "../../../layers/presentation/screens/activity_screen/ActivityScreen";
 
 
 export type HomeStackParamList = {
-    HomeScreen: any,
+    ProgressStack: ProgressStackParamList,
     ActivityScreen: any,
     ProfileScreen: any
 }
@@ -44,10 +44,11 @@ export const HomeStack = observer(({navigation, route}: props) => {
                            tabBarHideOnKeyboard: true
                        }}>
 
-            <Tab.Screen name={`HomeScreen`}
+            <Tab.Screen name={`ProgressStack`}
                         options={{
                             tabBarLabel: t(`DRAWER_MENU.PROGRESS`),
                             headerTitle: `un`,
+                            headerShown: false,
                             tabBarIcon: (props) => <Icon size={26}
                                                          color={props.focused ? `black` : colorSchema.secondary}
                                                          source={`chart-bar`}/>,
@@ -56,7 +57,7 @@ export const HomeStack = observer(({navigation, route}: props) => {
                                 color: colorSchema.primary
                             }
                         }}
-                        component={HomeScreen}/>
+                        component={ProgressStack}/>
 
             <Tab.Screen name={`ActivityScreen`}
                         options={{
@@ -73,7 +74,7 @@ export const HomeStack = observer(({navigation, route}: props) => {
 
             <Tab.Screen name={`ProfileScreen`}
                         options={{
-                            headerTitle: `Profile`,
+                            headerTitle: `${t(`DRAWER_MENU.PROFILE`)}`,
                             tabBarLabel: t(`DRAWER_MENU.PROFILE`),
                             tabBarIcon: (props) => <Icon size={26}
                                                          color={props.focused ? `black` : colorSchema.secondary}

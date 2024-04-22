@@ -11,11 +11,17 @@ import moment from "moment";
 import {TrainingCase} from "../../../../domain/usecase/TrainingCase";
 import {PolylineCase} from "../../../../domain/usecase/PolylineCase";
 import LoadStorage from "../../../../domain/usecase/LoadStorage";
+import {Training} from "../../../../domain/entity/Training";
 
 export default class UserStore {
+    // public modules
+    public user: User;
+
     public auth: boolean = false;
     public guest: boolean = false;
-    public user: User;
+
+    public isNotRemoteTraining: Training[] = [];
+    public isNotRemoteTrainingStatus: boolean = false;
 
     private errorStore: ErrorStore;
     private userCase: UserCase;
@@ -54,6 +60,15 @@ export default class UserStore {
         if (this.user.auth) {
             await this.updatePedometer();
             await new ActivityCase().observeStepCount(this.user.user_id, this.stepCounter);
+
+            this.user.training.forEach(training => {
+                if (!this.isNotRemoteTrainingStatus && training.remote) {
+                    this.isNotRemoteTrainingStatus = true;
+                }
+                if (!training.remote) {
+                    this.isNotRemoteTraining.push(training);
+                }
+            });
         }
     };
 
@@ -73,6 +88,7 @@ export default class UserStore {
 
             await this.activityCase.saveActivity(userActivity);
 
+            // @ts-ignore
             await this.trainingCase.saveTrainingLocal(userTraining);
 
             for (let i: number = 0; i < userTraining.length; i++) {
@@ -88,6 +104,15 @@ export default class UserStore {
 
             console.log(this.user);
         }
+    };
+
+    public uploadLocalTraining = async (): Promise<void> => {
+        await this.trainingCase.uploadLocalTrainigManual(this.isNotRemoteTraining, this.user.user_id);
+        await this.updateUserInfo();
+        runInAction(() => {
+            this.isNotRemoteTrainingStatus = false;
+            this.isNotRemoteTraining = [];
+        })
     };
 
     public updateUserInfo = async (): Promise<void> => {

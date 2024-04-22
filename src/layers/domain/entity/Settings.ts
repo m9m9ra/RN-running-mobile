@@ -14,6 +14,6 @@ export class Settings {
     @Column({nullable: false, default: false})
     gpsAlways: boolean
 
-    @Column({nullable: false, default: false})
-    mapZoom: boolean
+    @Column({nullable: false, default: 19})
+    mapZoom: number
 }

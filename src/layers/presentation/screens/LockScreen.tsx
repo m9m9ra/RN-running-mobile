@@ -27,7 +27,7 @@ export const LockScreen = ({navigation, route}: props) => {
                         height: 300,
                         width: 240
                     }} source={require('./../../../../assets/LogоRU_store.png')}/>
-                    <Text children={`0.0.1`} style={{
+                    <Text children={`0.0.4`} style={{
                         fontSize: 24,
                         fontWeight: '100'
                     }}/>
