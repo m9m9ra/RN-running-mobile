@@ -142,7 +142,8 @@ const style = StyleSheet.create({
         flexGrow: 1,
         paddingVertical: 24,
         paddingHorizontal: 24,
-        gap: 12
+        gap: 12,
+        backgroundColor: Colors.lighter
     },
     card: {
         backgroundColor: `#FFFFFF`,

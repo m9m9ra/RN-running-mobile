@@ -171,7 +171,7 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
                               letterSpacing: 2.4
                           }}/>
 
-                    {userStore.user.training.reverse().slice(0, sortedTrainingCount).map((item: Training, index: number) => {
+                    {userStore.user.training.slice(0, sortedTrainingCount).map((item: Training, index: number) => {
                         const yaMapRef = createRef<YaMap>();
 
                         // yaMapRef.current.fitMarkers(item.polyline);
@@ -302,7 +302,8 @@ export const HistoryScreen = observer(({navigation, route}: props) => {
 
 const style = StyleSheet.create({
     container: {
-        flexGrow: 1
+        flexGrow: 1,
+        backgroundColor: Colors.lighter
     },
     headerScore: {
         fontSize: 28,

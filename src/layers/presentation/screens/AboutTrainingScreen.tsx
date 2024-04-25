@@ -8,6 +8,7 @@ import YaMap, {Marker, Polyline} from "react-native-yamap";
 import {colorSchema} from "../../../core/utils/ColorSchema";
 import {AboutTrainingStackParamList} from "../../../core/navigation/modules/AboutTrainingStack";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
+import {Colors} from "react-native/Libraries/NewAppScreen";
 
 
 type props = BottomTabScreenProps<AboutTrainingStackParamList, `AboutTrainingScreen`>;
@@ -111,6 +112,7 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                               strokeWidth={6}
                               outlineColor={`#FFFFFF`}
                               outlineWidth={1.4}/>
+                    {/* todo - Ебучий полилайн */}
                 </YaMap>
                 <Divider style={{
                     height: 2,
@@ -395,7 +397,8 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
 const style = StyleSheet.create({
     container: {
         flexGrow: 1,
-        paddingBottom: 34
+        paddingBottom: 34,
+        backgroundColor: Colors.lighter
     },
     headerScore: {
         fontSize: 28,

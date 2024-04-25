@@ -4,7 +4,7 @@ import {Training} from "./Training";
 @Entity()
 export class Polyline {
     @PrimaryGeneratedColumn()
-    id: number
+    public id: number
 
     @ManyToOne(() => Training, (training) => training.polyline)
     training_id: number
@@ -14,4 +14,10 @@ export class Polyline {
 
     @Column({type: "float"})
     lon: number
+
+    @Column({type: "bigint", nullable: true})
+    timestamp: number
+
+    @Column({enum: ["START", "END", "MIDDLE"], default: "MIDDLE"})
+    type: string
 }

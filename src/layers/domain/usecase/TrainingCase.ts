@@ -1,6 +1,7 @@
 import {TrainingRepository} from "../repository/TrainingRepository";
 import {Training} from "../entity/Training";
 import {supabase} from "../../data/source/network/Supabase";
+import {dataSourse} from "../../data/dto/DataSourse";
 
 export class TrainingCase extends TrainingRepository{
     public training: Training[] = [];
@@ -16,14 +17,32 @@ export class TrainingCase extends TrainingRepository{
     };
 
     public getTraining = async (training: Training): Promise<Training> => {
-        return await this.trainingRepository.findOne({
-            where: {
-                id: training.id
-            },
+        console.log(`training_id error`, training.id);
+        const trainig_id = training.id;
+        return await dataSourse.manager.findOne(Training, {
             relations: {
-                polyline: true
-            }
-        })
+                polyline: true,
+                ways: true
+            },
+            where: {
+                id: trainig_id,
+                polyline: {
+                    training_id: trainig_id
+                }
+            }})
+
+        // return await this.trainingRepository.findOne({
+        //     relations: {
+        //         polyline: true,
+        //         ways: true
+        //     },
+        //     where: {
+        //         id: trainig_id,
+        //         polyline: {
+        //             training_id: trainig_id
+        //         }
+        //     }
+        // })
     };
 
     public getAllTrainingLocal = async (user_id: number): Promise<Training[]> => {
@@ -33,7 +52,7 @@ export class TrainingCase extends TrainingRepository{
             },
             relations: {
                 polyline: true
-            }
+            },
         });
     };
 

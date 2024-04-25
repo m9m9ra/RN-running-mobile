@@ -4,13 +4,15 @@ import {Training} from "../../../../domain/entity/Training";
 import {Polyline} from "../../../../domain/entity/Polyline";
 import {KcalPerMinute} from "../../../../../core/utils/KcalCalc";
 import {pointToDistance} from "../../../../../core/utils/PointToDistance";
-import Geolocation, {GeoError} from "react-native-geolocation-service";
+import Geolocation from "react-native-geolocation-service";
 import UserStore from "./UserStore";
 import {StepCounter} from "../services/StepCounter";
 import {PolylineCase} from "../../../../domain/usecase/PolylineCase";
 import {TrainingCase} from "../../../../domain/usecase/TrainingCase";
 import {Point} from "react-native-yamap";
 import {AppState, NativeEventSubscription} from "react-native";
+import {WaysCase} from "../../../../domain/usecase/WaysCase";
+import {Ways} from "../../../../domain/entity/Ways";
 
 export class RunningStore {
     public timer: string = `00:00:00`;
@@ -23,11 +25,15 @@ export class RunningStore {
         lat: 54.7065,
         lon: 20.511,
     };
+    public freeze = {
+        polyPause: []
+    };
 
     // DomesticModules
     private backgroundTracker: number = 0;
     private appState;
     private subscription: NativeEventSubscription;
+    private firstLine: boolean = true;
 
     private seconds: number = 0;
     private minute: number = 0;
@@ -41,10 +47,12 @@ export class RunningStore {
     private intervalToSaveTraining: NodeJS.Timeout;
     private trainingCase: TrainingCase;
     private polylineCase: PolylineCase;
+    private waysCase: WaysCase;
 
     constructor(stepCounter: StepCounter, userStore: UserStore) {
         this.trainingCase = new TrainingCase();
         this.polylineCase = new PolylineCase();
+        this.waysCase = new WaysCase();
         this.stepCounter = stepCounter;
         this.userStore = userStore;
 
@@ -102,6 +110,9 @@ export class RunningStore {
 
             return true;
         } else if (this.isRunning && this.isRunningPause) {
+            runInAction(() => {
+                this.training.pauseCount += 1;
+            })
             await this.startRunning();
             return true
         } else {
@@ -112,6 +123,7 @@ export class RunningStore {
                 clearInterval(this.intervalId);
                 clearInterval(this.intervalToSaveTraining);
                 this.isRunningPause = false;
+                this.freeze.polyPause = [];
 
                 this.isRunning = false;
                 this.training.polyline ? this.training.polyline = this.training.polyline : this.training.polyline = [];
@@ -145,6 +157,46 @@ export class RunningStore {
         }
     };
 
+    public pauseRunning = async (): Promise<void> => {
+        Geolocation.clearWatch(this.watchId);
+        clearInterval(this.intervalId);
+
+        runInAction(() => {
+            this.isRunningPause = true;
+            this.firstLine = true;
+            this.training.pause = true;
+        });
+
+        const newPolyline = Object.assign(new Polyline(), {
+            training_id: this.training.id,
+            lat: this.currentPosition.lat,
+            lon: this.currentPosition.lon,
+            type: "END",
+            timestamp: new Date()
+        });
+
+        await this.polylineCase.savePolylineLocal(newPolyline);
+
+        const newWay = Object.assign(new Ways(), {
+            training_id: this.training.id,
+            timestamp: new Date()
+        });
+
+        const ways = await this.waysCase.saveLocal(newWay);
+        console.log(ways);
+
+        await this.trainingCase.saveTrainingLocal(this.training);
+
+        const change = await this.trainingCase.getTraining(this.training);
+
+        runInAction(() => {
+            this.training = change;
+        });
+
+        const findById = await this.waysCase.getAllWays(this.training.id)
+        console.log(findById, `await this.waysCase.getAllWays(this.training.id)`);
+    };
+
     private startRunning = async (): Promise<void> => {
         runInAction(() => {
             this.isRunningPause = false;
@@ -165,8 +217,14 @@ export class RunningStore {
                 const newPolyline = Object.assign(new Polyline(), {
                     training_id: this.training.id,
                     lat: currentPosition.lat,
-                    lon: currentPosition.lon
+                    lon: currentPosition.lon,
+                    type: this.firstLine ? "START" : "MIDDLE",
+                    timestamp: position.timestamp
                 });
+
+                if (this.firstLine) {
+                    this.firstLine = false;
+                }
 
                 await this.polylineCase.savePolylineLocal(newPolyline);
 
@@ -201,7 +259,7 @@ export class RunningStore {
 
                         // todo - avg_pace
                         if (this.hour > 0 && this.minute > 0) {
-                            time = this.hour > 0 ? this.hour * 60 * 60 + this.minute * 60: this.minute * 60 + this.seconds;
+                            time = this.hour > 0 ? this.hour * 60 * 60 + this.minute * 60 : this.minute * 60 + this.seconds;
                         } else if (this.minute > 0) {
                             time = this.minute * 60 + this.seconds;
                         } else {
@@ -222,9 +280,6 @@ export class RunningStore {
                         if (this.training.average > this.training.max_speed) {
                             this.training.max_speed = this.training.average;
                         }
-
-                        console.log(this.training.average, `avg`);
-                        console.log(this.training.max_speed, `max_speed`);
                     }
                 });
             },
@@ -266,14 +321,6 @@ export class RunningStore {
                 })
             }, 1000);
         });
-    };
-
-    public pauseRunning = async (): Promise<void> => {
-        Geolocation.clearWatch(this.watchId);
-        clearInterval(this.intervalId);
-        runInAction(() => {
-            this.isRunningPause = true;
-        })
     };
 
     private runTrackBackground = (): void => {

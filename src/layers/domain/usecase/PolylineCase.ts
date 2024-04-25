@@ -5,6 +5,21 @@ import {supabase} from "../../data/source/network/Supabase";
 export class PolylineCase extends PolylineRepository {
     public polyline: Polyline[] = [];
 
+    public savePolylineLocal = async (polyline: Polyline): Promise<Polyline[]> => {
+        return await this.polylineRepository.save([polyline]);
+    };
+
+    public getPolylineRemote = async (training_id: number): Promise<Polyline[]> => {
+        const {data, error} = await supabase().from(`polyline`).select().eq('training_id', training_id);
+        console.log(data, error);
+
+        return data
+    };
+
+    public saveLocal = async (polyline: Polyline[]): Promise<void> => {
+        await this.polylineRepository.save(polyline);
+    };
+
     public savePolyline = async (polyline: Polyline): Promise<Polyline[]> => {
         await supabase()
             .from(`polyline`)
@@ -27,7 +42,6 @@ export class PolylineCase extends PolylineRepository {
             }
         });
     };
-
     public uploadPolyline = async (polyline: Polyline[]): Promise<Polyline[]> => {
         polyline.forEach(item => {
             supabase()
@@ -41,37 +55,23 @@ export class PolylineCase extends PolylineRepository {
 
         return
     };
-
-    public savePolylineLocal = async (polyline: Polyline): Promise<Polyline[]> => {
-        const isUniq = await this.polylineRepository.findOne({
+    public updatePolylineLocal = async (training_id: number, pause_id: number): Promise<Polyline[]> => {
+        let isUniq = await this.polylineRepository.find({
             where: {
-                lat: polyline.lat,
-                lon: polyline.lon,
-                training_id: polyline.training_id
+                training_id: training_id
             }
         });
 
-        if (isUniq != null) {
+        // const tempPoly = isUniq;
+        //
+        // await this.polylineRepository.remove(isUniq);
+        //
+        // isUniq = isUniq.map((item) => {
+        //     item.pause_id = pause_id;
+        //     item.training_id = undefined;
+        //     return item
+        // });
 
-        } else {
-            await this.polylineRepository.save([polyline]);
-        }
-
-        return await this.polylineRepository.find({
-            where: {
-                training_id: polyline.training_id
-            }
-        });
-    };
-
-    public getPolylineRemote = async (training_id: number): Promise<Polyline[]> => {
-        const {data, error} = await supabase().from(`polyline`).select().eq('training_id', training_id);
-        console.log(data, error);
-
-        return data
-    };
-
-    public saveLocal = async (polyline: Polyline[]): Promise<void> => {
-        await this.polylineRepository.save(polyline);
+        return await this.polylineRepository.save(isUniq);
     };
 }

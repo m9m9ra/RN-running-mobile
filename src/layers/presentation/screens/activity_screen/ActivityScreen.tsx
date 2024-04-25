@@ -4,7 +4,6 @@ import {observer} from "mobx-react-lite";
 import {useTranslation} from "react-i18next";
 import {useRootStore} from "../../shared/store/RootStore";
 import {useLayoutEffect, useState} from "react";
-import {useNetInfo} from "@react-native-community/netinfo";
 import {requestLocationPermission} from "../../../../core/utils/requestLocationPermission";
 import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, TouchableWithoutFeedback, View} from "react-native";
 import {Appbar, Button, Dialog, Icon, MD3Colors, Text} from "react-native-paper";
@@ -13,15 +12,15 @@ import {promptForEnableLocationIfNeeded} from "react-native-android-location-ena
 import {MapMini} from "../../shared/ui/MapMini";
 import CircularProgress from "react-native-circular-progress-indicator";
 import {openSettings} from "react-native-permissions";
+import SwipeButton from 'rn-swipe-button';
+import {colorSchema} from "../../../../core/utils/ColorSchema";
 
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
-    const {timer, toggleRunning} = useRootStore();
     const {training, isRunning, runningStore} = useRootStore();
     const [permission, setPermission] = useState<boolean>(true);
     const [refreshing, setRefreshing] = useState<boolean>(false);
-    const {type, isConnected} = useNetInfo();
 
     const [countdown, setCountdown] = useState<number>(10);
     const [countdownAvailible, setCountdownAvailible] = useState<boolean>(false);
@@ -192,6 +191,38 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     </View>
                 </Appbar.Header>
 
+                <Dialog visible={!permission}
+                        style={{
+                            borderRadius: 4,
+                            backgroundColor: `#FFF`
+                        }}
+                        onDismiss={() => {
+                            setPermission(true);
+                        }}>
+                    <Dialog.Title children={`GPS location`}
+                                  style={{
+                                      letterSpacing: 1.6
+                                  }}/>
+                    <Dialog.Content>
+                        <Text variant="bodyMedium"
+                              children={`Prodman Running App needs access to your location always`}
+                              style={{
+                                  letterSpacing: 0.8
+                              }}/>
+                    </Dialog.Content>
+                    <Dialog.Actions>
+                        <Button onPress={() => {
+                            setPermission(true);
+                            openSettings().then(r => {
+                            });
+                        }}
+                                labelStyle={{
+                                    letterSpacing: 0.8
+                                }}
+                                children={`Open settings`}/>
+                    </Dialog.Actions>
+                </Dialog>
+
                 {!refreshing ?
                         <MapMini/>
                         :
@@ -239,48 +270,162 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                         false
                 }
 
-                {runningPause ?
-                        <TouchableWithoutFeedback disabled={false}
-                                                  onPress={() => {
-                                                      setRunningPause(false);
-                                                  }}>
-                            <View style={{
-                                zIndex: 9999,
-                                position: `absolute`,
-                                left: 0,
-                                right: 0,
-                                bottom: 0,
-                                top: 190,
-                                alignItems: `center`,
-                                justifyContent: `center`,
-                                backgroundColor: `#0000008B`,
-                                paddingBottom: 80
-                            }}>
-                                <View style={{
-                                    backgroundColor: `#FFF`,
-                                    borderRadius: 4,
-                                    width: 180,
-                                    height: 140,
-                                    paddingHorizontal: 16,
-                                    paddingVertical: 12,
-                                    gap: 24
-                                }}>
+                {/*{runningPause ?*/}
+                {/*        <TouchableWithoutFeedback disabled={false}*/}
+                {/*                                  onPress={() => {*/}
+                {/*                                      setRunningPause(false);*/}
+                {/*                                  }}>*/}
+                {/*            <View style={{*/}
+                {/*                zIndex: 9999,*/}
+                {/*                position: `absolute`,*/}
+                {/*                left: 0,*/}
+                {/*                right: 0,*/}
+                {/*                bottom: 0,*/}
+                {/*                top: 190,*/}
+                {/*                alignItems: `center`,*/}
+                {/*                justifyContent: `center`,*/}
+                {/*                backgroundColor: `#0000008B`,*/}
+                {/*                paddingBottom: 80*/}
+                {/*            }}>*/}
+                {/*                <View style={{*/}
+                {/*                    backgroundColor: `#FFF`,*/}
+                {/*                    borderRadius: 4,*/}
+                {/*                    width: 180,*/}
+                {/*                    height: 140,*/}
+                {/*                    paddingHorizontal: 16,*/}
+                {/*                    paddingVertical: 12,*/}
+                {/*                    gap: 24*/}
+                {/*                }}>*/}
+                {/*                    <View style={{*/}
+                {/*                        flexDirection: `row`,*/}
+                {/*                        alignItems: `center`,*/}
+                {/*                        justifyContent: `space-between`,*/}
+                {/*                        paddingHorizontal: 4*/}
+                {/*                    }}>*/}
+                {/*                        <Text children={``}/>*/}
+                {/*                        <Icon size={24}*/}
+                {/*                              source={`close-box-outline`}/>*/}
+                {/*                    </View>*/}
+                {/*                    <View style={{*/}
+                {/*                        flexDirection: `row`,*/}
+                {/*                        alignItems: `center`,*/}
+                {/*                        justifyContent: `space-between`,*/}
+                {/*                    }}>*/}
+                {/*                        <TouchableOpacity disabled={false}*/}
+                {/*                                          onPress={async () => {*/}
+                {/*                                              if (runningStore.isRunning) {*/}
+                {/*                                                  setRefreshing(true);*/}
+                {/*                                                  setRunningPause(false);*/}
+                {/*                                                  runningStore.toggleRunning()*/}
+                {/*                                                          .then((running) => {*/}
+                {/*                                                              setRefreshing(false);*/}
+                {/*                                                              if (!running) {*/}
+                {/*                                                                  setCountdown(10);*/}
+                {/*                                                                  // @ts-ignore*/}
+                {/*                                                                  navigation.navigate(`AboutTrainingStack`, {training: runningStore.training})*/}
+                {/*                                                              } else {*/}
+                {/*                                                                  throw new Error(`??? Activity Screen`);*/}
+                {/*                                                              }*/}
+                {/*                                                          });*/}
+                {/*                                              }*/}
+                {/*                                          }}*/}
+                {/*                                          style={{*/}
+                {/*                                              width: 58,*/}
+                {/*                                              height: 58,*/}
+                {/*                                              backgroundColor: `#FFF`,*/}
+                {/*                                              borderRadius: 4,*/}
+                {/*                                              alignItems: `center`,*/}
+                {/*                                              justifyContent: `center`,*/}
+                {/*                                              elevation: 4*/}
+                {/*                                          }}*/}
+                {/*                                          children={<Icon size={24}*/}
+                {/*                                                          source={`stop`}/>}/>*/}
+
+                {/*                        <TouchableOpacity disabled={false}*/}
+                {/*                                          onPress={async () => {*/}
+                {/*                                              await runningStore.pauseRunning();*/}
+                {/*                                              setRunningPause(false);*/}
+                {/*                                          }}*/}
+                {/*                                          style={{*/}
+                {/*                                              width: 58,*/}
+                {/*                                              height: 58,*/}
+                {/*                                              backgroundColor: `#FFF`,*/}
+                {/*                                              borderRadius: 4,*/}
+                {/*                                              alignItems: `center`,*/}
+                {/*                                              justifyContent: `center`,*/}
+                {/*                                              elevation: 4*/}
+                {/*                                          }}*/}
+                {/*                                          children={<Icon size={24}*/}
+                {/*                                                          source={`pause`}/>}/>*/}
+                {/*                    </View>*/}
+                {/*                </View>*/}
+                {/*            </View>*/}
+                {/*        </TouchableWithoutFeedback>*/}
+                {/*        :*/}
+                {/*        false*/}
+                {/*}*/}
+
+                <View style={{
+                    paddingHorizontal: 24,
+                    position: `absolute`,
+                    bottom: 24,
+                    left: 0,
+                    right: 0
+                }}>
+                    {runningStore.isRunning ?
+                            runningPause ?
                                     <View style={{
                                         flexDirection: `row`,
                                         alignItems: `center`,
                                         justifyContent: `space-between`,
-                                        paddingHorizontal: 4
+                                        gap: 12
                                     }}>
-                                        <Text children={``}/>
-                                        <Icon size={24}
-                                              source={`close-box-outline`}/>
-                                    </View>
-                                    <View style={{
-                                        flexDirection: `row`,
-                                        alignItems: `center`,
-                                        justifyContent: `space-between`,
-                                    }}>
-                                        <TouchableOpacity disabled={false}
+                                        <TouchableOpacity disabled={refreshing}
+                                                          onPress={async () => {
+                                                              if (runningStore.isRunning) {
+                                                                  setRefreshing(true);
+                                                                  setRunningPause(false);
+                                                                  runningStore.toggleRunning()
+                                                                          .then(() => {
+                                                                              runningStore.toggleRunning().then((running) => {
+                                                                                  setRefreshing(false);
+                                                                                  if (!running) {
+                                                                                      setCountdown(10);
+                                                                                      navigation.navigate(`ProgressStack`, {
+                                                                                          // @ts-ignore
+                                                                                          screen: "AboutTrainingStack",
+                                                                                          params: {
+                                                                                              training: runningStore.training
+                                                                                          }
+                                                                                      })
+                                                                                  } else {
+                                                                                      throw new Error(`??? Activity Screen`);
+                                                                                  }
+                                                                              })
+                                                                          });
+                                                              }
+                                                          }}
+                                                          style={{
+                                                              backgroundColor: `#FFFFFF`,
+                                                              paddingHorizontal: 11,
+                                                              paddingVertical: 16,
+                                                              flexDirection: `row`,
+                                                              justifyContent: `center`,
+                                                              elevation: 4,
+                                                              flex: 1,
+                                                              borderRadius: 0,
+                                                              borderWidth: 1,
+                                                              borderColor: `black`
+                                                          }}
+                                                          children={<Text children={`finish`.toUpperCase()}
+                                                                          style={{
+                                                                              color: `black`,
+                                                                              fontSize: 13,
+                                                                              letterSpacing: 2.6,
+                                                                              fontWeight: `700`
+                                                                          }}/>}/>
+
+                                        <TouchableOpacity disabled={refreshing}
                                                           onPress={async () => {
                                                               if (runningStore.isRunning) {
                                                                   setRefreshing(true);
@@ -293,112 +438,100 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                                                                                   // @ts-ignore
                                                                                   navigation.navigate(`AboutTrainingStack`, {training: runningStore.training})
                                                                               } else {
-                                                                                  throw new Error(`??? Activity Screen`);
+
                                                                               }
                                                                           });
                                                               }
                                                           }}
                                                           style={{
-                                                              width: 58,
-                                                              height: 58,
-                                                              backgroundColor: `#FFF`,
-                                                              borderRadius: 4,
-                                                              alignItems: `center`,
+                                                              backgroundColor: `black`,
+                                                              paddingHorizontal: 11,
+                                                              paddingVertical: 16,
+                                                              flexDirection: `row`,
                                                               justifyContent: `center`,
-                                                              elevation: 4
+                                                              elevation: 4,
+                                                              flex: 1
                                                           }}
-                                                          children={<Icon size={24}
-                                                                          source={`stop`}/>}/>
-
-                                        <TouchableOpacity disabled={false}
-                                                          onPress={async () => {
-                                                              await runningStore.pauseRunning();
-                                                              setRunningPause(false);
-                                                          }}
-                                                          style={{
-                                                              width: 58,
-                                                              height: 58,
-                                                              backgroundColor: `#FFF`,
-                                                              borderRadius: 4,
-                                                              alignItems: `center`,
-                                                              justifyContent: `center`,
-                                                              elevation: 4
-                                                          }}
-                                                          children={<Icon size={24}
-                                                                          source={`pause`}/>}/>
+                                                          children={<Text children={`resume`.toUpperCase()}
+                                                                          style={{
+                                                                              color: `#FFFFFF`,
+                                                                              fontSize: 13,
+                                                                              letterSpacing: 2.6,
+                                                                              fontWeight: `700`
+                                                                          }}/>}/>
                                     </View>
+                                    :
+                                    <SwipeButton disabled={refreshing}
+                                                 onSwipeSuccess={async () => {
+                                                     console.log(`success stop running!`);
+                                                     setRunningPause(true);
+                                                     setRefreshing(true);
+                                                     await runningStore.pauseRunning();
+                                                     setRefreshing(false);
+                                                 }}
+                                                 title={`Slide to pause ⟶`.toUpperCase()}
+                                                 resetAfterSuccessAnimDelay={150}
+                                                 screenReaderEnabled={false}
+                                                 swipeSuccessThreshold={50}
+                                                 railBackgroundColor="black"
+                                                 railStyles={{
+                                                     backgroundColor: `rgba(255, 255, 255, 0.45)`,
+                                                     borderWidth: 0,
+                                                     borderRadius: 0
+                                                 }}
+                                                 thumbIconBackgroundColor={`rgba(255, 255, 255, 0)`}
+                                                 thumbIconStyles={{
+                                                     backgroundColor: `#FFFFFF`,
+                                                     // display: `none`,
+                                                     // width: 10,
+                                                     // height: 10,
+                                                     borderRadius: 0,
+                                                     borderWidth: 0
+                                                 }}
+                                                 titleStyles={{
+                                                     color: `#FFFFFF`,
+                                                     fontSize: 13,
+                                                     letterSpacing: 2.6,
+                                                     fontWeight: `700`,
+                                                     paddingHorizontal: 11,
+                                                 }}
+                                                 containerStyles={{
+                                                     backgroundColor: `black`,
+                                                     flexDirection: `row`,
+                                                     justifyContent: `space-between`,
+                                                     paddingVertical: 4,
+                                                     borderRadius: 0,
+                                                     elevation: 4
+                                                 }}/>
+                            :
+                            <TouchableWithoutFeedback disabled={refreshing}
+                                                      onPress={async () => togleRunning()}>
+                                <View style={{
+                                    backgroundColor: `black`,
+                                    paddingHorizontal: 11,
+                                    paddingVertical: 16,
+                                    flexDirection: `row`,
+                                    justifyContent: `space-between`,
+                                    elevation: 4
+                                }}>
+                                    <TouchableOpacity disabled={refreshing}
+                                            //END_TIMER
+                                                      children={<Text
+                                                              children={`${runningStore.isRunning && !runningStore.isRunningPause ? t(`ACTION.END_TIMER`) : t(`ACTION.START_TIMER`)}`.toUpperCase()}
+                                                              style={{
+                                                                  color: `#FFFFFF`,
+                                                                  fontSize: 13,
+                                                                  letterSpacing: 2.6,
+                                                                  fontWeight: `700`
+                                                              }}/>}
+                                                      onPress={async () => togleRunning()}/>
+                                    <TouchableOpacity disabled={refreshing}
+                                                      children={<Icon size={18} source={`arrow-right`}
+                                                                      color={`#FFFFFF`}/>}
+                                                      onPress={async () => togleRunning()}/>
                                 </View>
-                            </View>
-                        </TouchableWithoutFeedback>
-                        :
-                        false
-                }
-
-                <Dialog visible={!permission}
-                        style={{
-                            borderRadius: 4,
-                            backgroundColor: `#FFF`
-                        }}
-                        onDismiss={() => {
-                            setPermission(true);
-                        }}>
-                    <Dialog.Title children={`GPS location`}
-                                  style={{
-                                      letterSpacing: 1.6
-                                  }}/>
-                    <Dialog.Content>
-                        <Text variant="bodyMedium"
-                              children={`Prodman Running App needs access to your location always`}
-                              style={{
-                                  letterSpacing: 0.8
-                              }}/>
-                    </Dialog.Content>
-                    <Dialog.Actions>
-                        <Button onPress={() => {
-                            setPermission(true);
-                            openSettings().then(r => {
-                            });
-                        }}
-                                labelStyle={{
-                                    letterSpacing: 0.8
-                                }}
-                                children={`Open settings`}/>
-                    </Dialog.Actions>
-                </Dialog>
-
-                <View style={{
-                    paddingHorizontal: 24,
-                    position: `absolute`,
-                    bottom: 24,
-                    left: 0,
-                    right: 0
-                }}>
-                    <TouchableWithoutFeedback disabled={refreshing}
-                                              onPress={async () => togleRunning()}>
-                        <View style={{
-                            backgroundColor: `black`,
-                            paddingHorizontal: 11,
-                            paddingVertical: 16,
-                            flexDirection: `row`,
-                            justifyContent: `space-between`,
-                            elevation: 4
-                        }}>
-                            <TouchableOpacity disabled={refreshing}
-                                    //END_TIMER
-                                              children={<Text
-                                                      children={`${runningStore.isRunning && !runningStore.isRunningPause ? t(`ACTION.END_TIMER`) : t(`ACTION.START_TIMER`)}`.toUpperCase()}
-                                                      style={{
-                                                          color: `#FFFFFF`,
-                                                          fontSize: 13,
-                                                          letterSpacing: 2.6,
-                                                          fontWeight: `700`
-                                                      }}/>}
-                                              onPress={async () => togleRunning()}/>
-                            <TouchableOpacity disabled={refreshing}
-                                              children={<Icon size={18} source={`arrow-right`} color={`#FFFFFF`}/>}
-                                              onPress={async () => togleRunning()}/>
-                        </View>
-                    </TouchableWithoutFeedback>
+                            </TouchableWithoutFeedback>
+                    }
                 </View>
             </ScrollView>
     )

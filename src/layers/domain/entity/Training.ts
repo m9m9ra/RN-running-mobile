@@ -1,7 +1,7 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { User } from "./User";
 import {Polyline} from "./Polyline";
-
+import {Ways} from "./Ways";
 @Entity()
 export class Training {
     @PrimaryGeneratedColumn()
@@ -15,10 +15,20 @@ export class Training {
 
     // todo - ??? Массив точек на карте
     @OneToMany(() => Polyline, (polyline) => polyline.training_id)
-    polyline?: Polyline[]
+    polyline: Polyline[]
+
+    // todo - ??? Массив точек на карте; замороженные пути
+    @OneToMany(() => Ways, (ways) => ways.training_id)
+    ways: Ways[]
 
     @Column({nullable: false, default: false})
     remote?: boolean
+
+    @Column({nullable: false, default: 0})
+    pauseCount?: number
+
+    @Column({nullable: false, default: false})
+    pause?: boolean
 
     @Column({nullable: true})
     distance?: string

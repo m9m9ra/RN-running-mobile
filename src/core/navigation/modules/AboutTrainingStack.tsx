@@ -48,7 +48,7 @@ export const AboutTrainingStack = ({navigation, route}: props) => {
                             }}>
                                 <TouchableOpacity disabled={false}
                                                   onPress={() => {
-                                                      navigation.goBack();
+                                                      navigation.navigate(`HomeScreen`);
                                                   }}
                                                   style={{
                                                       marginRight: 12
