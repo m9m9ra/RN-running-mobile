@@ -1,5 +1,6 @@
 import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Training} from "./Training";
+import {Ways} from "./Ways";
 
 @Entity()
 export class Polyline {
@@ -8,6 +9,9 @@ export class Polyline {
 
     @ManyToOne(() => Training, (training) => training.polyline)
     training_id: number
+
+    @ManyToOne(() => Ways, (ways) => ways.polyline)
+    ways_id: number
 
     @Column({type: "float"})
     lat: number

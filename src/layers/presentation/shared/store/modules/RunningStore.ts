@@ -178,23 +178,25 @@ export class RunningStore {
         await this.polylineCase.savePolylineLocal(newPolyline);
 
         const newWay = Object.assign(new Ways(), {
-            training_id: this.training.id,
+            training_id: this.training,
+            polyline: this.training.polyline,
             timestamp: new Date()
         });
 
         const ways = await this.waysCase.saveLocal(newWay);
         console.log(ways);
+        runInAction(() => {
+            this.training.ways.push(ways);
+            this.training.polyline = [];
+        })
 
-        await this.trainingCase.saveTrainingLocal(this.training);
+        const change = await this.trainingCase.saveTrainingLocal(this.training);
 
-        const change = await this.trainingCase.getTraining(this.training);
+        // const change = await this.trainingCase.getTraining(this.training);
 
         runInAction(() => {
             this.training = change;
         });
-
-        const findById = await this.waysCase.getAllWays(this.training.id)
-        console.log(findById, `await this.waysCase.getAllWays(this.training.id)`);
     };
 
     private startRunning = async (): Promise<void> => {

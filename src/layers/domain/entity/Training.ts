@@ -1,10 +1,10 @@
-import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, Relation} from "typeorm";
 import { User } from "./User";
 import {Polyline} from "./Polyline";
 import {Ways} from "./Ways";
 @Entity()
 export class Training {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({name: `id`})
     id: number
 
     @ManyToOne(() => User, (user) => user.training)
@@ -14,12 +14,12 @@ export class Training {
     type: string
 
     // todo - ??? Массив точек на карте
-    @OneToMany(() => Polyline, (polyline) => polyline.training_id)
+    @OneToMany(() => Polyline, (polyline) => polyline.training_id,{cascade: true})
     polyline: Polyline[]
 
     // todo - ??? Массив точек на карте; замороженные пути
-    @OneToMany(() => Ways, (ways) => ways.training_id)
-    ways: Ways[]
+    @OneToMany(() => Ways, (ways) => ways.training_id,{cascade: true})
+    ways: Relation<Ways[]>
 
     @Column({nullable: false, default: false})
     remote?: boolean

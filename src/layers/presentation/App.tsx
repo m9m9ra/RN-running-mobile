@@ -15,7 +15,6 @@ import {LoadingScreen} from "./screens/LoadingScreen";
 import {openSettings, PERMISSIONS, request} from "react-native-permissions";
 import {useNetInfo} from "@react-native-community/netinfo";
 registerTranslation('en-GB', enGB)
-import "reflect-metadata"
 
 export const App = observer(() => {
     const isDarkMode = useColorScheme() === 'dark';

@@ -22,7 +22,9 @@ export class TrainingCase extends TrainingRepository{
         return await dataSourse.manager.findOne(Training, {
             relations: {
                 polyline: true,
-                ways: true
+                ways: {
+                    polyline: true
+                }
             },
             where: {
                 id: trainig_id,
@@ -98,7 +100,20 @@ export class TrainingCase extends TrainingRepository{
     };
 
     public saveTrainingLocal = async (training: Training): Promise<Training> => {
-        return await this.trainingRepository.save(training);
+        await this.trainingRepository.save(training);
+        return await dataSourse.manager.findOne(Training, {
+            relations: {
+                polyline: true,
+                ways: {
+                    polyline: true
+                }
+            },
+            where: {
+                id: training.id,
+                polyline: {
+                    training_id: training.id
+                }
+            }})
     };
 
     public uploadLocalTrainigManual = async (localTraining: Training[], user_id: number): Promise<void> => {
