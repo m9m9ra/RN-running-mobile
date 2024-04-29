@@ -9,12 +9,25 @@ import {RefreshControl, ScrollView, StyleSheet, TouchableOpacity, TouchableWitho
 import {Appbar, Button, Dialog, Icon, MD3Colors, Text} from "react-native-paper";
 import {Colors} from "react-native/Libraries/NewAppScreen";
 import {promptForEnableLocationIfNeeded} from "react-native-android-location-enabler";
-import {MapMini} from "../../shared/ui/MapMini";
 import CircularProgress from "react-native-circular-progress-indicator";
 import {openSettings} from "react-native-permissions";
 import SwipeButton from 'rn-swipe-button';
+import {createMaterialTopTabNavigator} from "@react-navigation/material-top-tabs";
+import {ActivityMapTab} from "./tabs/ActivityMapTab";
+import {ActivitySettingsTab} from "./tabs/ActivitySettingsTab";
+import {ActivityMusicTab} from "./tabs/ActivityMusicTab";
+import {ActivityProgressTab} from "./tabs/ActivityProgressTab";
 import {colorSchema} from "../../../../core/utils/ColorSchema";
+import {MapMini} from "./ui/MapMini";
 
+export type ActivityScreenParamList = {
+    ActivityMusicTab: any,
+    ActivityMapTab: any,
+    ActivityProgressTab: any,
+    ActivitySettingsTab: any
+}
+
+const Tabs = createMaterialTopTabNavigator<ActivityScreenParamList>();
 type props = BottomTabScreenProps<HomeStackParamList, `ActivityScreen`>;
 export const ActivityScreen = observer(({navigation, route}: props) => {
     const {t} = useTranslation();
@@ -157,7 +170,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                         marginTop: 24
                     }}>
                         <View>
-                            <Text children={`${runningStore.training && runningStore.training.distance ? runningStore.training.distance : `0.00`}`}
+                            <Text children={`${runningStore.training && runningStore.training.distance && runningStore.isRunning ? runningStore.training.distance : `0.00`}`}
                                   style={style.headerScore}/>
                             <Text children={t(`ACTION.DISTANCE`)}
                                   style={style.headerLabel}/>
@@ -167,7 +180,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                             alignItems: `center`
                         }}>
                             <Text children={`${// @ts-ignore
-                                    runningStore.training && runningStore.training.kcal !== Infinity && runningStore.training.kcal !== null
+                                    runningStore.training && runningStore.training.kcal !== Infinity && runningStore.training.kcal !== null && runningStore.isRunning
                                             ?
                                             runningStore.training.kcal
                                             :
@@ -179,7 +192,7 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
 
                         <View>
                             <Text children={`${// @ts-ignore
-                                    runningStore.training && runningStore.training.average_pace !== Infinity && runningStore.training.average_pace !== null
+                                    runningStore.training && runningStore.training.average_pace !== Infinity && runningStore.training.average_pace !== null && runningStore.isRunning
                                             ? runningStore.training.average_pace
                                             :
                                             `00:00`}`}
@@ -223,10 +236,73 @@ export const ActivityScreen = observer(({navigation, route}: props) => {
                     </Dialog.Actions>
                 </Dialog>
 
-                {!refreshing ?
-                        <MapMini/>
+                {runningStore.isRunning ?
+                        <Tabs.Navigator initialRouteName={`ActivityMapTab`}
+                                        screenOptions={{
+                                            tabBarStyle: {
+                                                height: 50,
+                                                backgroundColor: Colors.lighter,
+                                            },
+                                            tabBarIndicatorStyle: {
+                                                backgroundColor: colorSchema.secondary,
+                                                height: 3
+                                            },
+                                            swipeEnabled: false,
+                                            tabBarScrollEnabled: false,
+                                            animationEnabled: false
+                                        }}>
+                            <Tabs.Screen name={`ActivityMusicTab`}
+                                         options={{
+                                             tabBarShowLabel: false,
+                                             tabBarIcon: () => {
+                                                 return (
+                                                         <Icon size={28}
+                                                               source={`music-box-outline`}/>
+                                                 )
+                                             }
+                                         }}
+                                         component={ActivityMusicTab}/>
+
+                            <Tabs.Screen name={`ActivityMapTab`}
+                                         options={{
+                                             tabBarShowLabel: false,
+                                             tabBarIcon: () => {
+                                                 return (
+                                                         <Icon size={28}
+                                                               source={`map-outline`}/>
+                                                 )
+                                             }
+                                         }}
+                                         component={ActivityMapTab}/>
+
+                            <Tabs.Screen name={`ActivityProgressTab`}
+                                         options={{
+                                             tabBarShowLabel: false,
+                                             tabBarIcon: () => {
+                                                 return (
+                                                         <Icon size={28}
+                                                               source={`chart-box-outline`}/>
+                                                 )
+                                             }
+                                         }}
+                                         component={ActivityProgressTab}/>
+
+                            <Tabs.Screen name={`ActivitySettingsTab`}
+                                         options={{
+                                             tabBarShowLabel: false,
+                                             tabBarIcon: () => {
+                                                 return (
+                                                         <Icon size={28}
+                                                               source={`cog-outline`}/>
+                                                 )
+                                             }
+                                         }}
+                                         component={ActivitySettingsTab}/>
+
+                        </Tabs.Navigator>
                         :
-                        false}
+                        <MapMini/>
+                }
 
                 {countdownAvailible ?
                         <View style={{

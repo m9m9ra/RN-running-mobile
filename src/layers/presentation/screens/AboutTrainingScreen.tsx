@@ -9,6 +9,7 @@ import {colorSchema} from "../../../core/utils/ColorSchema";
 import {AboutTrainingStackParamList} from "../../../core/navigation/modules/AboutTrainingStack";
 import {BottomTabScreenProps} from "@react-navigation/bottom-tabs";
 import {Colors} from "react-native/Libraries/NewAppScreen";
+import {Ways} from "../../domain/entity/Ways";
 
 
 type props = BottomTabScreenProps<AboutTrainingStackParamList, `AboutTrainingScreen`>;
@@ -19,8 +20,8 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
     const yaMapRef = createRef<YaMap>();
 
     useEffect(() => {
-        yaMapRef.current.fitMarkers(route.params.training.polyline);
-        // yaMapRef.current.fitAllMarkers();
+        yaMapRef.current.fitMarkers(route.params.training.ways[0].polyline);
+        yaMapRef.current.fitAllMarkers();
     }, [route.params.training]);
 
     const onRefresh = () => {
@@ -66,44 +67,6 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                            height: 260,
                            borderRadius: 0
                        }}>
-                    <Marker point={route.params.training.polyline != null && route.params.training.polyline.length > 2
-                            ? route.params.training.polyline[0]
-                            : {...geolocationService.currentPosition}}
-                            children={<View style={{
-                                backgroundColor: colorSchema.primary,
-                                alignItems: `center`,
-                                justifyContent: `center`,
-                                width: 24,
-                                height: 24,
-                                borderRadius: 100,
-                                borderColor: `#FFFFFF`,
-                                borderWidth: 1
-                            }}>
-                                <Text children={`0`}
-                                      style={{
-                                          fontSize: 14,
-                                          color: `#FFFFFF`
-                                      }}/>
-                            </View>}/>
-                    <Marker point={route.params.training.polyline != null && route.params.training.polyline.length > 2
-                            ? route.params.training.polyline[route.params.training.polyline.length - 1]
-                            : {...geolocationService.currentPosition}}
-                            children={<View style={{
-                                backgroundColor: colorSchema.primary,
-                                alignItems: `center`,
-                                justifyContent: `center`,
-                                width: 24,
-                                height: 24,
-                                borderRadius: 100,
-                                borderColor: `#FFFFFF`,
-                                borderWidth: 1
-                            }}>
-                                <Text children={`${route.params.training.distance != null ? Number(route.params.training.distance).toFixed(0) : 0}`}
-                                      style={{
-                                          fontSize: 14,
-                                          color: `#FFFFFF`
-                                      }}/>
-                            </View>}/>
                     {/* todo - Ебучий полилайн */}
                     <Polyline points={route.params.training.polyline != null
                             ? route.params.training.polyline
@@ -113,6 +76,65 @@ export const AboutTrainingScreen = observer(({navigation, route}: props) => {
                               outlineColor={`#FFFFFF`}
                               outlineWidth={1.4}/>
                     {/* todo - Ебучий полилайн */}
+                    {route.params.training && route.params.training.pause
+                            ?
+                            <>
+                                {route.params.training.ways.map((item: Ways) => {
+                                    return (
+                                            <View key={item.id}>
+                                                <Marker point={item.polyline != null && item.polyline.length > 2
+                                                        ? item.polyline[0]
+                                                        : {...geolocationService.currentPosition}}
+                                                        children={<View style={{
+                                                            backgroundColor: colorSchema.primary,
+                                                            alignItems: `center`,
+                                                            justifyContent: `center`,
+                                                            width: 24,
+                                                            height: 24,
+                                                            borderRadius: 100,
+                                                            borderColor: `#FFFFFF`,
+                                                            borderWidth: 1
+                                                        }}>
+                                                            <Text children={`S`}
+                                                                  style={{
+                                                                      fontSize: 14,
+                                                                      color: `#FFFFFF`
+                                                                  }}/>
+                                                        </View>}/>
+                                                <Polyline points={item.polyline != null
+                                                        ? item.polyline
+                                                        : [{...geolocationService.currentPosition}]}
+                                                          strokeColor={`gray`}
+                                                          strokeWidth={6}
+                                                          outlineColor={`black`}
+                                                          outlineWidth={1.4}/>
+                                                <Marker point={item.polyline != null && item.polyline.length > 2
+                                                        ? item.polyline[item.polyline.length - 1]
+                                                        : {...geolocationService.currentPosition}}
+                                                        children={<View style={{
+                                                            backgroundColor: colorSchema.primary,
+                                                            alignItems: `center`,
+                                                            justifyContent: `center`,
+                                                            width: 24,
+                                                            height: 24,
+                                                            borderRadius: 100,
+                                                            borderColor: `#FFFFFF`,
+                                                            borderWidth: 1
+                                                        }}>
+                                                            <Text children={`F`}
+                                                                  style={{
+                                                                      fontSize: 14,
+                                                                      color: `#FFFFFF`
+                                                                  }}/>
+                                                        </View>}/>
+                                            </View>
+                                    )
+                                })
+                                }
+                            </>
+                            :
+                            false
+                    }
                 </YaMap>
                 <Divider style={{
                     height: 2,

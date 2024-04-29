@@ -148,7 +148,7 @@ export class RunningStore {
                 // console.log()
             })
 
-            await this.userStore.updateUserInfo();
+            // await this.userStore.updateUserInfo();
 
             // todo - Под вопросом!
             this.runTrackBackground();
@@ -180,7 +180,15 @@ export class RunningStore {
         const newWay = Object.assign(new Ways(), {
             training_id: this.training,
             polyline: this.training.polyline,
-            timestamp: new Date()
+            timestamp: new Date(),
+            distance: this.training.distance,
+            max_speed: this.training.max_speed,
+            average: this.training.average,
+            average_pace: this.training.average_pace,
+            average_step: this.training.average_step,
+            duration: this.timer,
+            end_data: moment(new Date()).format(`h:mm a`),
+            kcal: this.training.kcal
         });
 
         const ways = await this.waysCase.saveLocal(newWay);
@@ -236,7 +244,7 @@ export class RunningStore {
 
                 runInAction(() => {
                     this.training = override;
-                    this.training.kcal = Number(Kcal) !== Infinity ? String(parseInt(Kcal)) : this.training.kcal;
+                    this.training.kcal = Number(Kcal) !== Infinity ? String(parseInt(Kcal) / 10) : this.training.kcal;
 
                     // todo - Не забудь, а то запомнишь!!!
                     this.currentPosition = {
@@ -246,6 +254,20 @@ export class RunningStore {
 
                     let currentDistance: number = 0;
                     if (this.training.polyline.length > 1 && this.training.polyline) {
+                        if (this.training.pause) {
+                            this.training.ways.forEach(item => {
+                                for (let i = 0; i < item.polyline.length - 1; i++) {
+                                    const distance = pointToDistance(
+                                        item.polyline[i].lat,
+                                        item.polyline[i].lon,
+                                        item.polyline[i + 1].lat,
+                                        item.polyline[i + 1].lon);
+
+                                    currentDistance += distance;
+                                    console.log(distance);
+                                }
+                            });
+                        }
                         for (let i = 0; i < this.training.polyline.length - 1; i++) {
                             const distance = pointToDistance(
                                 this.training.polyline[i].lat,
@@ -255,6 +277,8 @@ export class RunningStore {
 
                             currentDistance += distance;
                         }
+
+                        console.log(currentDistance);
                         this.training.distance = currentDistance.toFixed(2);
 
                         let time: number;

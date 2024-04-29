@@ -13,7 +13,7 @@ export class Training {
     @Column({enum: ["RUNNING"]})
     type: string
 
-    // todo - ??? Массив точек на карте
+    // todo - ??? Массив точек на карте; Local - current
     @OneToMany(() => Polyline, (polyline) => polyline.training_id,{cascade: true})
     polyline: Polyline[]
 

@@ -43,6 +43,6 @@ const style = StyleSheet.create({
         paddingTop: 66,
         paddingHorizontal: 24,
         paddingBottom: 84,
-        backgroundColor: Colors.lighter
+        backgroundColor: `#FFFFFF`
     }
 })
